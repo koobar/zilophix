@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "neac.h": "c",
+        "errcode.h": "c",
+        "file_access.h": "c",
+        "bit_stream.h": "c"
+    }
+}
