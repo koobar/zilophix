@@ -1,5 +1,6 @@
 #include "./include/zilophixdec.h"
 #include "errcode.h"
+#include "wave_file_writer.h"
 #include <stdio.h>
 #include <wchar.h>
 
@@ -303,4 +304,29 @@ unsigned char* DecoderGetPicture(HDECODER decoder) {
     }
 
     return NULL;
+}
+
+void DecodeFileA(LPCSTR input, LPCSTR output){
+    FILE* input_file = fopen(input, "rb");
+    decoder* decoder = decoder_create(input_file);
+    wave_file_writer* writer = wave_file_writer_create(output);
+    uint32_t i;
+
+    /* WAVファイルのフォーマットを設定 */
+    wave_file_writer_set_pcm_format(writer, decoder->sample_rate, decoder->bits_per_sample, decoder->num_channels);
+    wave_file_writer_set_num_samples(writer, decoder->num_total_samples);
+
+    /* WAVファイルへの書き込み開始 */
+    wave_file_writer_begin_write(writer);
+
+    /* すべてのサンプルをデコード */
+    for (i = 0; i < decoder->num_total_samples; ++i){
+        wave_file_writer_write_sample(writer, decoder_read_sample(decoder));
+    }
+
+    /* 後始末 */
+    wave_file_writer_end_write(writer);
+    wave_file_writer_close(writer);
+    decoder_close(decoder);
+    decoder_free(decoder);
 }

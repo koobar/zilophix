@@ -96,4 +96,11 @@ void __declspec(dllexport) EncoderWriteSample(HENCODER encoder, int sample);
  */
 void __declspec(dllexport) EncoderEndWrite(HENCODER encoder);
 
+void __declspec(dllexport) EncodeFileA(
+    LPCSTR input,
+    LPCSTR output,
+    uint16_t block_size,
+    bool use_mid_side_stereo,
+    uint8_t filter_taps);
+
 #endif

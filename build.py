@@ -113,8 +113,8 @@ def build():
     make_exec("zilophix", bin_dir, [libzilophix_obj_path, libwavefile_obj_path, zilophix_obj_path])
 
     # DLL版Zilophixのコンパイル
-    compile_project(zilophixdll_dir, zilophixdll_obj_path, "-std=c99", [f"{libzilophix_dir}{os.sep}include"])
-    make_shared_lib("zilophixdll", bin_dir, [libzilophix_obj_path, zilophixdll_obj_path])
+    compile_project(zilophixdll_dir, zilophixdll_obj_path, "-std=c99", [f"{libzilophix_dir}{os.sep}include", f"{libwavefile_dir}{os.sep}include"])
+    make_shared_lib("zilophixdll", bin_dir, [libzilophix_obj_path, zilophixdll_obj_path, libwavefile_obj_path])
 
 # コマンドライン引数を取得
 # 1個目の引数は、スクリプトのファイル名が格納されることに注意。

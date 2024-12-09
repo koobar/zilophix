@@ -266,4 +266,6 @@ unsigned char __declspec(dllexport) DecoderGetPictureFormatCode(HDECODER decoder
 */
 BYTEPTR __declspec(dllexport) DecoderGetPicture(HDECODER decoder);
 
+void __declspec(dllexport) DecodeFileA(LPCSTR input, LPCSTR output);
+
 #endif
