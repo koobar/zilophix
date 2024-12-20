@@ -101,20 +101,20 @@ void EncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_
     encoder* encoder = encoder_create(
         output_file,
         wave_file_reader_get_sample_rate(reader),
-        wave_file_reader_get_bits_per_sample(reader),
-        wave_file_reader_get_num_channels(reader),
+        (uint8_t)wave_file_reader_get_bits_per_sample(reader),
+        (uint8_t)wave_file_reader_get_num_channels(reader),
         num_samples,
         block_size,
         use_mid_side_stereo,
         filter_taps,
         NULL);
 
-    /* ã™ã¹ã¦ã®ã‚µãƒ³ãƒ—ãƒ«ã‚’ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰ã™ã‚‹ */
+    /* ‚·‚×‚Ä‚ÌƒTƒ“ƒvƒ‹‚ğƒGƒ“ƒR[ƒh‚·‚é */
     for (i = 0; i < num_samples; ++i){
         encoder_write_sample(encoder, wave_file_reader_read_sample(reader));
     }
 
-    /* å¾Œå§‹æœ« */
+    /* Œãn–– */
     encoder_end_write(encoder);
     wave_file_reader_close(reader);
     encoder_free(encoder);
