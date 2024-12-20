@@ -23,8 +23,13 @@
     <ClCompile Include="wave_file_writer.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\wave_file_reader.h" />
-    <ClInclude Include="include\wave_file_writer.h" />
+    <ClInclude Include="include\wave_file_reader.h">
+      <DeploymentContent>false</DeploymentContent>
+      <FileType>CppHeader</FileType>
+    </ClInclude>
+    <ClInclude Include="include\wave_file_writer.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -110,6 +115,10 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -131,6 +140,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -148,6 +161,10 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -169,6 +186,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

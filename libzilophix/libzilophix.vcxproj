@@ -32,19 +32,45 @@
     <ClCompile Include="tag.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\bit_stream.h" />
-    <ClInclude Include="include\block.h" />
-    <ClInclude Include="include\code.h" />
-    <ClInclude Include="include\decoder.h" />
-    <ClInclude Include="include\encoder.h" />
-    <ClInclude Include="include\errcode.h" />
-    <ClInclude Include="include\file_access.h" />
-    <ClInclude Include="include\lms.h" />
-    <ClInclude Include="include\macro.h" />
-    <ClInclude Include="include\polynomial_predictor.h" />
-    <ClInclude Include="include\sub_block.h" />
-    <ClInclude Include="include\tag.h" />
-    <ClInclude Include="include\zilophix.h" />
+    <ClInclude Include="include\bit_stream.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\block.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\code.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\decoder.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\encoder.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\errcode.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\file_access.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\lms.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\macro.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\polynomial_predictor.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\sub_block.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\tag.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="include\zilophix.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -130,6 +156,10 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -151,6 +181,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -168,6 +202,10 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -189,6 +227,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
+xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

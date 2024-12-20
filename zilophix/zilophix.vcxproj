@@ -169,7 +169,9 @@
     <ClCompile Include="zilophix.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\path.h" />
+    <ClInclude Include="include\path.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
