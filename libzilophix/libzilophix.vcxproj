@@ -173,6 +173,7 @@ xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <CompileAs>CompileAsC</CompileAs>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -219,6 +220,7 @@ xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <CompileAs>CompileAsC</CompileAs>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>
