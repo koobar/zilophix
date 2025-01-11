@@ -189,7 +189,7 @@ static void print_logo() {
     print_return();
     print("Codec version:   1.0");
     print("Tool version:    1.01");
-    print("Build:           2025/01/10");
+    print("Build:           2025/01/11");
 }
 
 /*!
