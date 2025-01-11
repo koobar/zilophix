@@ -10,262 +10,268 @@ typedef decoder *HDECODER;
 typedef uint8_t* BYTEPTR;
 
 /*!
-* @brief            指定されたパスのファイルをデコードするデコーダのハンドルを返します。
-* @param path       開くファイルのパス
-* @return           デコーダのハンドル
+* @brief            Create new instance of ZilophiX decoder (ANSI).
+* @param path       File name of ZilophiX file.
+* @return           The pointer of HDECODER.
 */
 HDECODER __declspec(dllexport) CreateDecoderA(LPCSTR path);
 
 /*!
-* @brief            指定されたパスのファイルをデコードするデコーダのハンドルを返します。
-* @param path       開くファイルのパス
-* @return           デコーダのハンドル
+* @brief            Create new instance of ZilophiX decoder (Unicode).
+* @param path       File name of ZilophiX file.
+* @return           The pointer of HDECODER.
 */
 HDECODER __declspec(dllexport) CreateDecoderW(LPCWSTR path);
 
 /*!
-* @brief            指定されたハンドルのデコーダを解放します。
-* @param decoder    デコーダのハンドル
+* @brief            Release decider.
+* @param decoder    The pointer of HDECODER.
 */
 void __declspec(dllexport) FreeDecoder(HDECODER decoder);
 
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルを閉じます。
-* @param decoder    デコーダのハンドル
+* @brief            Close file.
+* @param decoder    The pointer of HDECODER.
 */
 void __declspec(dllexport) DecoderCloseFile(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルのサンプリング周波数を取得します。
-* @param decoder    デコーダのハンドル
-* @return           サンプリング周波数
+* @brief            Gets sample rate.
+* @param decoder    The pointer of HDECODER.
+* @return           Sample rate.
 */
 uint32_t __declspec(dllexport) DecoderGetSampleRate(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルのチャンネル数を取得します。
-* @param decoder    デコーダのハンドル
-* @return           チャンネル数
+* @brief            Gets the number of channels.
+* @param decoder    The pointer of HDECODER.
+* @return           The number of channels.
 */
 uint32_t __declspec(dllexport) DecoderGetChannels(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルの量子化ビット数を取得します。
-* @param decoder    デコーダのハンドル
+* @brief            Gets bits per sample.
+* @param decoder    The pointer of HDECODER.
+* @return           Bits per sample.
 */
 uint32_t __declspec(dllexport) DecoderGetBitsPerSample(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルのサンプル数を取得します。
-* @param decoder    デコーダのハンドル
-* @return           サンプル数
+* @brief            Gets the number of samples.
+* @param decoder    The pointer of HDECODER.
+* @return           The number of samples.
 */
 uint32_t __declspec(dllexport) DecoderGetNumTotalSamples(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルのブロックのサイズを取得します。
-* @param decoder    デコーダのハンドル
-* @return           ブロックのサイズ
+* @brief            Gets block size.
+* @param decoder    The pointer of HDECODER.
+* @return           Block size.
 */
 uint16_t __declspec(dllexport) DecoderGetBlockSize(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルのブロック数を取得します。
-* @param decoder    デコーダのハンドル
-* @return           ブロック数
+* @brief            Gets the number of blocks.
+* @param decoder    The pointer of HDECODER.
+* @return           The number of blocks.
 */
 uint32_t __declspec(dllexport) DecoderGetNumBlocks(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルで、ミッドサイドステレオが使用されているかどうかを示すフラグを取得します。
-* @param decoder    デコーダのハンドル
-* @return           ミッドサイドステレオが使用されていればtrueを、使用されていなければfalseを返します。
+* @brief            Gets the Mid-Side stereo flag.
+* @param decoder    The pointer of HDECODER.
+* @return           Returns true if mid-side stereo is used, false if not.
 */
 bool __declspec(dllexport) DecoderGetUseMidSideStereo(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルから1サンプル読み込みます。
-* @param decoder    デコーダのハンドル
-* @return           読み込んだサンプル。戻り値の型はint32_tですが、実際のビット数は量子化ビット数と同じとなります。
+* @brief            Read sample as PCM.
+* @param decoder    The pointer of HDECODER.
+* @return           Sample
 */
 int32_t __declspec(dllexport) DecoderReadSample(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルで、デコードするサンプルのオフセットを設定します。
-* @param decoder    デコーダのハンドル
-* @param offset     サンプルのオフセット
+* @brief            Sets the sample offset to decode.
+* @param decoder    The pointer of HDECODER.
+* @param offset     Offset.
 */
 void __declspec(dllexport) DecoderSetSampleOffset(HDECODER decoder, uint32_t offset);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルの、デコード中のサンプルのオフセットを取得します。
-* @param decoder    デコーダのハンドル
-* @return           サンプルのオフセット
+* @brief            Gets the offset of the sample being decoded.
+* @param decoder    The pointer of HDECODER.
+* @return           Offset.
 */
 uint32_t __declspec(dllexport) DecoderGetSampleOffset(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルを、ミリ秒単位で指定された時間にシークします。
-* @param decoder    デコーダのハンドル
-* @param msec       シーク先時間（ミリ秒単位）
+* @brief            Seeks to the specified time in milliseconds.
+* @param decoder    The pointer of HDECODER.
+* @param msec       time in milliseconds.
 */
 void __declspec(dllexport) DecoderSeekTo(HDECODER decoder, uint32_t msec);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルの演奏時間をミリ秒単位で取得します。
-* @param decoder    デコーダのハンドル
-* @return           デコーダで開かれているファイルの演奏時間（ミリ秒単位）
+* @brief            Gets the playback duration in milliseconds.
+* @param decoder    The pointer of HDECODER.
+* @return           The playback duration in milliseconds.
 */
 uint32_t __declspec(dllexport) DecoderGetDurationMsec(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに、タグ情報が含まれているかどうかを判定します。
-* @param decoder    デコーダのハンドル
-* @return           タグ情報が含まれていればtrueを、含まれていなければfalseを返します。
+* @brief            Determines whether tag information is included.
+* @param decoder    The pointer of HDECODER.
+* @return           Returns true if tag information is included, false if not.
 */
 bool __declspec(dllexport) DecoderContainsTagInfo(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、タイトルを取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたタイトルを返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the title from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Title.
 */
 LPCSTR __declspec(dllexport) DecoderGetTitle(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、アルバム名を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたアルバム名を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the album name from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Album name.
 */
 LPCSTR __declspec(dllexport) DecoderGetAlbum(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、アーティスト名を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたアーティスト名を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the artist name from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Artist name.
 */
 LPCSTR __declspec(dllexport) DecoderGetArtist(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、アルバムアーティストを取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたアルバムアーティストを返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the album artist from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Album artists.
 */
 LPCSTR __declspec(dllexport) DecoderGetAlbumArtist(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、サブタイトルを取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたサブタイトルを返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the subtitle from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Subtitle.
 */
 LPCSTR __declspec(dllexport) DecoderGetSubtitle(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、発行者を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定された発行者を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the publisher from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Publisher.
 */
 LPCSTR __declspec(dllexport) DecoderGetPublisher(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、作曲者を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定された作曲者を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the composer from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Composer.
 */
 LPCSTR __declspec(dllexport) DecoderGetComposer(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、作詞者を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定された作詞者を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the songwriter from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Songwriter.
 */
 LPCSTR __declspec(dllexport) DecoderGetSongwriter(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、指揮者を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定された指揮者を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the conductor from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Conductor.
 */
 LPCSTR __declspec(dllexport) DecoderGetConductor(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、著作権表示を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定された著作権表示を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the copyright from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Copyright.
 */
 LPCSTR __declspec(dllexport) DecoderGetCopyright(HDECODER decoder);
 
 /*!
-* @brief            デコーダで開かれているファイルに含まれるタグ情報から、ジャンル名を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたジャンル名を返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the genre from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Genre
 */
 LPCSTR __declspec(dllexport) DecoderGetGenre(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、コメントを取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたコメントを返します。タグが含まれていない場合や、設定されていない場合、\0を返します。
+* @brief            Gets the comment from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Comment
 */
 LPCSTR __declspec(dllexport) DecoderGetComment(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、年を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定された年を返します。タグが含まれていない場合や、設定されていない場合、0を返します。
+* @brief            Gets the year from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Year
 */
 uint16_t __declspec(dllexport) DecoderGetYear(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、トラック番号を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたトラック番号を返します。タグが含まれていない場合や、設定されていない場合、0を返します。
+* @brief            Gets the track number from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Track number
 */
 uint16_t __declspec(dllexport) DecoderGetTrackNumber(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、トラック数を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたトラック数を返します。タグが含まれていない場合や、設定されていない場合、0を返します。
+* @brief            Gets the track count from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Track count
 */
 uint16_t __declspec(dllexport) DecoderGetTrackCount(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、ディスク番号を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたディスク番号を返します。タグが含まれていない場合や、設定されていない場合、0を返します。
+* @brief            Gets the disc number from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Track count
 */
 uint16_t __declspec(dllexport) DecoderGetDisc(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、レーティングを取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたレーティングを返します。タグが含まれていない場合や、設定されていない場合、0を返します。
+* @brief            Gets the rating from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Rating.
 */
 uint16_t __declspec(dllexport) DecoderGetRating(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、カバー画像のサイズを取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたカバー画像データのサイズを返します。タグが含まれていない場合や、設定されていない場合、0を返します。
+* @brief            Gets the picture size from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Picture size.
 */
 uint32_t __declspec(dllexport) DecoderGetPictureSize(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、カバー画像のフォーマットコードを取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたカバー画像データのフォーマットコードを返します。タグが含まれていない場合や、設定されていない場合、0を返します。
+* @brief            Gets the picture format code from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           Picture format code.
 */
 unsigned char __declspec(dllexport) DecoderGetPictureFormatCode(HDECODER decoder);
 
 /*!
-* @brief            指定されたハンドルのデコーダで開かれているファイルに含まれるタグ情報から、カバー画像を取得します。
-* @param decoder    デコーダのハンドル
-* @return           タグに設定されたカバー画像データが格納された領域へのポインタを返します。タグが含まれていない場合や、設定されていない場合、NULLを返します。
+* @brief            Gets the picture from the tag information.
+* @param decoder    The pointer of HDECODER.
+* @return           The pointer of picture binary data.
 */
 BYTEPTR __declspec(dllexport) DecoderGetPicture(HDECODER decoder);
 
+/*!
+* @brief            Decode input file and save to output file as Linear PCM WAV format.
+* @param input      Input file path.
+* @param output     Output file path.
+*/
 void __declspec(dllexport) DecodeFileA(LPCSTR input, LPCSTR output);
 
 #endif

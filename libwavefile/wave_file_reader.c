@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルから8ビット整数を読み込みます。
- * @param file  ファイルポインタ
- * @return      読み込まれた値
+ * @brief       Reads an 8-bit integer from the specified file.
+ * @param file  file
+ * @return      value
  */
 static uint8_t read_uint8(FILE* file) {
     uint8_t value;
@@ -15,9 +15,9 @@ static uint8_t read_uint8(FILE* file) {
 }
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルから16ビット整数を読み込みます。
- * @param file  ファイルポインタ
- * @return      読み込まれた値
+ * @brief       Reads an 16-bit integer from the specified file.
+ * @param file  file
+ * @return      value
  */
 static uint16_t read_uint16(FILE* file) {
     uint16_t value;
@@ -27,9 +27,9 @@ static uint16_t read_uint16(FILE* file) {
 }
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルから32ビット整数を読み込みます。
- * @param file  ファイルポインタ
- * @return      読み込まれた値
+ * @brief       Reads an 32-bit integer from the specified file.
+ * @param file  file
+ * @return      value
  */
 static uint32_t read_uint32(FILE* file) {
     uint32_t value;
@@ -39,9 +39,9 @@ static uint32_t read_uint32(FILE* file) {
 }
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルから16ビット符号付き整数を読み込みます。
- * @param file  ファイルポインタ
- * @return      読み込まれた値
+ * @brief       Reads an signed 16-bit integer from the specified file.
+ * @param file  file
+ * @return      value
  */
 static int16_t read_int16(FILE* file) {
     int16_t value;
@@ -51,9 +51,9 @@ static int16_t read_int16(FILE* file) {
 }
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルからASCII文字を読み込みます。
- * @param file  ファイルポインタ
- * @return      読み込まれた値
+ * @brief       Reads an char from the specified file.
+ * @param file  File
+ * @return      Value
  */
 static char read_char(FILE* file) {
     char value;
@@ -63,11 +63,11 @@ static char read_char(FILE* file) {
 }
 
 /*!
- * @brief           指定されたハンドルのwave_file_readerが開いているファイルの読み込み位置を、指定されたASCII文字に一致するバイト列が出現する箇所に移動します。
- * @param *reader   wave_file_readerのハンドル
- * @param *data     ASCII文字
- * @param n         ASCII文字の文字数
- * @return          指定されたASCII文字に対応するバイト列が出現したかどうかを示す値
+ * @brief           Moves the read position of the file to the first occurrence of a byte sequence that matches the specified ASCII character.
+ * @param *reader   Pointer of wave_file_reader.
+ * @param *data     ASCII chars
+ * @param n         Number of chars
+ * @return          A value indicating whether a byte sequence corresponding to the specified ASCII character has occurred.
  */
 static bool check_match_next_bytes(const wave_file_reader* reader, const char* data, uint32_t n) {
     register uint32_t i;
@@ -85,12 +85,12 @@ static bool check_match_next_bytes(const wave_file_reader* reader, const char* d
 }
 
 /*!
- * @brief                   指定されたハンドルのwave_file_readerが開いているファイルの読み込み位置を、指定されたチャンク名のチャンクの開始位置に移動します。
- * @param *reader           wave_file_readerのハンドル
- * @param *chunk_name       チャンク名
- * @param n                 チャンク名の文字数
- * @param find_from_begin   ファイルの最初からチャンクの探索を行うかどうかを示すフラグ
- * @return                  指定された名前のチャンクが見つかったかどうかを示す値
+ * @brief                   Moves the read position of the file to the start of the chunk with the specified chunk name.
+ * @param *reader           Pointer of wave_file_reader.
+ * @param *chunk_name       Chunk name
+ * @param n                 Number of chunk name chars.
+ * @param find_from_begin   Flag indicating whether to seek chunks from the beginning of the file
+ * @return                  A value indicating whether a chunk with the specified name was found.
  */
 static bool go_to_chunk(const wave_file_reader* reader, const char* chunk_name, uint32_t n, bool find_from_begin) {
     if (find_from_begin) {
@@ -107,30 +107,29 @@ static bool go_to_chunk(const wave_file_reader* reader, const char* chunk_name, 
 }
 
 /*!
- * @brief                   指定されたハンドルのwave_file_readerが開いているファイルからfmtチャンクを読み込みます。
+ * @brief                   Read fmt chunk.
  */
 static void read_fmt_chunk(wave_file_reader* reader) {
     uint16_t audio_format;
 
     if (go_to_chunk(reader, "fmt ", 4, true)) {
-        read_uint32(reader->wave_file);                                     /* チャンクサイズを読み飛ばす */
+        read_uint32(reader->wave_file);                                     /* Skip chunk size (4 bytes)*/
         audio_format = read_uint16(reader->wave_file);
 
-        /* オーディオフォーマットがPCMか？ */
         if (audio_format == 0x0001 || audio_format == 0xFFFE) {
-            reader->num_channels = read_uint16(reader->wave_file);          /* チャンネル数 */
-            reader->sample_rate = read_uint32(reader->wave_file);           /* サンプリング周波数 */
-            reader->avr_bytes_per_sec = read_uint32(reader->wave_file);     /* 1秒あたりの平均バイト数 */
-            reader->block_size = read_uint16(reader->wave_file);            /* ブロックサイズ */
-            reader->bits_per_sample = read_uint16(reader->wave_file);       /* 量子化ビット数 */
+            reader->num_channels = read_uint16(reader->wave_file);          /* Number of channels. */
+            reader->sample_rate = read_uint32(reader->wave_file);           /* Sample rate */
+            reader->avr_bytes_per_sec = read_uint32(reader->wave_file);     /* Average bytes per second. */
+            reader->block_size = read_uint16(reader->wave_file);            /* Block size */
+            reader->bits_per_sample = read_uint16(reader->wave_file);       /* Quantization bits. */
         }
     }
 }
 
 /*!
- * @brief           wave_file_readerのハンドルを生成します。
- * @path            読み込むWAVファイルのパス
- * @return          wave_file_readerのハンドル
+ * @brief           Create new instance of wave_file_reader.
+ * @path            WAV file path.
+ * @return          New pointer of wave_file_reader.
  */
 wave_file_reader* wave_file_reader_create(const char* path) {
     wave_file_reader* result = (wave_file_reader*)malloc(sizeof(wave_file_reader));
@@ -144,22 +143,22 @@ wave_file_reader* wave_file_reader_create(const char* path) {
 }
 
 /*!
- * @brief           WAVファイルを開きます。
- * @param *reader   wave_file_readerのハンドル
- * @param *path     ファイルパス
+ * @brief           Open WAV file.
+ * @param *reader   Pointer of wave_file_reader.
+ * @param *path     WAV file path.
  */
 void wave_file_reader_open(wave_file_reader* reader, const char* path) {
     uint32_t size;
 
-    /* ファイルをバイナリ読み込みモードで開く */
+    /* Open WAV file in read binary mode. */
     reader->wave_file = fopen(path, "rb");
 
-    /* fmt チャンクを読み込む */
+    /* Read fmt chunk. */
     read_fmt_chunk(reader);
 
-    /* dataチャンクに移動 */
+    /* Move to data chunk */
     if (go_to_chunk(reader, "data", 4, true)) {
-        /* 合計サンプル数を計算 */
+        /* Calculate number of samples. */
         size = read_uint32(reader->wave_file);
         reader->num_samples = size / (reader->bits_per_sample / 8);
     }
@@ -169,53 +168,53 @@ void wave_file_reader_open(wave_file_reader* reader, const char* path) {
 }
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルを閉じます。
- * @param *reader   wave_file_readerのハンドル
+ * @brief           Close WAV file.
+ * @param *reader   Pointer of wave_file_reader.
  */
 void wave_file_reader_close(const wave_file_reader* reader) {
     fclose(reader->wave_file);
 }
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルのサンプリング周波数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          サンプリング周波数
+ * @brief           Get sample rate.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Sample rate.
  */
 uint32_t wave_file_reader_get_sample_rate(const wave_file_reader* reader) {
     return reader->sample_rate;
 }
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルの量子化ビット数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          量子化ビット数
+ * @brief           Get bits per sample.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Bits per sample.
  */
 uint16_t wave_file_reader_get_bits_per_sample(const wave_file_reader* reader) {
     return reader->bits_per_sample;
 }
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルのチャンネル数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          チャンネル数
+ * @brief           Get number of channels.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Number of channels.
  */
 uint16_t wave_file_reader_get_num_channels(const wave_file_reader* reader) {
     return reader->num_channels;
 }
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルの総サンプル数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          総サンプル数
+ * @brief           Get number of samples.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Number of samples.
  */
 uint32_t wave_file_reader_get_num_samples(const wave_file_reader* reader) {
     return reader->num_samples;
 }
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルから次のサンプルを読み込みます。
- * @param *reader   wave_file_readerのハンドル
- * @return          サンプル
+ * @brief           Read next sample.
+ * @param *reader   Pointer of wave_file_reader
+ * @return          Sample
  */
 int32_t wave_file_reader_read_sample(wave_file_reader* reader) {
     register int32_t result = 0;

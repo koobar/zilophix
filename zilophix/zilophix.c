@@ -37,9 +37,9 @@ static const char* tag_picture_path;
 static bool has_tag = false;
 
 /*!
- * @brief               コマンドライン引数を解析します。
- * @param argc          引数の数
- * @param argv          引数
+ * @brief               Parse command line arguments.
+ * @param argc          The number of arguments.
+ * @param argv          Arguments.
  */
 static void parse_commandline_args(int argc, char* argv[]) {
     int i;
@@ -156,8 +156,8 @@ static void parse_commandline_args(int argc, char* argv[]) {
 }
 
 /*!
- * @brief                   メッセージを出力します。
- * @param *str              出力するメッセージ
+ * @brief           Print message
+ * @param *str      message.
  */
 static void print(const char* str) {
     if (!is_silent_mode) {
@@ -167,33 +167,33 @@ static void print(const char* str) {
 }
 
 /*!
- * @brief                   行セパレータを出力します。
+ * @brief           Print line separator.
  */
 static void print_separator() {
     print("================================================================================");
 }
 
 /*!
- * @brief                   改行を出力します。
+ * @brief           Print linebreak.
  */
 static void print_return() {
     print("");
 }
 
 /*!
- * @brief                   著作権表示等を出力します。
+ * @brief           Print copyright messages.
  */
 static void print_logo() {
     print("ZilophiX (ZpX): The free and open-source lossless audio codec.");
-    print("Copyright (c) 2024 koobar. Released under WTFPL version 2.");
+    print("Copyright (c) 2024-2025 koobar. Released under WTFPL version 2.");
     print_return();
     print("Codec version:   1.0");
-    print("Tool version:    1.0");
-    print("Build:           2024/12/25");
+    print("Tool version:    1.01");
+    print("Build:           2025/01/10");
 }
 
 /*!
- * @brief       ヘルプメッセージを表示します。
+ * @brief           Print help messages
  */
 static void print_usage() {
     printf("Usage:      zilophix [options]\n");
@@ -228,11 +228,11 @@ static void print_usage() {
 }
 
 /*!
- * @brief                   エンコード結果を出力します。
- * @param src               エンコード前のファイルのパス
- * @param output            エンコード後のファイルのパス
- * @param encode_start      エンコード開始時間
- * @param encode_end        エンコード終了時間
+ * @brief                   Print encode result.
+ * @param src               Source file path.
+ * @param output            Destination file path.
+ * @param encode_start      Start time 
+ * @param encode_end        Stop time
  */
 static void print_encode_result(clock_t encode_start, clock_t encode_end) {
     size_t buffer_size = sizeof(char) * 1024;
@@ -272,8 +272,8 @@ static void print_encode_result(clock_t encode_start, clock_t encode_end) {
 }
 
 /*!
- * @brief                   フォーマット情報を出力します。
- * @param *decoder          デコーダのハンドル
+ * @brief                   Print format informations.
+ * @param *decoder          Pointer of decoder.
  */
 static void print_format_info(decoder* decoder) {
     size_t buffer_size = sizeof(char) * 1024;
@@ -313,6 +313,10 @@ static void print_format_info(decoder* decoder) {
     free(buffer);
 }
 
+/*!
+ * @brief                   Print tag informations.
+ * @param *decoder          Pointer of tag.
+ */
 static void print_tag(tag* ptag) {
     size_t buffer_size = sizeof(char) * 1024;
     char* buffer = (char*)malloc(buffer_size);
@@ -384,11 +388,11 @@ static void print_tag(tag* ptag) {
 }
 
 /*!
- * @brief                   デコード結果を出力します。
- * @param *decoder          デコーダのハンドル
- * @param output            出力先パス
- * @param decode_start      デコード開始時間
- * @param decode_end        デコード終了時間
+ * @brief                   Print decode result.
+ * @param *decoder          Pointer of decoder.
+ * @param output            Output path
+ * @param decode_start      Start time
+ * @param decode_end        Stop time
  */
 static void print_decode_result(decoder* decoder, clock_t decode_start, clock_t decode_end) {
     size_t buffer_size = sizeof(char) * 1024;
@@ -422,7 +426,7 @@ static void print_decode_result(decoder* decoder, clock_t decode_start, clock_t 
 }
 
 /*!
- * @brief                           エンコード処理を行います
+ * @brief           Encode
  */
 static void encode() {
     FILE* output_file;
@@ -432,13 +436,13 @@ static void encode() {
     clock_t start, end;
     tag* ptag;
 
-    /* 古いファイルがあれば削除 */
+    /* Delete old file. */
     remove(output_file_path);
 
-    /* WAVファイルデコーダを作成 */
+    /* Create instance of WAV file reader. */
     reader = wave_file_reader_create(input_file_path);
 
-    /* WAVファイルに含まれるサンプル数を取得 */
+    /* Get the number of samples from WAV file. */
     n = wave_file_reader_get_num_samples(reader);
 
     if (has_tag) {
@@ -470,7 +474,7 @@ static void encode() {
         ptag = NULL;
     }
 
-    /* エンコーダを作成 */
+    /* Create new instance of encoder. */
     output_file = fopen(output_file_path, "wb");
     encoder = encoder_create(
         output_file,
@@ -483,10 +487,10 @@ static void encode() {
         filter_taps,
         ptag);
 
-    /* エンコード開始時間を記録 */
+    /* Save start time. */
     start = clock();
 
-    /* すべてのサンプルをエンコード */
+    /* Encode all samples. */
     for (i = 0; i < n; ++i) {
         encoder_write_sample(encoder, wave_file_reader_read_sample(reader));
     }
@@ -494,15 +498,15 @@ static void encode() {
     wave_file_reader_close(reader);
     encoder_free(encoder);
 
-    /* エンコード終了時間を記録 */
+    /* Encode stop time. */
     end = clock();
 
-    /* エンコード結果を出力 */
+    /* print result */
     print_encode_result(start, end);
 }
 
 /*!
- * @brief                   デコード処理を行います。
+ * @brief           Decode
  */
 static void decode() {
     FILE* input_file = NULL;
@@ -511,38 +515,36 @@ static void decode() {
     clock_t start, end;
     uint32_t i;
 
-    /* 古いファイルがあれば削除 */
+    /* Delete old file. */
     remove(output_file_path);
 
-    /* デコーダのハンドルを作成 */
+    /* Create new instance of decoder.*/
     input_file = fopen(input_file_path, "rb");
     decoder = decoder_create(input_file);
 
-    /* WAVEファイルエンコーダを作成 */
+    /* Create new WAV file writer and set pcm format and the number of samples. */
     writer = wave_file_writer_create(output_file_path);
     wave_file_writer_set_pcm_format(writer, decoder->sample_rate, decoder->bits_per_sample, decoder->num_channels);
     wave_file_writer_set_num_samples(writer, decoder->num_total_samples);
 
-    /* WAVEファイルへの書き込み開始 */
+    /* Save start time */
+    start = clock();
     wave_file_writer_begin_write(writer);
 
-    /* デコード開始時間を記録 */
-    start = clock();
-
-    /* すべてのサンプルをデコード */
+    /* Decode and write all samples. */
     for (i = 0; i < decoder->num_total_samples; ++i) {
         wave_file_writer_write_sample(writer, decoder_read_sample(decoder));
     }
     wave_file_writer_end_write(writer);
     wave_file_writer_close(writer);
 
-    /* デコード終了時間を記録 */
+    /* Save stop time. */
     end = clock();
 
-    /* デコード結果を出力 */
+    /* Print decode result. */
     print_decode_result(decoder, start, end);
 
-    /* 後始末 */
+    /* Release decoder. */
     decoder_free(decoder);
 }
 
@@ -552,10 +554,10 @@ int main(int argc, char* argv[]) {
     char* dir = NULL;
     char* name = NULL;
 
-    /* コマンドライン引数を解析 */
+    /* Parse commandline args */
     parse_commandline_args(argc, argv);
 
-    /* ロゴを表示 */
+    /* Print logo */
     print_logo();
 
     if (is_help_mode) {
@@ -565,7 +567,7 @@ int main(int argc, char* argv[]) {
     else if (input_file_path != NULL) {
         print_separator();
 
-        /* 入力ファイルの拡張子を取得 */
+        /* Get input file extension */
         extension = get_extension(input_file_path);
 
         if (strcmp(extension, ".wav") == 0) {
@@ -583,7 +585,7 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            /* エンコード */
+            /* Encode */
             encode();
         }
         else if (strcmp(extension, ".zpx") == 0) {
@@ -599,7 +601,7 @@ int main(int argc, char* argv[]) {
                     dir = get_directory_name(input_file_path);
                     name = get_file_name_without_extension(input_file_path);
 
-                    /* 保存先パスを作成 */
+                    /* Create output file name */
                     strcat_s(output_file_path, buffer_size, dir);
                     strcat_s(output_file_path, buffer_size, PATH_SEPARATOR_STR);
                     strcat_s(output_file_path, buffer_size, name);
@@ -610,7 +612,7 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            /* デコード */
+            /* Decode */
             decode();
         }
     }

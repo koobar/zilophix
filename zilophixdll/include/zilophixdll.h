@@ -4,8 +4,8 @@
 #include "errcode.h"
 
 /*!
- * @brief       最後に発生したエラーのエラーコードを取得します。
- * @return      最後に発生したエラーのエラーコード
+ * @brief       Gets last error code.
+ * @return      Error code
  */
 error_code GetLastErrorCode();
 

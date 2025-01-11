@@ -56,42 +56,42 @@ typedef struct {
 } tag;
 
 /*!
- * @brief                   タグ構造体を初期化します。
- * @param *tag              タグ構造体のハンドル
+ * @brief                   Initialize tag information.
+ * @param *tag              Pointer of tag information.
  */
 void tag_init(tag* tag);
 
 /*!
- * @brief                   タグ構造体を解放します。
- * @param *tag              タグ構造体のハンドル
+ * @brief                   Release tag information.
+ * @param *tag              Pointer of tag information.
  */
 void tag_free(tag* tag);
 
 /*!
- * @brief                   タグ構造体に画像ファイルを設定します。
- * @param *tag              タグ構造体のハンドル
- * @param *picture_file     画像ファイルのハンドル
+ * @brief                   Set image file to tag informations.
+ * @param *tag              Pointer of tag information.
+ * @param *picture_file     Picture file.
  */
 void tag_set_picture(tag* tag, FILE* picture_file);
 
 /*!
- * @brief                   タグ構造体に画像ファイルを設定します。
- * @param *tag              タグ構造体のハンドル
- * @param *picture_file     画像ファイルのパス
+ * @brief                   Set image file to tag informations.
+ * @param *tag              Pointer of tag information.
+ * @param *picture_file     Path of image file.
  */
 void tag_set_picture_from_path(tag* tag, const char* path);
 
 /*!
- * @brief                   タグを読み込み、タグ構造体に格納します。
- * @param *file             ファイルのハンドル
- * @param **tag             タグ構造体のポインタのポインタ
+ * @brief                   Read tag informations.
+ * @param *file             file
+ * @param **tag             Pointer of pointer of tag information.
  */
 void tag_read(FILE* file, tag** tag);
 
 /*!
- * @brief                   タグを書き込みます。
- * @param *file             ファイルのハンドル
- * @param *tag              タグ構造体のハンドル
+ * @brief                   Write tag informations to file.
+ * @param *file             file
+ * @param *tag              Pointer of tag information.
  */
 void tag_write(FILE* file, tag* tag);
 

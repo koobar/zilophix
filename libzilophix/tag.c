@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 /*!
- * @brief           タグ構造体のメンバ変数pictureに格納された画像のバイナリデータを、タグとしてファイルに出力します。
- * @param *file     ファイルハンドル
- * @param *tag      タグ構造体のハンドル
+ * @brief           Write picture binary data.
+ * @param *file     File
+ * @param *tag      Pointer of tag informations.
  */
 static void tag_write_picture(FILE* file, tag* tag) {
     uint32_t offset;
@@ -14,7 +14,6 @@ static void tag_write_picture(FILE* file, tag* tag) {
         return;
     }
 
-    /* 画像データを書き込む */
     write_uint8(file, TAG_ID_PICTURE);
     write_uint32(file, tag->picture_size);
     write_uint8(file, tag->picture_format);
@@ -24,22 +23,22 @@ static void tag_write_picture(FILE* file, tag* tag) {
 }
 
 /*!
- * @brief           ファイルから画像データを読み込みます。
- * @param *file     ファイルハンドル
- * @param **tag     タグ構造体のポインタのポインタ
- * @param size      画像データのサイズ
+ * @brief           Read image data from file.
+ * @param *file     File
+ * @param **tag     Pointer of pointer of tag informations.
+ * @param size      Size of image data.
  */
 static void tag_read_picture(FILE* file, tag** tag, uint32_t size) {
     uint32_t offset;
 
-    /* 画像データを格納する領域を確保 */
+    /* Allocate memory */
     (*tag)->picture_size = (uint32_t)size;
     (*tag)->picture = (uint8_t*)malloc(sizeof(uint8_t) * size);
     if ((*tag)->picture == NULL) {
         return;
     }
 
-    /* 画像データを読み込む */
+    /* Read image data */
     (*tag)->picture_format = read_uint8(file);
     for (offset = 0; offset < size; ++offset) {
         (*tag)->picture[offset] = read_uint8(file);
@@ -47,10 +46,10 @@ static void tag_read_picture(FILE* file, tag** tag, uint32_t size) {
 }
 
 /*!
- * @brief       1個目の引数に指定された文字列が、2個目の引数に指定された文字列で終了しているかどうかを判定します。但し、大文字と小文字を区別しません。
- * @param *str  文字列
- * @param *end  引数1が、この文字列で終了しているかどうかを判定します。
- * @return      引数1が引数2の文字列で終了していればtrueを、そうでなければfalseを返します。
+ * @brief       Checks whether the string specified in the first argument ends with the string specified in the second argument, but is not case sensitive.
+ * @param *str  string
+ * @param *end  ends with
+ * @return      Returns true if argument-1 ends with the string in argument-2, false otherwise.
  */
 static int str_ends_with(const char* str, const char* end) {
     size_t len = strlen(str);
@@ -64,8 +63,8 @@ static int str_ends_with(const char* str, const char* end) {
 }
 
 /*!
- * @brief                   タグ構造体を初期化します。
- * @param *tag              タグ構造体のハンドル
+ * @brief                   Initialize tag information.
+ * @param *tag              Pointer of tag information.
  */
 void tag_init(tag* tag) {
     const char* unknown = "\0";
@@ -92,8 +91,8 @@ void tag_init(tag* tag) {
 }
 
 /*!
- * @brief                   タグ構造体を解放します。
- * @param *tag              タグ構造体のハンドル
+ * @brief                   Release tag information.
+ * @param *tag              Pointer of tag information.
  */
 void tag_free(tag* tag) {
     if (tag == NULL) {
@@ -106,9 +105,9 @@ void tag_free(tag* tag) {
 }
 
 /*!
- * @brief                   タグ構造体に画像ファイルを設定します。
- * @param *tag              タグ構造体のハンドル
- * @param *picture_file     画像ファイルのハンドル
+ * @brief                   Set image file to tag informations.
+ * @param *tag              Pointer of tag information.
+ * @param *picture_file     Picture file.
  */
 void tag_set_picture(tag* tag, FILE* picture_file) {
     fpos_t size, offset;
@@ -116,21 +115,21 @@ void tag_set_picture(tag* tag, FILE* picture_file) {
         return;
     }
 
-    /* 画像ファイルのサイズを取得 */
+    /* Get size of picture file. */
     fseek(picture_file, 0, SEEK_END);
     fgetpos(picture_file, &size);
 
-    /* 画像ファイルの先頭に戻る */
+    /* Rewind */
     rewind(picture_file);
 
-    /* 画像ファイルのデータを格納する領域を確保 */
+    /* Allocate memory */
     tag->picture_size = (uint32_t)size;
     tag->picture = (uint8_t*)malloc(sizeof(uint8_t) * (uint32_t)size);
     if (tag->picture == NULL) {
         return;
     }
 
-    /* 画像ファイルのデータを読み込む */
+    /* Read picture file */
     for (offset = 0; offset < size; ++offset) {
         tag->picture[offset] = read_uint8(picture_file);
     }
@@ -139,9 +138,9 @@ void tag_set_picture(tag* tag, FILE* picture_file) {
 }
 
 /*!
- * @brief                   タグ構造体に画像ファイルを設定します。
- * @param *tag              タグ構造体のハンドル
- * @param *picture_file     画像ファイルのパス
+ * @brief                   Set image file to tag informations.
+ * @param *tag              Pointer of tag information.
+ * @param *picture_file     Path of image file.
  */
 void tag_set_picture_from_path(tag* tag, const char* path) {
     FILE* file = NULL;
@@ -166,9 +165,9 @@ void tag_set_picture_from_path(tag* tag, const char* path) {
 }
 
 /*!
- * @brief                   タグを読み込み、タグ構造体に格納します。
- * @param *file             ファイルのハンドル
- * @param **tag             タグ構造体のポインタのポインタ
+ * @brief                   Read tag informations.
+ * @param *file             file
+ * @param **tag             Pointer of pointer of tag information.
  */
 void tag_read(FILE* file, tag** ptag) {
     uint8_t num_tag_info, i, id;
@@ -181,16 +180,16 @@ void tag_read(FILE* file, tag** ptag) {
             return;
         }
 
-        /* タグ情報を初期化 */
+        /* Initialize */
         tag_init(*ptag);
 
-        /* タグ数を取得 */
+        /* Get the number of tag informations */
         num_tag_info = read_uint8(file);
 
         /* すべてのタグを読み込む */
         for (i = 0; i < num_tag_info; ++i) {
-            id = read_uint8(file);              /* タグIDを読み込む */
-            size = read_uint32(file);           /* タグのデータのバイト数を読み込む */
+            id = read_uint8(file);              /* Read ID */
+            size = read_uint32(file);           /* Read bytes */
 
             switch (id) {
             case TAG_ID_TITLE:
@@ -256,135 +255,129 @@ void tag_read(FILE* file, tag** ptag) {
 }
 
 /*!
- * @brief                   タグを書き込みます。
- * @param *file             ファイルのハンドル
- * @param *tag             タグ構造体のハンドル
+ * @brief                   Write tag informations to file.
+ * @param *file             file
+ * @param *tag              Pointer of tag information.
  */
 void tag_write(FILE* file, tag* tag) {
     uint32_t size;
 
-    /* タグの存在判定用フラグを書き込む */
+    /* Write tag check code */
     write_bool(file, tag != NULL);
 
     if (tag != NULL) {
-        /* タグ情報の総数を書き込む */
+        /* Write the number of tags. */
         write_uint8(file, TAG_INFO_COUNT);
 
-        /*  タグ情報のデータ構造 
+        /*  TAG Structure
          *  -------------------------------------
          *  | ID (1Byte) | Size (4Bytes) | Data |
          *  -------------------------------------
-         * 
-         *  IDはタグの種類を示す。例えば、0x01なら曲のタイトルを、0x02ならアルバム名を示す。
-         *  Size は、Data のバイト数を示す。文字列データの場合はこの内容が可変であるが、
-         *  トラック番号や発行年など、固定長の整数データが格納される場合、Sizeを読み込まなくても
-         *  Data のサイズを変数の型から推定することも可能である。しかし、データ構造上、固定長の
-         *  データであっても、必ず Size は書き込まなければならない。
          */
 
-        /* タイトル */
+        /* Title */
         size = (uint32_t)(strlen(tag->title) + 1);
         write_uint8(file, TAG_ID_TITLE);
         write_uint32(file, size);
         write_string(file, tag->title, size);
 
-        /* アルバム名 */
+        /* Album name */
         size = (uint32_t)(strlen(tag->album) + 1);
         write_uint8(file, TAG_ID_ALBUM);
         write_uint32(file, size);
         write_string(file, tag->album, size);
 
-        /* アーティスト名 */
+        /* Artist name */
         size = (uint32_t)(strlen(tag->artist) + 1);
         write_uint8(file, TAG_ID_ARTIST);
         write_uint32(file, size);
         write_string(file, tag->artist, size);
 
-        /* アルバムアーティスト名 */
+        /* Album artist name */
         size = (uint32_t)(strlen(tag->album_artist) + 1);
         write_uint8(file, TAG_ID_ALBUM_ARTIST);
         write_uint32(file, size);
         write_string(file, tag->album_artist, size);
 
-        /* サブタイトル */
+        /* Subtitle */
         size = (uint32_t)(strlen(tag->subtitle) + 1);
         write_uint8(file, TAG_ID_SUBTITLE);
         write_uint32(file, size);
         write_string(file, tag->subtitle, size);
 
-        /* 発行者 */
+        /* Publisher */
         size = (uint32_t)(strlen(tag->publisher) + 1);
         write_uint8(file, TAG_ID_PUBLISHER);
         write_uint32(file, size);
         write_string(file, tag->publisher, size);
 
-        /* 作曲者 */
+        /* Composer */
         size = (uint32_t)(strlen(tag->composer) + 1);
         write_uint8(file, TAG_ID_COMPOSER);
         write_uint32(file, size);
         write_string(file, tag->composer, size);
 
-        /* 作詞者 */
+        /* Songwriter */
         size = (uint32_t)(strlen(tag->songwriter) + 1);
         write_uint8(file, TAG_ID_SONGWRITER);
         write_uint32(file, size);
         write_string(file, tag->songwriter, size);
 
-        /* 指揮者 */
+        /* Conductor */
         size = (uint32_t)(strlen(tag->conductor) + 1);
         write_uint8(file, TAG_ID_CONDUCTOR);
         write_uint32(file, size);
         write_string(file, tag->conductor, size);
 
-        /* 著作権表示 */
+        /* Copyright */
         size = (uint32_t)(strlen(tag->copyright) + 1);
         write_uint8(file, TAG_ID_COPYRIGHT);
         write_uint32(file, size);
         write_string(file, tag->copyright, size);
 
-        /* ジャンル */
+        /* Genre */
         size = (uint32_t)(strlen(tag->genre) + 1);
         write_uint8(file, TAG_ID_GENRE);
         write_uint32(file, size);
         write_string(file, tag->genre, size);
 
-        /* コメント */
+        /* Comment */
         size = (uint32_t)(strlen(tag->comment) + 1);
         write_uint8(file, TAG_ID_COMMENT);
         write_uint32(file, size);
         write_string(file, tag->comment, size);
 
-        /* 発行年 */
+        /* Year */
         size = 2;
         write_uint8(file, TAG_ID_YEAR);
         write_uint32(file, size);
         write_uint16(file, tag->year);
 
-        /* トラック番号 */
+        /* Track number */
         size = 2;
         write_uint8(file, TAG_ID_TRACK_NUM);
         write_uint32(file, size);
         write_uint16(file, tag->track_number);
 
-        /* トラック数 */
+        /* Track count */
         size = 2;
         write_uint8(file, TAG_ID_TRACK_CNT);
         write_uint32(file, size);
         write_uint16(file, tag->track_count);
 
-        /* ディスク番号 */
+        /* Disc number */
         size = 2;
         write_uint8(file, TAG_ID_DISC);
         write_uint32(file, size);
         write_uint16(file, tag->disc);
 
-        /* 評価 */
+        /* Rate */
         size = 2;
         write_uint8(file, TAG_ID_RATE);
         write_uint32(file, size);
         write_uint16(file, tag->rate);
 
-        /* 画像の書き込み */
+        /* Picture */
         tag_write_picture(file, tag);
     }
 }

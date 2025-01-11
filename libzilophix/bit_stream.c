@@ -23,22 +23,22 @@ static const uint32_t bit_mask_table[32] = {
 };
 
 static void write_buffer(bit_stream* stream) {
-    /* バッファをファイルに書き込む */
+    /* Write buffer to file. */
     fwrite(&stream->buffer, stream->max_buffer_bytes, 1, stream->file);
     stream->buffer_position = 0;
     stream->buffer = 0;
 }
 
 static void read_buffer(bit_stream* stream){
-    /* バッファサイズ分のデータをファイルから読み込む */
+    /* Read binary data from file and store to buffer. */
     fread(&stream->buffer, stream->max_buffer_bytes, 1, stream->file);
 }
 
 /*!
- * @brief           ビットストリームの領域を確保し、そのハンドルを返します。
- * @param *file     ビットストリームで扱うファイルのファイルハンドル
- * @param mode      ビットストリームのモード
- * @return          ビットストリームのハンドル
+ * @brief           Create new instance of bit_stream.
+ * @param *file     File
+ * @param mode      Mode
+ * @return          A pointer to the created instance.
  */
 bit_stream* bit_stream_create(FILE* file, uint32_t mode) {
     bit_stream* stream = (bit_stream*)malloc(sizeof(bit_stream));
@@ -53,8 +53,8 @@ bit_stream* bit_stream_create(FILE* file, uint32_t mode) {
 }
 
 /*!
- * @brief           ビットストリームを初期化します。
- * @param *stream   ビットストリームのハンドル
+ * @brief           Initialize bit_stream instance.
+ * @param *stream   Pointer of bit_stream.
  */
 void bit_stream_init(bit_stream* stream) {
     stream->buffer = 0;
@@ -62,9 +62,9 @@ void bit_stream_init(bit_stream* stream) {
 }
 
 /*!
- * @brief           ビットストリームから1ビット読み込みます。
- * @param *stream   ビットストリームのハンドル
- * @return          読み込まれたビット
+ * @brief           Read single bit from bit_stream.
+ * @param *stream   Pointer of bit_stream.
+ * @return          Bit read.
  */
 bool bit_stream_read_bit(bit_stream* stream) {
     bool bit;
@@ -73,7 +73,6 @@ bool bit_stream_read_bit(bit_stream* stream) {
         read_buffer(stream);
     }
 
-    /* buffer_position が示す位置のビットを抽出 */
     bit = (stream->buffer & bit_mask_table[stream->buffer_position]);
     stream->buffer_position = buffer_read_position_table[stream->buffer_position];
 
@@ -81,10 +80,10 @@ bool bit_stream_read_bit(bit_stream* stream) {
 }
 
 /*!
- * @brief           ビットストリームから任意ビット数の整数を読み込みます。
- * @param *stream   ビットストリームのハンドル
- * @param bits      読み込む整数のビット数
- * @return          読み込まれた整数
+ * @brief           Reads an unsigned integer number of bits from the bitstream.
+ * @param *stream   Pointer of bit_stream.
+ * @param bits      The number of integer bits to read
+ * @return          Integer read.
  */
 uint32_t bit_stream_read_uint(bit_stream* stream, uint32_t bits) {
     uint32_t value = 0;
@@ -98,8 +97,8 @@ uint32_t bit_stream_read_uint(bit_stream* stream, uint32_t bits) {
 }
 
 /*!
- * @brief           ビットストリームからunary符号化された整数を読み込みます。
- * @param *stream   ビットストリームのハンドル
+ * @brief           Reads a unary encoded integer from the bitstream.
+ * @param *stream   Pointer of bit_stream.
  */
 uint32_t bit_stream_read_unary(bit_stream* stream){
     uint32_t result = 0;
@@ -112,29 +111,29 @@ uint32_t bit_stream_read_unary(bit_stream* stream){
 }
 
 /*!
- * @brief           ビットストリームからRice符号化された符号付き整数を読み込みます。
- * @param *stream   ビットストリームのハンドル
- * @param bits      読み込む整数のビット数
- * @return          読み込まれた整数
+ * @brief           Reads a Rice-encoded signed integer from the bitstream.
+ * @param *stream   Pointer of bit_stream.
+ * @param bits      The number of integer bits to read.
+ * @return          Integer read.
  */
 uint32_t bit_stream_read_rice_signed(bit_stream* stream, uint32_t parameter){
     uint32_t quotient;
     uint32_t remainder;
 
-    /* unary符号化された商を読み込む */
+    /* Reads the unary encoded quotient. */
     quotient = bit_stream_read_unary(stream);
 
-    /* 剰余を読み込む */
+    /* Read the remainder. */
     remainder = bit_stream_read_uint(stream, parameter);
 
-    /* 値を復元 */
+    /* Decode value and return it. */
     return CONVERT_UINT32_TO_INT32(LSHIFT(quotient, parameter) | remainder);
 }
 
 /*!
- * @brief           ビットストリームに1ビット書き込みます。
- * @param *stream   ビットストリームのハンドル
- * @param bit       書き込むビット
+ * @brief           Writes a single bit to the bitstream.
+ * @param *stream   Pointer of bit_stream.
+ * @param bit       Bit to write.
  */
 void bit_stream_write_bit(bit_stream* stream, bool bit) {
     if (stream->buffer_position == stream->max_buffer_bits) {
@@ -146,10 +145,10 @@ void bit_stream_write_bit(bit_stream* stream, bool bit) {
 }
 
 /*!
- * @brief           ビットストリームに任意ビット数の整数を書き込みます。
- * @param *stream   ビットストリームのハンドル
- * @param value     書き込む整数
- * @param num_bits  書き込む整数のビット数
+ * @brief           Writes an unsigned integer number of arbitrary bits to the bitstream.
+ * @param *stream   Pointer of bit_stream.
+ * @param value     Unsigned integer to write.
+ * @param num_bits  The number of integer bits to write.
  */
 void bit_stream_write_uint(bit_stream* stream, uint32_t value, uint32_t num_bits) {
     int32_t i;
@@ -160,9 +159,9 @@ void bit_stream_write_uint(bit_stream* stream, uint32_t value, uint32_t num_bits
 }
 
 /*!
- * @brief           ビットストリームに整数をunary符号として書き込みます。
- * @param *stream   ビットストリームのハンドル
- * @param value     書き込む整数
+ * @brief           Write unsigned integer as unary code.
+ * @param *stream   Pointer of bit_stream.
+ * @param value     Unsigned integer to write.
  */
 void bit_stream_write_unary(bit_stream* stream, uint32_t value){
     uint32_t i;
@@ -174,9 +173,10 @@ void bit_stream_write_unary(bit_stream* stream, uint32_t value){
 }
 
 /*!
- * @brief           ビットストリームに整数をRice符号として書き込みます。
- * @param *stream   ビットストリームのハンドル
- * @param value     書き込む整数
+ * @brief           Write signed integer as Rice code.
+ * @param *stream   Pointer of bit_stream
+ * @param value     Signed integer to write.
+ * @param parameter Rice parameter.
  */
 void bit_stream_write_signed_rice(bit_stream* stream, int32_t value, uint32_t parameter){
     uint32_t val;
@@ -187,16 +187,16 @@ void bit_stream_write_signed_rice(bit_stream* stream, int32_t value, uint32_t pa
     quotient = RSHIFT(val, parameter);
     remainder = val - LSHIFT(quotient, parameter);
 
-    /* 商をunary符号として書き込む */
+    /* Write quotient as unary code. */
     bit_stream_write_unary(stream, quotient);
 
-    /* 剰余を書き込む */
+    /* Write remainder. */
     bit_stream_write_uint(stream, remainder, parameter);
 }
 
 /*!
- * @brief			バッファに残っている、ファイルポインタが示すファイルに書き込まれていない値を無条件に書き込みます。
- * @param *stream	ビットストリームのハンドル
+ * @brief			Close specified bit_stream.
+ * @param *stream	Pointer of bit_stream.
  */
 void bit_stream_close(bit_stream* stream) {
     if (stream->mode == BIT_STREAM_MODE_WRITE) {

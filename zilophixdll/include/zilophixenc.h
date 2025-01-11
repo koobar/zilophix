@@ -9,16 +9,17 @@
 typedef encoder* HENCODER;
 
 /*!
- * @brief                           指定された設定で、エンコーダのハンドルを生成します。
- * @param output                    出力先のファイルのパス
- * @param sample_rate               サンプリング周波数
- * @param bits_per_sample           量子化ビット数
- * @param num_channels              チャンネル数
- * @param num_samples               合計サンプル数
- * @param block_size                ブロックサイズ
- * @param use_mid_side_stereo       ミッドサイドステレオを使用するかどうかを示すフラグ
- * @param filter_taps               LMSフィルタのタップ数
- * @param *tag                      タグ情報
+ * @brief                           Create new instance of encoder (ANSI).
+ * @param output                    Output file path (ANSI string).
+ * @param sample_rate               Sample rate.
+ * @param bits_per_sample           PCM Quantization bits.
+ * @param num_channels              The number of channels.
+ * @param num_samples               The number of sapmles.
+ * @param block_size                Block size.
+ * @param use_mid_side_stereo       Mid-Side stereo flag.
+ * @param filter_taps               The taps of SSLMS filter.
+ * @param *tag                      The pointer of tag information.
+ * @return                          The pointer of HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromPathA(
     LPCSTR output,
@@ -32,16 +33,17 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathA(
     tag* tag);
 
 /*!
- * @brief                           指定された設定で、エンコーダのハンドルを生成します。
- * @param output                    出力先のファイルのパス
- * @param sample_rate               サンプリング周波数
- * @param bits_per_sample           量子化ビット数
- * @param num_channels              チャンネル数
- * @param num_samples               合計サンプル数
- * @param block_size                ブロックサイズ
- * @param use_mid_side_stereo       ミッドサイドステレオを使用するかどうかを示すフラグ
- * @param filter_taps               LMSフィルタのタップ数
- * @param *tag                      タグ情報
+ * @brief                           Create new instance of encoder.
+ * @param output                    Output file path (Unicode string).
+ * @param sample_rate               Sample rate
+ * @param bits_per_sample           PCM Quantization bits.
+ * @param num_channels              The number of channels.
+ * @param num_samples               The number of samples.
+ * @param block_size                Block size.
+ * @param use_mid_side_stereo       Mid-Side stereo flag.
+ * @param filter_taps               The taps of SSLMS filter.
+ * @param *tag                      The pointer of tag information.
+ * @return                          The pointer of HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromPathW(
     LPCWSTR output,
@@ -55,16 +57,17 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathW(
     tag* tag);
 
 /*!
- * @brief                           指定された設定で、エンコーダのハンドルを生成します。
- * @param *file                     出力先のファイルハンドル
- * @param sample_rate               サンプリング周波数
- * @param bits_per_sample           量子化ビット数
- * @param num_channels              チャンネル数
- * @param num_samples               合計サンプル数
- * @param block_size                ブロックサイズ
- * @param use_mid_side_stereo       ミッドサイドステレオを使用するかどうかを示すフラグ
- * @param filter_taps               LMSフィルタのタップ数
- * @param *tag                      タグ情報
+ * @brief                           Create new instance of encoder from file.
+ * @param *file                     File
+ * @param sample_rate               Sample rate.
+ * @param bits_per_sample           PCM quantization bits.
+ * @param num_channels              The number of channels.
+ * @param num_samples               The number of samples.
+ * @param block_size                Block size.
+ * @param use_mid_side_stereo       Mid-Side stereo flag.
+ * @param filter_taps               The taps of SSLMS filter.
+ * @param *tag                      The pointer of tag information.
+ * @return                          The pointer of HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromFile(
     FILE* file,
@@ -78,24 +81,29 @@ HENCODER __declspec(dllexport) CreateEncoderFromFile(
     tag* tag);
 
 /*!
- * @brief           エンコーダを解放します。
- * @param encoder   エンコーダのハンドル
+ * @brief                           Release encoder.
+ * @param encoder                   The pointer of HENCODER.
  */
 void __declspec(dllexport) FreeEncoder(HENCODER encoder);
 
 /*!
- * @brief           指定されたハンドルのエンコーダで、指定されたサンプルをエンコードします。
- * @param encoder   エンコーダのハンドル
- * @param sample    サンプル
+ * @brief                           Encode and write sample.
+ * @param encoder                   The pointer of HENCODER.
+ * @param sample                    Sample
  */
 void __declspec(dllexport) EncoderWriteSample(HENCODER encoder, int sample);
 
 /*!
- * @brief           指定されたハンドルのエンコーダでのエンコードの終了処理を行います。すべてのサンプルのエンコードが終了した後に、必ず呼び出してください。
- * @param encoder   エンコーダのハンドル
+ * @brief                           Finalizes the encoding process. Be sure to call this function after all samples have been encoded.
+ * @param encoder                   The pointer of HENCODER.
  */
 void __declspec(dllexport) EncoderEndWrite(HENCODER encoder);
 
+/*!
+* @brief                            Encode WAV input file and save to output file.
+* @param input                      Input file path.
+* @param output                     Output file path.
+*/
 void __declspec(dllexport) EncodeFileA(
     LPCSTR input,
     LPCSTR output,

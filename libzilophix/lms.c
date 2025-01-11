@@ -5,12 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* シフトファクタテーブル: { 16ビットデータ用, 24ビットデータ用 }*/
+/* Shift factor table: { for 16-bits pcm, for 24-bits pcm }*/
 static const int32_t shift_factor_table[2] = { 9, 8 };
 
 /*!
- * @brief           LMSフィルタのハンドルを生成します。
- * @return			LMSフィルタのハンドル
+ * @brief           Create new SSLMS filter instance.
+ * @return          Pointer of created instance.
  */
 lms* lms_create(uint8_t taps, uint8_t pcm_bits) {
     lms* result = (lms*)malloc(sizeof(lms));
@@ -30,14 +30,19 @@ lms* lms_create(uint8_t taps, uint8_t pcm_bits) {
 }
 
 /*!
- * @brief           LMSフィルタを解放します。
- * @param *filter   LMSフィルタのハンドル
+ * @brief           Release SSLMS filter.
+ * @param *filter   Pointer of SSLMS filter.
  */
 void lms_free(lms* filter) {
     free(filter->history);
     free(filter->sign);
     free(filter->weights);
 }
+
+/*!
+ * @brief           Initialize SSLMS filter.
+ * @param *filter   Pointer of SSLMS filter.
+ */
 
 void lms_clear(lms* filter) {
     memset(filter->history, 0, sizeof(int32_t) * filter->taps);
@@ -46,14 +51,14 @@ void lms_clear(lms* filter) {
 }
 
 /*!
- * @brief           PCMサンプルを予測します。
- * @param *filter   LMSフィルタのハンドル
- * @return          予測されたPCMサンプル
+ * @brief           Predict next sample.
+ * @param *filter   Pointer of SSLMS filter.
+ * @return          Prediction
  */
 int32_t lms_predict(lms* filter) {
     int32_t sum = 0;
 
-    /* カスみたいな書き方だが、for文より高速に動作した */
+    /* It's a stupid way of writing it, but it works faster than a for statement. */
     switch (filter->taps){
         case 32: sum += RSHIFT(filter->weights[31] * filter->history[31], filter->shift);
         case 31: sum += RSHIFT(filter->weights[30] * filter->history[30], filter->shift);
@@ -93,15 +98,15 @@ int32_t lms_predict(lms* filter) {
 }
 
 /*!
- * @brief           LMSフィルタを更新します。
- * @param *filter   LMSフィルタのハンドル
- * @param sample    実際のPCMサンプル
- * @param residual  実際のPCMサンプルと、予測されたPCMサンプルの差分
+ * @brief           Update SSLMS filter.
+ * @param *filter   Pointer of SSLMS filter.
+ * @param sample    Actual sample.
+ * @param residual  Prediction residual.
  */
 void lms_update(lms* filter, int32_t sample, int32_t residual) {
     int8_t sgn = SIGN(residual);
 
-    /* カスみたいな書き方だが、for文より高速に動作した */
+    /* It's a stupid way of writing it, but it works faster than a for statement. */
     switch (filter->taps){
         case 32: filter->weights[31] += sgn * filter->sign[31];
         case 31: filter->weights[30] += sgn * filter->sign[30];
@@ -137,7 +142,7 @@ void lms_update(lms* filter, int32_t sample, int32_t residual) {
         case 1: filter->weights[0] += sgn * filter->sign[0];
     }
 
-    /* 過去サンプルと過去符号を移動し、最新のサンプルと符号を新たに格納する */
+    /* Move the past samples and past codes, and store the latest samples and codes. */
     memmove(&filter->history[1], &filter->history[0], (filter->taps - 1) * sizeof(int32_t));
     memmove(&filter->sign[1], &filter->sign[0], (filter->taps - 1) * sizeof(int8_t));
     filter->history[0] = sample;

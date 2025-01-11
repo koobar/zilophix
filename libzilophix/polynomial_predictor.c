@@ -11,8 +11,8 @@
 #define K 4
 
 /*!
- * @brief               多項式予測器のハンドルを生成します。
- * @return              多項式予測器のハンドル
+ * @brief               Create new instance of polynomial predictor.
+ * @return              Pointer of created instance.
  */
 polynomial_predictor* polynomial_predictor_create() {
     polynomial_predictor* result = (polynomial_predictor*)malloc(sizeof(polynomial_predictor));
@@ -27,34 +27,34 @@ polynomial_predictor* polynomial_predictor_create() {
 }
 
 /*!
- * @brief               多項式予測器を解放します。
- * @param *predictor    多項式予測器のハンドル
+ * @brief               Release polynomial predictor.
+ * @param *predictor    Pointer of polynomial predictor
  */
 void polynomial_predictor_free(polynomial_predictor* predictor) {
     free(predictor->history);
 }
 
 /*!
- * @brief               多項式予測器を初期化します。
- * @param *predictor    多項式予測器のハンドル
+ * @brief               Initialize polynomial predictor.
+ * @param *predictor    Pointer of polynomial predictor
  */
 void polynomial_predictor_clear(polynomial_predictor* predictor) {
     memset(predictor->history, 0, sizeof(int32_t) * POLYNOMIAL_PREDICATOR_MAX_HISTORY);
 }
 
 /*!
- * @brief               指定されたハンドルの多項式予測器で、次に続くPCMサンプルを予測します。
- * @param *predictor    多項式予測器のハンドル
- * @return              予測されたPCMサンプル
+ * @brief               Predict next sample.
+ * @param *predictor    Pointer of polynomial predictor
+ * @return              Prediction
  */
 int32_t polynomial_predictor_predict(polynomial_predictor* predictor) {
     return PREDICT2(predictor->history[0], predictor->history[1], K);
 }
 
 /*!
- * @brief               多項式予測器を更新します。
- * @param *predictor    多項式予測器のハンドル
- * @param sample        PCMサンプル
+ * @brief               Update polynomial predictor.
+ * @param *predictor    Pointer of polynomial predictor
+ * @param sample        Actual sample.
  */
 void polynomial_predictor_update(polynomial_predictor* predictor, int32_t sample) {
     memmove(&predictor->history[1], &predictor->history[0], (POLYNOMIAL_PREDICATOR_MAX_HISTORY - 1) * sizeof(int32_t));

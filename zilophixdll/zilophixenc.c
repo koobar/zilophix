@@ -109,13 +109,13 @@ void EncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_
         filter_taps,
         NULL);
 
-    /* すべてのサンプルをエンコードする */
+    /* Encode all samples. */
     for (i = 0; i < num_samples; ++i){
         encoder_write_sample(encoder, wave_file_reader_read_sample(reader));
     }
-
-    /* 後始末 */
     encoder_end_write(encoder);
+
+    /* Release resources. */
     wave_file_reader_close(reader);
     encoder_free(encoder);
 }

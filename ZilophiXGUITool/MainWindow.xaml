@@ -42,18 +42,18 @@
                     <RowDefinition Height="100*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="処理対象ファイル一覧"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Files"/>
                 <ListBox x:Name="ConvertItemsListBox" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                          SelectionChanged="ConvertItemsListBox_SelectionChanged"/>
                 <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3,0,0,0">
-                    <Button x:Name="AddFileButton" Content="ファイルを追加"
+                    <Button x:Name="AddFileButton" Content="Add Files..."
                             Click="AddFileButton_Click"/>
-                    <Button x:Name="RemoveFileButton" Content="ファイルを除去" Margin="0,3,0,0"
+                    <Button x:Name="RemoveFileButton" Content="Remove File" Margin="0,3,0,0"
                             Click="RemoveFileButton_Click"/>
                 </StackPanel>
             </Grid>
 
-            <TextBlock Grid.Row="1" Text="WAVはZilophiXに、ZilophiXはWAVに変換します。" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="1" Text="Convert WAV to ZilophiX and ZilophiX to WAV." HorizontalAlignment="Left"/>
         </Grid>
 
         <Grid Grid.Row="1" Margin="3,5,3,5">
@@ -68,18 +68,18 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="保存先フォルダのパスを入力してください"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Output directory"/>
             <TextBox x:Name="OutputDirectoryPathTextBox" Grid.Row="2" Grid.Column="0"/>
-            <Button x:Name="SelectOutputDirectoryButton" Grid.Row="2" Grid.Column="1" Content="参照" Width="50" Margin="3,0,0,0"
+            <Button x:Name="SelectOutputDirectoryButton" Grid.Row="2" Grid.Column="1" Content="..." Width="25" Margin="3,0,0,0"
                     Click="SelectOutputDirectoryButton_Click"/>
         </Grid>
 
-        <GroupBox Grid.Row="2" Header="エンコード設定" Margin="3,0,3,3">
+        <GroupBox Grid.Row="2" Header="Encode options" Margin="3,0,3,3">
             <StackPanel Grid.Row="3" Margin="3,3,3,3">
                 <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap">
-                    SSLMSフィルタのタップ数<LineBreak/>
-                    数値が大きいほど高い圧縮効果を発揮しますが、
-                    エンコード/デコード時の負荷が増大します。
+                    SSLMS filter taps<LineBreak/>
+                    The larger the value, the greater the compression effect,
+                    but the greater the load during encoding/decoding.
                 </TextBlock>
 
                 <Grid Margin="0,5,0,3">
@@ -94,16 +94,16 @@
                     <TextBlock x:Name="SSLMSFilterTapsLabel" Grid.Column="1" Width="20" Text="4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
 
-                <TextBlock Text="処理ブロックサイズ" Margin="0,5,0,0"/>
+                <TextBlock Text="Block size" Margin="0,5,0,0"/>
                 <ComboBox x:Name="BlockSizeComboBox" Margin="0,3,0,0" HorizontalAlignment="Left" MinWidth="100">
-                    <ComboBoxItem Content="256サンプル" Tag="256"/>
-                    <ComboBoxItem Content="512サンプル" Tag="512"/>
-                    <ComboBoxItem Content="1024サンプル" Tag="1024"/>
-                    <ComboBoxItem Content="2048サンプル" Tag="2048"/>
-                    <ComboBoxItem Content="4096サンプル" Tag="4096"/>
-                    <ComboBoxItem Content="8192サンプル" Tag="8192"/>
+                    <ComboBoxItem Content="256 Samples" Tag="256"/>
+                    <ComboBoxItem Content="512 Samples" Tag="512"/>
+                    <ComboBoxItem Content="1024 Samples" Tag="1024"/>
+                    <ComboBoxItem Content="2048 Samples" Tag="2048"/>
+                    <ComboBoxItem Content="4096 Samples" Tag="4096"/>
+                    <ComboBoxItem Content="8192 Samples" Tag="8192"/>
                 </ComboBox>
-                <CheckBox x:Name="UseMidSideConvertingCheckBox" Content="Mid-Sideステレオに変換する" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+                <CheckBox x:Name="UseMidSideConvertingCheckBox" Content="Use Mid-Side stereo." HorizontalAlignment="Left" Margin="0,5,0,0"/>
             </StackPanel>
         </GroupBox>
 
@@ -111,7 +111,7 @@
                      Minimum="0" Maximum="100" Value="0"/>
         
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="3,3,3,3">
-            <Button x:Name="StartProcessButton" Content="変換開始" Width="80" Height="25"
+            <Button x:Name="StartProcessButton" Content="Convert" Width="80" Height="25"
                     Click="StartProcessButton_Click"/>
         </StackPanel>
     </Grid>

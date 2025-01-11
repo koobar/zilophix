@@ -3,9 +3,9 @@
 #include <string.h>
 
 /*!
- * @brief           指定されたパスのファイルのバイト数を取得します。
- * @param *path     パス
- * @return          指定されたパスのファイルのバイト数
+ * @brief           Get file size.
+ * @param *path     File path
+ * @return          File size.
  */
 fpos_t get_file_size(const char* file_name){
     fpos_t fsize = 0;
@@ -18,19 +18,19 @@ fpos_t get_file_size(const char* file_name){
         return 0;
     }
 
-    /* ファイルサイズを取得 */
+    /* Get file size. */
     fseek(fp, 0, SEEK_END);
     fgetpos(fp, &fsize);
 
-    /* ファイルサイズを取得するために開いただけなので、ここで閉じてしまってもよい */
+    /* Close file. */
     fclose(fp);
     return fsize;
 }
 
 /*!
- * @brief           指定されたパスからファイル名部分を取得します。
- * @param *path     パス
- * @return          ファイル名
+ * @brief           Get file name from full path.
+ * @param *path     Full path.
+ * @return          File name.
  */
 char* get_file_name(const char* path) {
     char* file_name_ptr;
@@ -47,9 +47,9 @@ char* get_file_name(const char* path) {
 }
 
 /*!
- * @brief           指定されたパスから、拡張子を除くファイル名部分を取得します。
- * @param *path     パス
- * @return          拡張子を除くファイル名
+ * @brief           Get file name from full path without extension.
+ * @param *path     Full Path
+ * @return          File name without extension
  */
 char* get_file_name_without_extension(const char* path) {
     char* name = get_file_name(path);
@@ -67,9 +67,9 @@ char* get_file_name_without_extension(const char* path) {
 }
 
 /*!
- * @brief           指定されたパスから拡張子部分を取得します。
- * @param *path     パス
- * @return          拡張子
+ * @brief           Get extension from full path.
+ * @param *path     Full path
+ * @return          extension
  */
 char* get_extension(const char* path) {
     const char* dot = NULL;
@@ -77,7 +77,7 @@ char* get_extension(const char* path) {
     size_t i, extension_size;
     size_t len = strlen(path);
 
-    /* 引数に与えられたパスのうち、拡張子の開始位置のポインタを取得する */
+    /* Get pointer of extension */
     for (i = len - 1; i != 0; --i) {
         if (path[i] == (char)'.') {
             dot = &path[i];
@@ -85,21 +85,19 @@ char* get_extension(const char* path) {
         }
     }
 
-    /* ポインタの取得失敗（拡張子がみつからない）ならNULLを返す */
     if (dot == NULL) {
         return NULL;
     }
 
-    /* 拡張子の領域を確保 */
+    /* Allocate memory */
     extension_size = strlen(dot);
     result = (char*)malloc(sizeof(char) * extension_size);
 
-    /* 拡張子領域の確保に失敗した場合はNULLを返す */
     if (result == NULL) {
         return NULL;
     }
 
-    /* 拡張子部分を拡張子の領域にコピー */
+    /* Copy characters to extension area */
     for (i = 0; i < extension_size; ++i) {
         result[i] = dot[i];
     }
@@ -109,15 +107,14 @@ char* get_extension(const char* path) {
 }
 
 /*!
- * @brief           指定されたパスからディレクトリ名部分を取得します。
- * @param *path     パス
- * @return          ディレクトリ名部分
+ * @brief           Get directory name from full path.
+ * @param *path     Full path
+ * @return          Directory name
  */
 char* get_directory_name(const char* path){
     size_t size = strlen(path), directory_name_end_offset = 0, directory_name_size, i;
     char* result;
 
-    /* ディレクトリ名部分の終了位置を取得 */
     for (i = size - 1; i != 0; --i) {
         if (path[i] == PATH_SEPARATOR) {
             directory_name_end_offset = i;
@@ -125,16 +122,15 @@ char* get_directory_name(const char* path){
         }
     }
 
-    /* ディレクトリ名部分を格納する領域を確保 */
+    /* Allocate memory */
     directory_name_size = directory_name_end_offset + 1;
     result = (char*)malloc(directory_name_size);
 
-    /* 確保できていなければNULLを返す */
     if (result == NULL) {
         return NULL;
     }
 
-    /* ディレクトリ名部分をディレクトリ名領域にコピー */
+    /* Copy characters to directory name area */
     for (i = 0; i < directory_name_size - 1; ++i) {
         result[i] = path[i];
     }
@@ -144,9 +140,9 @@ char* get_directory_name(const char* path){
 }
 
 /*!
- * @brief               指定されたパスのファイルの拡張子を変更したパスを取得します。
- * @param path          パス
- * @param new_extension 新しい拡張子
+ * @brief               Change extension and full path.
+ * @param path          Full path 
+ * @param new_extension New extension
  */
 void change_extension(char* path, const char* new_extension) {
     char* dot = NULL;
@@ -161,11 +157,9 @@ void change_extension(char* path, const char* new_extension) {
     }
 
     if (dot != NULL) {
-        // 既存の拡張子を置き換える
         strncpy(dot, new_extension, strlen(new_extension) + 1);
     }
     else {
-        // 新しい拡張子を追加
         strncat(path, new_extension, strlen(new_extension));
     }
 }

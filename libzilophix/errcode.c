@@ -6,8 +6,8 @@ static bool on_error_exit = true;
 static error_code last_error_code = ERROR_OK;
 
 /*!
- * @brief           指定されたエラーコードでエラーをレポートします。
- * @param error     エラーコード
+ * @brief           Reports error code.
+ * @param error     Error code.
  */
 void report_error(error_code error) {
     last_error_code = error;
@@ -19,16 +19,16 @@ void report_error(error_code error) {
 }
 
 /*!
- * @brief           最後に発生したエラーのエラーコードを取得します。
- * @return          エラーコード
+ * @brief           Get last reported error code
+ * @return          Error code.
  */
 error_code get_last_error_code() {
     return last_error_code;
 }
 
 /*!
- * @brief           最後に発生したエラーのエラーコードを取得します。
- * @param value     trueならエラー発生時に即座にプログラムを終了します。falseなら、プログラムを終了しません。
+ * @brief           Set on error exit.
+ * @param value     If true, the program will immediately exit when an error occurs. If false, the program will not exit.
  */
 void set_on_error_exit(bool value) {
     on_error_exit = value;

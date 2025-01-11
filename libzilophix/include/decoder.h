@@ -11,84 +11,81 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-/*!
- * @brief デコーダ
- */
 typedef struct {
-    FILE* file;                                     /* ファイルハンドル */
-    bit_stream* bit_stream;                         /* ビットストリームのハンドル */
+    FILE* file;                                     /* File */
+    bit_stream* bit_stream;                         /* Bitstream */
 
-    uint8_t format_version;                         /* フォーマットのバージョン */
-    uint32_t sample_rate;                           /* サンプリング周波数 */
-    uint8_t bits_per_sample;                        /* PCMの量子化ビット数 */
-    uint8_t num_channels;                           /* チャンネル数 */
-    uint32_t num_total_samples;                     /* ファイルに含まれるサンプルの総数 */
-    uint8_t filter_taps;                            /* SSLMSフィルタのタップ数 */
-    uint16_t block_size;                            /* ブロック（厳密にはサブブロック）に含まれるサンプル数*/
-    bool use_mid_side_stereo;                       /* ミッドサイドステレオが使用されているかどうかを示すフラグ */
-    uint32_t num_blocks;                            /* ファイルに含まれるブロックの総数 */
-    uint8_t reserved1;                              /* 予約済み1 */
-    uint8_t reserved2;                              /* 予約済み2 */
+    uint8_t format_version;                         /* Format version */
+    uint32_t sample_rate;                           /* Sample rate */
+    uint8_t bits_per_sample;                        /* PCM quantization bits. */
+    uint8_t num_channels;                           /* The number of channels. */
+    uint32_t num_total_samples;                     /* The number of samples. */
+    uint8_t filter_taps;                            /* The number of SSLMS filter taps. */
+    uint16_t block_size;                            /* Block size. */
+    bool use_mid_side_stereo;                       /* Mid-Side stereo flag. */
+    uint32_t num_blocks;                            /* The number of blocks. */
+    uint8_t reserved1;                              /* Reserved. */
+    uint8_t reserved2;                              /* Reserved. */
     uint32_t audio_data_begin;
     uint32_t audio_data_size;
 
-    lms** lms_filters;                              /* チャンネル毎のSSLMSフィルタのハンドルを格納する領域 */
-    polynomial_predictor** polynomial_predictors;   /* チャンネル毎の多項式予測器のハンドルを格納する領域 */
+    lms** lms_filters;                              /* SSLMS filters. */
+    polynomial_predictor** polynomial_predictors;   /* Polynomial predictors. */
 
-    tag* tag;                                       /* タグ情報のハンドル */
-    code* coder;                                    /* ブロック読み書きAPIのハンドル */
-    block* current_block;                           /* デコード中のブロックのハンドル */
-    uint8_t current_read_sub_block_channel;         /* 次にサンプルを読み込む場合のチャンネルのオフセット */
-    uint16_t current_read_sub_block_offset;         /* 次にサンプルを読み込む場合に参照するサブブロックのオフセット */
+    tag* tag;                                       /* The pointer of tag information. */
+    code* coder;                                    /* The pointer of code. */
+    block* current_block;                           /* The pointer of decoding block. */
+    uint8_t current_read_sub_block_channel;         /* The offset of subblock channel. */
+    uint16_t current_read_sub_block_offset;         /* The offset of subblock sample reading offset. */
 
-    uint32_t num_samples_read;                      /* 読み込み済みサンプル数 */
-    bool is_seeking;                                /* シーク処理中であるかどうかを示すフラグ */
+    uint32_t num_samples_read;                      /* The number of samples read. */
+    bool is_seeking;                                /* Seeking flag. */
 } decoder;
 
 /*!
- * @brief                   デコーダのハンドルを生成します。
- * @param path              デコードするファイルのハンドル
- * @return                  デコーダのハンドル
+ * @brief                   Create new instance of decoder.
+ * @param file*             Pointer of file.
+ * @return                  Pointer of created instance.
  */
 decoder* decoder_create(FILE* file);
 
 /*!
- * @brief                   デコーダを解放します。
- * @param decoder           デコーダのハンドル
+ * @brief                   Release specified decoder.
+ * @param decoder           Pointer of decoder.
  */
 void decoder_free(decoder* decoder);
 
 /*!
- * @brief                   ファイルを閉じます。
- * @param decoder           デコーダのハンドル
+ * @brief                   Close decoding file.
+ * @param decoder           Pointer of decoder.
  */
 void decoder_close(decoder* decoder);
 
 /*!
- * @brief                   次の1サンプルを読み込み、PCMサンプルとして返します。
- * @param decoder           デコーダのハンドル
- * @return                  デコードされたPCMサンプル
+ * @brief                   Read next sample and return as PCM.
+ * @param decoder           Pointer of decoder.
+ * @return                  Sample
  */
 int32_t decoder_read_sample(decoder* decoder);
 
 /*!
- * @brief                   指定されたオフセットのサンプルまでシークします。
- * @param *decoder          デコーダのハンドル
- * @param sample_offset     シーク先のサンプルのオフセット
+ * @brief                   Seek to specified sample offset.
+ * @param *decoder          Pointer of decoder.
+ * @param sample_offset     Sample offset.
  */
 void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset);
 
 /*!
- * @brief                   ミリ秒単位で指定された時間までシークします。
- * @param *decoder          デコーダのハンドル
- * @param sample_offset     シーク先時間（ミリ秒）
+ * @brief                   Seek to specific time in milliseconds.
+ * @param *decoder          Pointer of decoder.
+ * @param sample_offset     Seek destination time in milliseconds.
  */
 void decoder_seek_milliseconds_to(decoder* decoder, uint32_t ms);
 
 /*!
- * @brief                   デコーダが開いているファイルの演奏時間をミリ秒単位で取得します。
- * @param *decoder          デコーダのハンドル
- * @return                  演奏時間（ミリ秒単位）
+ * @brief                   Get playback duration in milliseconds.
+ * @param *decoder          Pointer of decoder.
+ * @return                  Playback duration in milliseconds.
  */
 uint32_t decoder_get_duration_ms(decoder* decoder);
 

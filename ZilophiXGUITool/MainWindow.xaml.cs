@@ -11,7 +11,7 @@ namespace ZilophiXGUITool
 {
     public partial class MainWindow : Window
     {
-        // 非公開フィールド
+        // Private fields.
         private readonly List<string> targetFiles;
         private readonly BackgroundWorker worker;
         private string convOutDir;
@@ -19,7 +19,7 @@ namespace ZilophiXGUITool
         private bool encUseMidSideStereo;
         private byte encSSLMSTaps;
 
-        // コンストラクタ
+        // Constructor
         public MainWindow()
         {
             this.targetFiles = new List<string>();
@@ -39,7 +39,7 @@ namespace ZilophiXGUITool
         private static extern void DecodeFileA(string input, string output);
 
         /// <summary>
-        /// 変換処理
+        /// Conversion
         /// </summary>
         /// <param name="input"></param>
         private void Process(string input)
@@ -66,7 +66,7 @@ namespace ZilophiXGUITool
         }
 
         /// <summary>
-        /// バックグラウンドで変換処理を開始する。
+        /// Start background conversion task.
         /// </summary>
         private void StartProcess()
         {
@@ -89,7 +89,7 @@ namespace ZilophiXGUITool
         }
 
         /// <summary>
-        /// 処理対象ファイルのリストを更新する。
+        /// Update file list.
         /// </summary>
         private void UpdateFileList()
         {
@@ -105,15 +105,9 @@ namespace ZilophiXGUITool
                 this.ConvertItemsListBox.Items.Add(item);
             }
 
-            // 後始末
             this.StartProcessButton.IsEnabled = this.ConvertItemsListBox.Items.Count > 0;
         }
 
-        /// <summary>
-        /// 変換処理が終了した場合の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnProcessCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.BlockSizeComboBox.IsEnabled = true;
@@ -125,24 +119,14 @@ namespace ZilophiXGUITool
             this.OutputDirectoryPathTextBox.IsEnabled = true;
             this.SelectOutputDirectoryButton.IsEnabled = true;
 
-            System.Windows.MessageBox.Show("処理が終了しました。", "終了", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("Conversion completed successfully!", "Completed", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        /// <summary>
-        /// 変換処理の進捗が変更された場合の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnProcessProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             this.ProcessProgressBar.Value = e.ProgressPercentage;
         }
 
-        /// <summary>
-        /// 変換処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnProcess(object sender, DoWorkEventArgs e)
         {
             for (int i = 0; i < this.targetFiles.Count; ++i)
@@ -150,30 +134,20 @@ namespace ZilophiXGUITool
                 Process(this.targetFiles[i]);
 
                 // 進捗を報告
-                int percentage = ((i + 1) * 100) / this.targetFiles.Count;
+                int percentage = (i + 1) * 100 / this.targetFiles.Count;
                 this.worker.ReportProgress(percentage);
             }
         }
 
-        /// <summary>
-        /// 処理対象ファイルリストの選択が変更された場合の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ConvertItemsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             this.RemoveFileButton.IsEnabled = this.ConvertItemsListBox.SelectedItems.Count != 0;
         }
 
-        /// <summary>
-        /// ファイルの追加ボタンがクリックされた場合の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void AddFileButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.Filter = "対応しているすべてのファイル(*.wav;*.zpx)|*.wav;*.zpx|WAV形式(*.wav)|*.wav|ZilophiX形式(*.zpx)|*.zpx";
+            dialog.Filter = "All supported files(*.wav;*.zpx)|*.wav;*.zpx|WAV(*.wav)|*.wav|ZilophiX(*.zpx)|*.zpx";
             dialog.Multiselect = true;
 
             if (dialog.ShowDialog().Value)
@@ -190,11 +164,6 @@ namespace ZilophiXGUITool
             UpdateFileList();
         }
 
-        /// <summary>
-        /// ファイルを除去ボタンがクリックされた場合の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void RemoveFileButton_Click(object sender, RoutedEventArgs e)
         {
             var item = (ListBoxItem)this.ConvertItemsListBox.SelectedItem;
@@ -208,11 +177,6 @@ namespace ZilophiXGUITool
             UpdateFileList();
         }
 
-        /// <summary>
-        /// SSLMSのタップ数スライダの値が変更された場合の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SSLMSFilterTapsTrack_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!this.IsLoaded)
@@ -223,11 +187,6 @@ namespace ZilophiXGUITool
             this.SSLMSFilterTapsLabel.Text = this.SSLMSFilterTapsTrack.Value.ToString();
         }
 
-        /// <summary>
-        /// 保存先フォルダの参照ボタンがクリックされた場合の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void SelectOutputDirectoryButton_Click(object sender, RoutedEventArgs e)
         {
             using (var dialog = new FolderBrowserDialog())

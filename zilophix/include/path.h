@@ -13,44 +13,44 @@
 #include <stdio.h>
 
 /*!
- * @brief           指定されたパスのファイルのバイト数を取得します。
- * @param *path     パス
- * @return          指定されたパスのファイルのバイト数
+ * @brief           Get file size.
+ * @param *path     File path
+ * @return          File size.
  */
 fpos_t get_file_size(const char* file_name);
 
 /*!
- * @brief           指定されたパスからファイル名部分を取得します。
- * @param *path     パス
- * @return          ファイル名
+ * @brief           Get file name from full path.
+ * @param *path     Full path.
+ * @return          File name.
  */
 char* get_file_name(const char* path);
 
 /*!
- * @brief           指定されたパスから、拡張子を除くファイル名部分を取得します。
- * @param *path     パス
- * @return          拡張子を除くファイル名
+ * @brief           Get file name from full path without extension.
+ * @param *path     Full Path
+ * @return          File name without extension
  */
 char* get_file_name_without_extension(const char* path);
 
 /*!
- * @brief           指定されたパスから拡張子部分を取得します。
- * @param *path     パス
- * @return          拡張子
+ * @brief           Get extension from full path.
+ * @param *path     Full path
+ * @return          extension
  */
 char* get_extension(const char* path);
 
 /*!
- * @brief           指定されたパスからディレクトリ名部分を取得します。
- * @param *path     パス
- * @return          ディレクトリ名部分
+ * @brief           Get directory name from full path.
+ * @param *path     Full path
+ * @return          Directory name
  */
 char* get_directory_name(const char* path);
 
 /*!
- * @brief               指定されたパスのファイルの拡張子を変更したパスを取得します。
- * @param path          パス
- * @param new_extension 新しい拡張子
+ * @brief               Change extension and full path.
+ * @param path          Full path
+ * @param new_extension New extension
  */
 void change_extension(char* path, const char* new_extension);
 

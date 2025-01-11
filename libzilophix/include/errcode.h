@@ -4,76 +4,66 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define ERROR_OK                                            0x0000      /* エラーではないことを示す */
-#define ERROR_UNKNOWN                                       0xffff      /* 原因不明のエラーであることを示す */
+#define ERROR_OK                                            0x0000      /* No error. */
+#define ERROR_UNKNOWN                                       0xffff      /* Unknown error. */
 
-/* ファイル読み込みエラー */
-#define ERROR_FILE_ACCESS_FAILED_TO_READ_UINT8              0x0010      /* 8ビット整数の読み込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_READ_UINT16             0x0011      /* 16ビット整数の読み込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_READ_UINT32             0x0012      /* 32ビット整数の読み込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_READ_INT16              0x0013      /* 符号付き16ビット整数の読み込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_READ_INT32              0x0014      /* 符号付き32ビット整数の読み込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_READ_CHAR               0x0015      /* ASCII文字の読み込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_READ_BOOL               0x0016      /* 真偽値の読み込みに失敗した */
+#define ERROR_FILE_ACCESS_FAILED_TO_READ_UINT8              0x0010      /* Failed to read unsigned 8-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_READ_UINT16             0x0011      /* Failed to read unsigned 16-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_READ_UINT32             0x0012      /* Failed to read unsigned 32-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_READ_INT16              0x0013      /* Failed to read signed 16-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_READ_INT32              0x0014      /* Failed to read signed 32-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_READ_CHAR               0x0015      /* Failed to read ASCII char. */
+#define ERROR_FILE_ACCESS_FAILED_TO_READ_BOOL               0x0016      /* Failed to read boolean value. */
 
-/* ファイル書き込みエラー */
-#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_UINT8             0x0017      /* 8ビット整数の書き込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_UINT16            0x0018      /* 16ビット整数の書き込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_UINT32            0x0019      /* 32ビット整数の書き込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_INT16             0x001a      /* 符号付き16ビット整数の書き込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_INT32             0x001b      /* 符号付き32ビット整数の書き込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_CHAR              0x001c      /* ASCII文字の書き込みに失敗した */
-#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_BOOL              0x001d      /* 真偽値の書き込みに失敗した */
+#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_UINT8             0x0017      /* Failed to write unsigned 8-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_UINT16            0x0018      /* Failed to write unsigned 16-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_UINT32            0x0019      /* Failed to write unsigned 32-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_INT16             0x001a      /* Failed to write signed 16-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_INT32             0x001b      /* Failed to write signed 32-bits integer. */
+#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_CHAR              0x001c      /* Failed to write ASCII char. */
+#define ERROR_FILE_ACCESS_FAILED_TO_WRITE_BOOL              0x001d      /* Failed to write boolean value. */
 
-/* ビットストリームのエラー */
-#define ERROR_BIT_STREAM_CANNOT_ALLOCATE_MEMORY             0x0020      /* ビットストリームで必要な領域のメモリアロケーションに失敗した */
-#define ERROR_BIT_STREAM_NOT_READ_MODE                      0x0021      /* ビットストリームが読み込みモードでないにもかかわらず、読み込みモード専用の関数が呼び出された */
-#define ERROR_BIT_STREAM_NOT_WRITE_MODE                     0x0022      /* ビットストリームが書き込みモードでないにもかかわらず、書き込みモード専用の関数が呼び出された */
+#define ERROR_BIT_STREAM_CANNOT_ALLOCATE_MEMORY             0x0020      /* Failed to allocate memory in bitstream. */
+#define ERROR_BIT_STREAM_NOT_READ_MODE                      0x0021      /* Called bitstream read function in write mode. */
+#define ERROR_BIT_STREAM_NOT_WRITE_MODE                     0x0022      /* Called bitstream write function in read mode. */
 
-/* LMSフィルタのエラー */
-#define ERROR_LMS_CANNOT_ALLOCATE_MEMORY                    0x0030      /* LMSフィルタで必要な領域のメモリアロケーションに失敗した */
-#define ERROR_LMS_INVALID_FILTER_TAPS                       0x0031      /* LMSフィルタのタップ数が有効範囲外であった */
-#define ERROR_LMS_UNSUPPORTED_PCM_BITS                      0x0032      /* LMSフィルタで処理しようとした信号が対応していない量子化ビット数であった */
+#define ERROR_LMS_CANNOT_ALLOCATE_MEMORY                    0x0030      /* Failed to allocate memory in SSLMS filter. */
+#define ERROR_LMS_INVALID_FILTER_TAPS                       0x0031      /* SSLMS taps out of range error. */
+#define ERROR_LMS_UNSUPPORTED_PCM_BITS                      0x0032      /* The signal to be processed by the SSLMS filter had an incompatible quantization bit rate. */
 
-/* 多項式予測器のエラー */
-#define ERROR_POLYNOMIAL_PREDICTOR_CANNOT_ALLOCATE_MEMORY   0x0040  /* 多項式予測器で必要な領域のメモリアロケーションに失敗した */
+#define ERROR_POLYNOMIAL_PREDICTOR_CANNOT_ALLOCATE_MEMORY   0x0040      /* Failed to allocate memory in polynomial filter. */
 
-/* ブロックのエラー */
-#define ERROR_BLOCK_CANNOT_ALLOCATE_MEMORY                  0x0050      /* ブロックで必要な領域のメモリアロケーションに失敗した */
+#define ERROR_BLOCK_CANNOT_ALLOCATE_MEMORY                  0x0050      /* Failed to allocate memory in block. */
 
-/* サブブロックのエラー */
-#define ERROR_SUB_BLOCK_CANNOT_ALLOCATE_MEMORY              0x0060      /* サブブロックで必要な領域のメモリアロケーションに失敗した */
+#define ERROR_SUB_BLOCK_CANNOT_ALLOCATE_MEMORY              0x0060      /* Failed to allocate memory in subblock. */
 
-/* エントロピー符号化のエラー */
-#define ERROR_RICE_CODING_INVALID_PARAMETER                 0x0070      /* エントロピー符号化に用いられたパラメータが不正なパラメータであった */
+#define ERROR_RICE_CODING_INVALID_PARAMETER                 0x0070      /* Invalid entropy parameter detected. */
 
-/* デコードエラー */
-#define ERROR_DECODER_CANNOT_ALLOCATE_MEMORY                0x0080      /* デコーダで必要な領域のメモリアロケーションに失敗した */
-#define ERROR_DECODER_FAILED_TO_OPEN_FILE                   0x0081      /* デコードしようとしたファイルを開けなかった */
-#define ERROR_DECODER_INVALID_MAGIC_NUMBER                  0x0082      /* デコードしようとしたファイルのマジックナンバーがZilophiXのものではなかった */
-#define ERROR_DECODER_UNSUPPORTED_FORMAT_VERSION            0x0083      /* デコードしようとしたファイルに含まれているZilophiXデータのバージョンがサポート対象外のバージョンであった */
+#define ERROR_DECODER_CANNOT_ALLOCATE_MEMORY                0x0080      /* Failed to allocate memory in decoder. */
+#define ERROR_DECODER_FAILED_TO_OPEN_FILE                   0x0081      /* Failed to open file in decoder. */
+#define ERROR_DECODER_INVALID_MAGIC_NUMBER                  0x0082      /* Invalid magic number detected in decoder. */
+#define ERROR_DECODER_UNSUPPORTED_FORMAT_VERSION            0x0083      /* Unsupported ZilophiX format version detected in decoder. */
 
-/* エンコードエラー */
-#define ERROR_ENCODER_CANNOT_ALLOCATE_MEMORY                0x0090      /* エンコーダーで必要な領域のメモリアロケーションに失敗した */
-#define ERROR_ENCODER_FAILED_TO_OPEN_FILE                   0x0091      /* エンコード先ファイルをバイナリ書き込み(wb)モードで開けなかった */
+#define ERROR_ENCODER_CANNOT_ALLOCATE_MEMORY                0x0090      /* Failed to allocate memory in encoder. */
+#define ERROR_ENCODER_FAILED_TO_OPEN_FILE                   0x0091      /* Failed to open file in encoder. */
 
 typedef uint16_t error_code;
 
 /*!
- * @brief           指定されたエラーコードでエラーをレポートします。
- * @param error     エラーコード
+ * @brief           Reports error code.
+ * @param error     Error code.
  */
 void report_error(error_code error);
 
 /*!
- * @brief           最後に発生したエラーのエラーコードを取得します。
- * @return          エラーコード
+ * @brief           Get last reported error code
+ * @return          Error code.
  */
 error_code get_last_error_code();
 
 /*!
- * @brief           最後に発生したエラーのエラーコードを取得します。
- * @param value     trueならエラー発生時に即座にプログラムを終了します。falseなら、プログラムを終了しません。
+ * @brief           Set on error exit.
+ * @param value     If true, the program will immediately exit when an error occurs. If false, the program will not exit.
  */
 void set_on_error_exit(bool value);
 

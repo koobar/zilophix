@@ -5,39 +5,39 @@
 #include "block.h"
 
 typedef struct {
-    bit_stream* bitstream;              /* 入出力用ビットストリームのハンドル */
+    bit_stream* bitstream;              /* Pointer of input bitstream */
     uint8_t bits_per_sample;
     uint8_t bits_of_entropy_parameter;
     uint8_t rice_parameter_max;
     uint8_t blank_partition_parameter;
-    uint32_t* workA;                    /* 作業領域A */
-    uint32_t* workB;                    /* 作業領域B */
+    uint32_t* workA;                    /* Working memory A */
+    uint32_t* workB;                    /* Working memory B */
 } code;
 
 /*!
- * @brief           ブロックを読み書きするAPIのハンドルを生成します。
- * @param *stream   ビットストリームのハンドル
- * @return          ブロック読み書きAPIのハンドル
+ * @brief           Create new instance of code.
+ * @param *stream   Pointer of bit_stream.
+ * @return          Pointer of created instance.
  */
 code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_sample);
 
 /*!
- * @brief           ブロックを読み書きするAPIのハンドルを解放します。
- * @param *coder    ブロック読み書きAPIのハンドル
+ * @brief           Release specified instance.
+ * @param *coder    Pointer of code.
  */
 void code_free(code* coder);
 
 /*!
- * @brief           ブロックを書き込みます。
- * @param *coder    ブロック読み書きAPIのハンドル
- * @param *block    書き込むブロックのハンドル
+ * @brief           Write block to bitstream.
+ * @param *coder    Pointer of code.
+ * @param *block    Pointer of block.
  */
 void code_write_block(code* coder, const block* block);
 
 /*!
- * @brief           ブロックを読み込みます。
- * @param *coder    ブロック読み書きAPIのハンドル
- * @param *block    読み込んだデータを格納するブロックのハンドル
+ * @brief           Read block from bitstream.
+ * @param *coder    Pointer of code.
+ * @param *block    Pointer of block.
  */
 void code_read_block(code* coder, block* block);
 

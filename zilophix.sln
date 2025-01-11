@@ -12,6 +12,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zilophixdll", "zilophixdll\zilophixdll.vcxproj", "{1652F3B3-9418-40B8-BF80-178F018F9156}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZilophiXGUITool", "ZilophiXGUITool\ZilophiXGUITool.csproj", "{1F25CCE9-3C9B-46F5-97F6-0A2FB1F319C3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1652F3B3-9418-40B8-BF80-178F018F9156} = {1652F3B3-9418-40B8-BF80-178F018F9156}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

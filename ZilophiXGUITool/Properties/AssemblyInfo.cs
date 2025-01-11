@@ -8,11 +8,11 @@ using System.Windows;
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
 [assembly: AssemblyTitle("ZilophiX GUI Tool")]
-[assembly: AssemblyDescription("GUI操作でZilophiXのエンコード・デコードを行うためのツールです。")]
+[assembly: AssemblyDescription("ZilophiX GUI tool.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ZilophiX")]
-[assembly: AssemblyCopyright("Copyright (c) 2024 koobar")]
+[assembly: AssemblyCopyright("Copyright (c) 2024-2025 koobar")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

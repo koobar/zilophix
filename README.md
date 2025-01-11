@@ -1,14 +1,13 @@
 # ZilophiX (ZpX)
 
-## これは何ですか？
-ZilophiXは、フリーかつオープンソースのロスレスオーディオコーデックです。
+## WHAT IS THIS?
+ZilophiX: ZilophiX is a open-source lossless audio codec.
 
-16ビットのPCMデータを圧縮する場合、ZilophiX の設定を最大効率に設定することで、
-FLACの最大圧縮率の設定とほぼ同じファイルサイズに圧縮することができます。
+16-bit PCM compression provides approximately the same compression ratio as 
+FLAC's maximum efficiency setting.
 
-24ビットのPCMデータを圧縮する場合、ZilophiX の設定を最大効率に設定することで、
-Monkey's Audio の最大圧縮率の設定とほぼ同じか、場合によってはそれより小さい
-ファイルサイズに圧縮することができます。
+24-bit PCM compression provides compression rates similar to Monkey's Audio's
+maximum efficiency setting, and in some cases even higher.
 
-ZilophiX のリファレンス実装（このプロジェクト）は、WTFPL Version 2 の下で配布され、
-ZilophiX のアルゴリズムはパブリックドメインとしてご利用いただけます。
+Reference implementation of ZilophiX is a released under WTFPL Version 2. 
+ZilophiX algorithms are released in the public domain. 

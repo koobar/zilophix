@@ -2,45 +2,45 @@
 #include <stdlib.h>
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルにASCII文字を書き込む。
- * @param file  ファイルポインタ
- * @param value 書き込む値
+ * @brief       Writes the specified ASCII character to the file.
+ * @param file  File
+ * @param value Value to write
  */
 static void write_char(FILE* file, const char value) {
     fwrite(&value, sizeof(char), 1, file);
 }
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルに16ビット整数を書き込む。
- * @param file  ファイルポインタ
- * @param value 書き込む値
+ * @brief       Writes a 16-bit integer to a file.
+ * @param file  File
+ * @param value Value to write
  */
 static void write_uint16(FILE* file, const uint16_t value) {
     fwrite(&value, sizeof(uint16_t), 1, file);
 }
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルに32ビット整数を書き込む。
- * @param file  ファイルポインタ
- * @param value 書き込む値
+ * @brief       Writes a 32-bit integer to a file.
+ * @param file  File
+ * @param value Value to write
  */
 static void write_uint32(FILE* file, const uint32_t value) {
     fwrite(&value, sizeof(uint32_t), 1, file);
 }
 
 /*!
- * @brief       指定されたファイルポインタが示すファイルに16符号付きビット整数を書き込む。
- * @param file  ファイルポインタ
- * @param value 書き込む値
+ * @brief       Writes a signed 16-bit integer to a file.
+ * @param file  File
+ * @param value Value to write
  */
 static void write_int16(FILE* file, const int16_t value) {
     fwrite(&value, sizeof(int16_t), 1, file);
 }
 
 /*!
- * @brief           指定されたハンドルのwave_file_writerが保持するフォーマット情報に基づいたチャンクサイズを計算します。
- * @param *writer   wave_file_readerのハンドル
- * @return          チャンクサイズ
+ * @brief           Calculate chunk size.
+ * @param *writer   Pointer of wave_file_writer.
+ * @return          Chunk size.
  */
 static uint32_t compute_chunk_size(const wave_file_writer* writer) {
     uint32_t size_of_fmt_chunk = 24;
@@ -52,20 +52,20 @@ static uint32_t compute_chunk_size(const wave_file_writer* writer) {
 }
 
 /*!
- * @brief           指定されたハンドルのwave_file_writerで、WAVEヘッダ部の書き込みを行います。
- * @param *writer   wave_file_readerのハンドル
+ * @brief           Write wave file header.
+ * @param *writer   Pointer of wave_file_writer
  */
 static void write_wave_header(const wave_file_writer* writer) {
-    /* RIFFのマジックナンバーを書き込む。 */
+    /* Write RIFF magic numbers. */
     write_char(writer->wave_file, 0x52);
     write_char(writer->wave_file, 0x49);
     write_char(writer->wave_file, 0x46);
     write_char(writer->wave_file, 0x46);
 
-    /* チャンクサイズを求めて書き込む。 */
+    /* Write chunk size. */
     write_uint32(writer->wave_file, compute_chunk_size(writer));
 
-    /* 'WAVE' をASCIIコードで書き込む。 */
+    /* Write 'WAVE' as ASCII string. */
     write_char(writer->wave_file, 0x57);
     write_char(writer->wave_file, 0x41);
     write_char(writer->wave_file, 0x56);
@@ -73,66 +73,66 @@ static void write_wave_header(const wave_file_writer* writer) {
 }
 
 /*!
- * @brief           指定されたハンドルのwave_file_writerで、fmtチャンクの書き込みを行います。
- * @param *writer   wave_file_readerのハンドル
+ * @brief           Write fmt chunk
+ * @param *writer   Pointer of wave_file_writer
  */
 static void write_fmt_chunk(const wave_file_writer* writer) {
     uint32_t avr_bytes_per_sec;
     uint16_t block_size;
 
-    /* fmt チャンクのヘッダを書き込む。 */
+    /* Write fmt chunk header. */
     write_char(writer->wave_file, 0x66);
     write_char(writer->wave_file, 0x6d);
     write_char(writer->wave_file, 0x74);
     write_char(writer->wave_file, 0x20);
 
-    /* チャンクのバイト数を書き込む。 */
+    /* Write fmt chunk size. */
     write_uint32(writer->wave_file, 16);
 
-    /* オーディオフォーマットを書き込む。 */
+    /* Write audio format code. */
     write_uint16(writer->wave_file, 0x0001);
 
-    /* チャンネル数を書き込む。 */
+    /* Write number of channels. */
     write_uint16(writer->wave_file, writer->num_channels);
 
-    /* サンプルレートを書き込む。 */
+    /* Write sample rate. */
     write_uint32(writer->wave_file, writer->sample_rate);
 
-    /* 1秒あたりの平均バイト数を書き込む。 */
+    /* Write average bytes per second. */
     avr_bytes_per_sec = writer->sample_rate * (writer->bits_per_sample / 8) * writer->num_channels;
     write_uint32(writer->wave_file, avr_bytes_per_sec);
 
-    /* ブロックのサイズを書き込む。 */
+    /* Write block size. */
     block_size = writer->num_channels * writer->bits_per_sample / 8;
     write_uint16(writer->wave_file, block_size);
 
-    /* 量子化ビット数を書き込む。 */
+    /* Write PCM quantization bits per sample. */
     write_uint16(writer->wave_file, writer->bits_per_sample);
 }
 
 /*!
- * @brief           指定されたハンドルのwave_file_writerで、dataチャンクの書き込みを行います。
- * @param *writer   wave_file_readerのハンドル
+ * @brief           Write data chunk.
+ * @param *writer   Pointer of wave_file_writer.
  */
 static void write_data_chunk_header(const wave_file_writer* writer) {
     uint32_t bytes_per_sample, data_chunk_size;
 
-    /* 'data' をASCIIコードで書き込む。 */
+    /* Write 'data' as ASCII string. */
     write_char(writer->wave_file, 0x64);
     write_char(writer->wave_file, 0x61);
     write_char(writer->wave_file, 0x74);
     write_char(writer->wave_file, 0x61);
 
-    /* チャンクサイズを書き込む。 */
+    /* Write chunk size. */
     bytes_per_sample = writer->bits_per_sample / 8;
     data_chunk_size = writer->num_samples * bytes_per_sample;
     write_uint32(writer->wave_file, data_chunk_size);
 }
 
 /*!
- * @brief           wave_file_writerのハンドルを生成します。
- * @param *path     出力するWAVファイルのパス
- * @return          wave_file_writerのハンドル
+ * @brief           Create new instance of wave_file_writer.
+ * @param *path     Output file path.
+ * @return          Pointer of wave_file_writer.
  */
 wave_file_writer* wave_file_writer_create(const char* path) {
     wave_file_writer* result = (wave_file_writer*)malloc(sizeof(wave_file_writer));
@@ -146,9 +146,9 @@ wave_file_writer* wave_file_writer_create(const char* path) {
 }
 
 /*!
- * @brief           WAVファイルを作成し、指定されたハンドルで開きます。
- * @param *writer   wave_file_writerのハンドル
- * @param *path     WAVファイルを作成するパス
+ * @brief           Create or open WAV file.
+ * @param *writer   Pointer of wave_file_writer.
+ * @param *path     Path of WAV file.
  */
 void wave_file_writer_open(wave_file_writer* writer, const char* path) {
     writer->wave_file = fopen(path, "wb");
@@ -162,8 +162,8 @@ void wave_file_writer_open(wave_file_writer* writer, const char* path) {
 }
 
 /*!
- * @brief           指定されたハンドルで作成したWAVファイルを閉じます。
- * @param *writer   wave_file_writerのハンドル
+ * @brief           Close WAV file.
+ * @param *writer   Pointer of wave_file_writer.
  */
 void wave_file_writer_close(const wave_file_writer* writer) {
     fclose(writer->wave_file);
@@ -171,11 +171,11 @@ void wave_file_writer_close(const wave_file_writer* writer) {
 }
 
 /*!
- * @brief                   指定されたハンドルで作成したWAVファイルのPCMのフォーマットを設定します。
- * @param *writer           wave_file_writerのハンドル
- * @param sample_rate       サンプリング周波数
- * @param bits_per_sample   量子化ビット数
- * @param num_channels      チャンネル数
+ * @brief                   Set PCM format.
+ * @param *writer           Pointer of wave_file_writer
+ * @param sample_rate       Sample rate.
+ * @param bits_per_sample   Quantization bits.
+ * @param num_channels      Number of channels.
  */
 void wave_file_writer_set_pcm_format(wave_file_writer* writer, uint32_t sample_rate, uint16_t bits_per_sample, uint16_t num_channels) {
     writer->sample_rate = sample_rate;
@@ -184,17 +184,17 @@ void wave_file_writer_set_pcm_format(wave_file_writer* writer, uint32_t sample_r
 }
 
 /*!
- * @brief                   指定されたハンドルで作成したWAVファイルの総サンプル数を設定します。
- * @param *writer           wave_file_writerのハンドル
- * @param num_samples       総サンプル数
+ * @brief                   Set number of samples.
+ * @param *writer           Pointer of wave_file_writer
+ * @param num_samples       Number of samples.
  */
 void wave_file_writer_set_num_samples(wave_file_writer* writer, uint32_t num_samples) {
     writer->num_samples = num_samples;
 }
 
 /*!
- * @brief                   指定されたハンドルで作成したWAVEファイルへのサンプルの書き込みを開始します。最初のサンプルの書き込み前に、必ず、この関数を呼び出してください。
- * @param *writer           wave_file_writerのハンドル
+ * @brief                   Begin write samples.
+ * @param *writer           Pointer of wave_file_writer.
  */
 void wave_file_writer_begin_write(const wave_file_writer* writer) {
     write_wave_header(writer);
@@ -203,9 +203,9 @@ void wave_file_writer_begin_write(const wave_file_writer* writer) {
 }
 
 /*!
- * @brief                   指定されたハンドルで作成したWAVファイルへサンプルを書き込みます。最初にこの関数を呼び出す前に、必ず、wave_file_writer_begin_write 関数を呼び出してください。
- * @param *writer           wave_file_writerのハンドル
- * @param sample            書き込むサンプル
+ * @brief                   Write PCM sample to WAV file. You need call wave_file_writer_begin_write function before calling this function.
+ * @param *writer           Pointer of wave_file_writer
+ * @param sample            Sample
  */
 void wave_file_writer_write_sample(const wave_file_writer* writer, int32_t sample) {
     switch (writer->bits_per_sample)
@@ -222,8 +222,8 @@ void wave_file_writer_write_sample(const wave_file_writer* writer, int32_t sampl
 }
 
 /*!
- * @brief                   指定されたハンドルで作成したWAVファイルへのサンプルの書き込みを終了します。すべてのサンプルを書き込んだ後に、必ずこの関数を呼び出してください。
- * @param *writer           wave_file_readerのハンドル
+ * @brief                   Stop write sample. This function must be called after all samples are written.
+ * @param *writer           Pointer of wave_file_reader.
  */
 void wave_file_writer_end_write(const wave_file_writer* writer) {
     fflush(writer->wave_file);

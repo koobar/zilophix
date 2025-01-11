@@ -7,44 +7,40 @@
 #include <stdlib.h>
 
 /*!
- * @brief           マジックナンバーを書き込みます。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Write magic numbers
+ * @param *encoder  Pointer of encoder.
 */
 static void write_magic_number(encoder* encoder){
-    /* マジックナンバーを書き込む。 */
     write_uint8(encoder->output_file, 0x5A);
     write_uint8(encoder->output_file, 0x70);
     write_uint8(encoder->output_file, 0x58);
 }
 
 /*!
- * @brief           フォーマット情報を書き込みます。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Write format informations.
+ * @param *encoder  Pointer of encoder.
 */
 static void write_format_info(encoder* encoder){
-    /* フォーマットのバージョンを書き込む。 */
+    /* Write format version. */
     write_uint8(encoder->output_file, FORMAT_VERSION_CURRENT);
 
-    /* PCMフォーマット情報を書き込む。 */
+    /* Write PCM format informations. */
     write_uint32(encoder->output_file, encoder->sample_rate);
     write_uint8(encoder->output_file, encoder->bits_per_sample);
     write_uint8(encoder->output_file, encoder->num_channels);
     write_uint32(encoder->output_file, encoder->num_samples);
 
-    /* エンコード情報 */
+    /* Write ZilophiX encode information. */
     write_uint8(encoder->output_file, encoder->filter_taps);
     write_uint16(encoder->output_file, encoder->block_size);
     write_bool(encoder->output_file, encoder->use_mid_side_stereo);
     write_uint32(encoder->output_file, encoder->num_blocks);
 
-    /* 予約済みコードを書き込む（未実装は常にゼロ）*/
+    /* Write reserved codes. */
     write_uint8(encoder->output_file, 0x00);
     write_uint8(encoder->output_file, 0x00);
 
-    /* オーディオデータの開始アドレスを書き込む領域を保持し、ダミーアドレスを書き込む
-     * オーディオデータの開始位置を明確に記録することで、例えバージョンアップなどで
-     * これ以降のデータ構造が変化しても、ここまでが正しければ、どこからが圧縮された
-     * オーディオデータであるのか判別することができる。*/
+    /* Write dummy audio data offset. */
     write_char(encoder->output_file, 'A');
     write_char(encoder->output_file, 'D');
     write_char(encoder->output_file, 'D');
@@ -52,10 +48,7 @@ static void write_format_info(encoder* encoder){
     encoder->audio_data_position_position = (uint32_t)ftell(encoder->output_file);
     write_uint32(encoder->output_file, 0xFFFFFFFF);
 
-    /* オーディオデータのサイズを書き込む領域を保持し、ダミーサイズを書き込む
-     * オーディオデータのサイズを明確に記録することで、例えバージョンアップなどで
-     * これ以降のデータ構造が変化しても、ここまでが正しければ、圧縮された
-     * オーディオデータのサイズを判別することができる。*/
+    /* Write dummy audio data size. */
     write_char(encoder->output_file, 'S');
     write_char(encoder->output_file, 'I');
     write_char(encoder->output_file, 'Z');
@@ -65,46 +58,41 @@ static void write_format_info(encoder* encoder){
 }
 
 /*!
- * @brief           ヘッダ部の書き込みを行います。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Write header.
+ * @param *encoder  Pointer of encoder.
  */
 static void write_header(encoder* encoder) {
-    /* マジックナンバーを書き込む。 */
     write_magic_number(encoder);
-
-    /* フォーマット情報を書き込む */
     write_format_info(encoder);
-    
-    /* タグ情報を書き込む */
     tag_write(encoder->output_file, encoder->tag);
 
-    /* データの開始オフセットを保持 */
+    /* Save audio data offset. */
     encoder->audio_data_begin_position = (uint32_t)ftell(encoder->output_file);
 }
 
 /*!
- * @brief           オーディオデータ部分の書き込みを終了し、データの開始アドレスとサイズを書き込みます。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Write audio data offset and audio data size.
+ * @param *encoder  Pointer of encoder.
 */
 static void flush_audio_data(encoder* encoder){
     uint32_t current_len = (uint32_t)ftell(encoder->output_file);
     uint32_t data_size = current_len - (encoder->audio_data_begin_position);
 
-    /* オーディオデータの開始アドレスのアドレスに移動し、開始アドレスを書き込む */
+    /* Move to address of audio data begin offset and write audio data offset */
     fseek(encoder->output_file, encoder->audio_data_position_position, SEEK_SET);
     write_uint32(encoder->output_file, encoder->audio_data_begin_position);
 
-    /* オーディオデータのサイズを書き込む位置に移動し、サイズを書き込む */
+    /* Move to address of audio data size and write audio data size. */
     fseek(encoder->output_file, encoder->audio_data_size_position, SEEK_SET);
     write_uint32(encoder->output_file, data_size);
 
-    /* 元の位置に移動 */
+    /* Move to default position. */
     fseek(encoder->output_file, current_len, SEEK_SET);
 }
 
 /*!
- * @brief           ブロックをエンコードします。ミッドサイドステレオが使用されている場合、encode_current_midside_block関数を使用してください。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Encode monaural or normal stereo block. 
+ * @param *encoder  Pointer of encoder
  */
 static void encode_current_block_normal(encoder* encoder){
     uint8_t ch;
@@ -120,24 +108,24 @@ static void encode_current_block_normal(encoder* encoder){
         lms = encoder->lms_filters[ch];
 
         for (offset = 0; offset < sb->size; ++offset) {
-            /* STEP 1. 多項式予測 */
+            /* STEP 1. Polynomial prediction. */
             residual = sb->samples[offset] - polynomial_predictor_predict(poly);
             polynomial_predictor_update(poly, sb->samples[offset]);
 
-            /* STEP 2. SSLMSフィルタによる予測 */
+            /* STEP 2. SSLMS prediction. */
             sample = residual;
             residual -= lms_predict(lms);
             lms_update(lms, sample, residual);
 
-            /* STEP 3. 出力 */
+            /* STEP 3. Output */
             sb->samples[offset] = residual;
         }
     }
 }
 
 /*!
- * @brief           ミッドサイドステレオブロックをエンコードします。ミッドサイドステレオではない場合、encode_current_normal_block関数を使用してください。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Encode Mid-Side stereo block.
+ * @param *encoder  Pointer of encoder.
  */
 static void encode_current_block_midside(encoder* encoder){
     uint16_t offset;
@@ -156,11 +144,11 @@ static void encode_current_block_midside(encoder* encoder){
         left = lch->samples[offset];
         right = rch->samples[offset];
 
-        /* STEP 1. ミッドサイドステレオへの変換 */
+        /* STEP 1. Convert to Mid-Side stereo. */
         lch->samples[offset] = mid = RSHIFT(left + right, 1);
         rch->samples[offset] = side = left - right;
 
-        /* STEP 2. 多項式予測 */
+        /* STEP 2. Polynomial prediction. */
         mid -= polynomial_predictor_predict(lpoly);
         side -= polynomial_predictor_predict(rpoly);
         polynomial_predictor_update(lpoly, lch->samples[offset]);
@@ -168,21 +156,21 @@ static void encode_current_block_midside(encoder* encoder){
         lch->samples[offset] = mid;
         rch->samples[offset] = side;
 
-        /* STEP 3. SSLMSフィルタによる予測 */
+        /* STEP 3. SSLMS prediction. */
         mid -= lms_predict(llms);
         side -= lms_predict(rlms);
         lms_update(llms, lch->samples[offset], mid);
         lms_update(rlms, rch->samples[offset], side);
 
-        /* STEP 4. 出力 */
+        /* STEP 4. Output */
         lch->samples[offset] = mid;
         rch->samples[offset] = side;
     }
 }
 
 /*!
- * @brief           指定されたハンドルのエンコーダで読み込まれたブロックのエンコードを行います。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Encode current block.
+ * @param *encoder  Pointer of encoder.
  */
 static void encode_current_block(encoder* encoder) {
     if (encoder->use_mid_side_stereo){
@@ -194,11 +182,11 @@ static void encode_current_block(encoder* encoder) {
 }
 
 /*!
- * @brief               ブロック数を計算します
- * @param num_samples   サンプル数
- * @param num_channels  チャンネル数
- * @param block_size    サブブロックのサンプル数
- * @return              ブロック数
+ * @brief               Calculate the number of blocks.
+ * @param num_samples   The number of samples.
+ * @param num_channels  The number of channels.
+ * @param block_size    The number of block size.
+ * @return              The number of blocks.
  */
 static uint32_t compute_block_count(uint32_t num_samples, uint8_t num_channels, uint16_t block_size) {
     uint32_t num_samples_per_ch = num_samples / num_channels;
@@ -212,17 +200,17 @@ static uint32_t compute_block_count(uint32_t num_samples, uint8_t num_channels, 
 }
 
 /*!
- * @brief                           エンコーダを初期化します
- * @param *encoder                  エンコーダのハンドル
- * @param *file                     出力先のファイルハンドル
- * @param sample_rate               サンプリング周波数
- * @param bits_per_sample           量子化ビット数
- * @param num_channels              チャンネル数
- * @param num_samples               合計サンプル数
- * @param block_size                ブロックサイズ
- * @param use_mid_side_stereo       ミッドサイドステレオを使用するかどうかを示すフラグ
- * @param filter_taps               LMSフィルタのタップ数
- * @param *tag                      タグ情報
+ * @brief                           Initialize encoder.
+ * @param *encoder                  Pointer of encoder.
+ * @param *file                     Output file.
+ * @param sample_rate               Sample rate.
+ * @param bits_per_sample           Quantization bits.
+ * @param num_channels              The number of channels.
+ * @param num_samples               The number of samples.
+ * @param block_size                Block size.
+ * @param use_mid_side_stereo       Mid-Side stereo flag.
+ * @param filter_taps               The taps of SSLMS filter.
+ * @param *tag                      Tag information.
  */
 static void init(
     encoder* encoder, 
@@ -259,30 +247,30 @@ static void init(
     encoder->current_sub_block_offset = 0;
     encoder->tag = tag;
 
-    /* ブロックを初期化 */
+    /* Initialize block */
     block_init(encoder->current_block, block_size, num_channels);
 
-    /* 各チャンネル用のフィルタを初期化 */
+    /* Initialize all filters. */
     for (ch = 0; ch < num_channels; ++ch) {
         encoder->lms_filters[ch] = lms_create(filter_taps, bits_per_sample);
         encoder->polynomial_predictors[ch] = polynomial_predictor_create();
     }
 
-    /* ヘッダ部を書き込む */
+    /* Write header */
     write_header(encoder);
 }
 
 /*!
- * @brief                           指定された設定で、エンコーダのハンドルを生成します。
- * @param *file                     出力先のファイルハンドル
- * @param sample_rate               サンプリング周波数
- * @param bits_per_sample           量子化ビット数
- * @param num_channels              チャンネル数
- * @param num_samples               合計サンプル数
- * @param block_size                ブロックサイズ
- * @param use_mid_side_stereo       ミッドサイドステレオを使用するかどうかを示すフラグ
- * @param filter_taps               LMSフィルタのタップ数
- * @param *tag                      タグ情報
+ * @brief                           Create new instance of encoder.
+ * @param *file                     Output file
+ * @param sample_rate               Sample rate
+ * @param bits_per_sample           Quantization bits
+ * @param num_channels              The number of channels.
+ * @param num_samples               The number of samples.
+ * @param block_size                Block size.
+ * @param use_mid_side_stereo       Mid-Side stereo flag.
+ * @param filter_taps               The taps of SSLMS filters.
+ * @param *tag                      Tag information.
  */
 encoder* encoder_create(
     FILE* file,
@@ -317,13 +305,13 @@ encoder* encoder_create(
 }
 
 /*!
- * @brief           指定されたハンドルのエンコーダを解放します。
- * @param *encoder  エンコーダのハンドル
+ * @brief           Release encoder.
+ * @param *encoder  Pointer of encoder.
  */
 void encoder_free(encoder* encoder) {
     uint8_t ch;
 
-    /* 各チャンネル用のフィルタを解放 */
+    /* Release all filters. */
     for (ch = 0; ch < encoder->num_channels; ++ch) {
         lms_free(encoder->lms_filters[ch]);
         polynomial_predictor_free(encoder->polynomial_predictors[ch]);
@@ -340,28 +328,26 @@ void encoder_free(encoder* encoder) {
 }
 
 /*!
- * @brief           指定されたハンドルのエンコーダで、指定されたサンプルをエンコードします。
- * @param *encoder  エンコーダのハンドル
- * @param sample    サンプル
+ * @brief           Encode sample.
+ * @param *encoder  Pointer of encoder.
+ * @param sample    Sample
  */
 void encoder_write_sample(encoder* encoder, int32_t sample) {
     int32_t flg_encode_block = 0;
 
     encoder->current_block->sub_blocks[encoder->current_sub_block_channel++]->samples[encoder->current_sub_block_offset] = sample;
 
-    /* オフセット更新 */
+    /* Update offsets. */
     if (encoder->current_sub_block_channel >= encoder->num_channels) {
         encoder->current_sub_block_channel = 0;
         ++encoder->current_sub_block_offset;
 
-        /* サブブロックのオフセットがブロックサイズ以上となった際は、サブブロックのオフセットをゼロに戻し、エンコードされたブロックを出力ストリームに書き込む */
         if (encoder->current_sub_block_offset >= encoder->block_size) {
             encoder->current_sub_block_offset = 0;
             flg_encode_block = 1;
         }
     }
 
-    /* 出力ストリームへの書き込みフラグが立っていれば書き込む */
     if (flg_encode_block == 1) {
         encode_current_block(encoder);
         code_write_block(encoder->coder, encoder->current_block);
@@ -369,8 +355,8 @@ void encoder_write_sample(encoder* encoder, int32_t sample) {
 }
 
 /*!
- * @brief           指定されたハンドルのエンコーダでのエンコードの終了処理を行います。すべてのサンプルのエンコードが終了した後に、必ず呼び出してください。
- * @param *encoder  エンコーダのハンドル
+ * @brief           End encode.
+ * @param *encoder  Pointer of encoder.
  */
 void encoder_end_write(encoder* encoder) {
     if (encoder->current_sub_block_offset != 0) {

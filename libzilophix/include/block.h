@@ -4,9 +4,6 @@
 #include "sub_block.h"
 #include <stdint.h>
 
-/*!
- * @brief ブロック
- */
 typedef struct {
     sub_block** sub_blocks;
     uint16_t size;
@@ -14,16 +11,16 @@ typedef struct {
 } block;
 
 /*!
- * @brief               ブロックを初期化します。
- * @param block         初期化するブロックのハンドル
- * @param size          ブロックに含まれるサブブロックのサンプル数 
- * @param num_channels  ブロックのチャンネル数（サブブロック数）
+ * @brief               Initialize block.
+ * @param block         Pointer of block.
+ * @param size          The number of samples.
+ * @param num_channels  The number of channels.
  */
 void block_init(block* block, uint16_t size, uint8_t num_channels);
 
 /*!
- * @brief       ブロックを解放します。
- * @param block ブロックのハンドル
+ * @brief       Release specified block.
+ * @param block Pointer of block.
  */
 void block_free(block* block);
 

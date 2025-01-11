@@ -17,57 +17,57 @@ typedef struct {
 } wave_file_reader;
 
 /*!
- * @brief           wave_file_readerのハンドルを生成します。
- * @param path      読み込むWAVファイルのパス
- * @return          wave_file_readerのハンドル
+ * @brief           Create new instance of wave_file_reader.
+ * @path            WAV file path.
+ * @return          New pointer of wave_file_reader.
  */
 wave_file_reader* wave_file_reader_create(const char* path);
 
 /*!
- * @brief           WAVファイルを開きます。
- * @param *reader   wave_file_readerのハンドル
- * @param *path     ファイルパス
+ * @brief           Open WAV file.
+ * @param *reader   Pointer of wave_file_reader.
+ * @param *path     WAV file path.
  */
 void wave_file_reader_open(wave_file_reader* reader, const char* path);
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルを閉じます。
- * @param *reader   wave_file_readerのハンドル
+ * @brief           Close WAV file.
+ * @param *reader   Pointer of wave_file_reader.
  */
 void wave_file_reader_close(const wave_file_reader* reader);
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルのサンプリング周波数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          サンプリング周波数
+ * @brief           Get sample rate.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Sample rate.
  */
 uint32_t wave_file_reader_get_sample_rate(const wave_file_reader* reader);
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルの量子化ビット数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          量子化ビット数
+ * @brief           Get bits per sample.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Bits per sample.
  */
 uint16_t wave_file_reader_get_bits_per_sample(const wave_file_reader* reader);
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルのチャンネル数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          チャンネル数
+ * @brief           Get number of channels.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Number of channels.
  */
 uint16_t wave_file_reader_get_num_channels(const wave_file_reader* reader);
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルの総サンプル数を取得します。
- * @param *reader   wave_file_readerのハンドル
- * @return          総サンプル数
+ * @brief           Get number of samples.
+ * @param *reader   Pointer of wave_file_reader.
+ * @return          Number of samples.
  */
 uint32_t wave_file_reader_get_num_samples(const wave_file_reader* reader);
 
 /*!
- * @brief           指定されたハンドルで開かれたWAVファイルから次のサンプルを読み込みます。
- * @param *reader   wave_file_readerのハンドル
- * @return          サンプル
+ * @brief           Read next sample.
+ * @param *reader   Pointer of wave_file_reader
+ * @return          Sample
  */
 int32_t wave_file_reader_read_sample(wave_file_reader* reader);
 

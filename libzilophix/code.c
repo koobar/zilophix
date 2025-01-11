@@ -1,4 +1,4 @@
-#include "./include/macro.h"
+ï»¿#include "./include/macro.h"
 #include "./include/code.h"
 #include "./include/errcode.h"
 #include "./include/sub_block.h"
@@ -25,8 +25,6 @@
 #define ENTROPY_PARAMETER_NEED_BITS_FOR_PCM24   5
 
 #ifdef _MSC_VER
-
-/* MSVC ‚É‚Í __builtin_clz ‚ªŠÜ‚Ü‚ê‚È‚¢‚½‚ßA©‘O‚ÅÀ‘•‚·‚é */
 #define __builtin_clz(x) clz(x)
 
 static inline uint32_t popcnt(uint32_t x)
@@ -52,11 +50,11 @@ static inline uint32_t clz(uint32_t x)
 #endif
 
 /*!
- * @brief                   w’è‚³‚ê‚½ƒf[ƒ^‚ğw’è‚³‚ê‚½ƒpƒ‰ƒ[ƒ^‚Åƒ‰ƒCƒX•„†‰»‚µ‚½ê‡‚Ìƒrƒbƒg”‚ğŒvZ‚µ‚Ü‚·B
- * @param *data             ƒf[ƒ^
- * @param data_size         ƒf[ƒ^‚ÌƒTƒCƒY
- * @param parameter         ƒ‰ƒCƒX•„†‰»‚Ìƒpƒ‰ƒ[ƒ^
- * @return                  w’è‚³‚ê‚½ƒf[ƒ^‚ğAw’è‚³‚ê‚½ƒpƒ‰ƒ[ƒ^‚Åƒ‰ƒCƒX•„†‰»‚µ‚½ê‡‚Ìƒrƒbƒg”
+ * @brief                   Calculates the number of bits required to Rice encode the given data with the specified parameters.
+ * @param *data             Pointer of data
+ * @param data_size         Size of data.
+ * @param parameter         Rice parameter
+ * @return                  The number of bits required to Rice-encode the specified data with the specified parameters.
  */
 static uint32_t compute_rice_total_bits(const int32_t* data, const uint16_t start, const uint16_t data_size, const uint32_t parameter) {
     uint32_t estimated_size = 0;
@@ -78,33 +76,33 @@ static uint32_t compute_rice_total_bits(const int32_t* data, const uint16_t star
 }
 
 /*!
- * @brief               w’è‚³‚ê‚½ƒf[ƒ^‚É‘Î‚µ‚ÄÅ“K‚Æ‚È‚éƒ‰ƒCƒX•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğŒvZ‚µ‚Ü‚·B
- * @param *coder        •„†‰»Ší‚Ìƒnƒ“ƒhƒ‹
- * @param *data         ƒf[ƒ^‚Ìƒ|ƒCƒ“ƒ^
- * @param start         ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌŠJnƒIƒtƒZƒbƒg
- * @param data_size     ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒTƒCƒY
- * @param *total_bits   [o—Í]‹‚ß‚ç‚ê‚½ƒpƒ‰ƒ[ƒ^‚Åƒ‰ƒCƒX•„†‰»‚µ‚½ê‡‚Ìƒf[ƒ^‚Ì‡Œvƒrƒbƒg”
- * @return              w’è‚³‚ê‚½ƒf[ƒ^‚É‘Î‚µ‚ÄÅ“K‚Æ‚È‚éƒ‰ƒCƒX•„†‰»‚Ìƒpƒ‰ƒ[ƒ^
+ * @brief               Calculates the optimal Rice coding parameters for the given data.
+ * @param *coder        Pointer of code.
+ * @param *data         Pointer of data.
+ * @param start         Offset of data begin.
+ * @param data_size     Data size.
+ * @param *total_bits   [OUT] The total number of bits of data when Rice-encoded with the obtained parameters
+ * @return              The optimal Rice encoding parameters for the given data
  */
 static uint32_t compute_optimal_rice_parameter(code* coder, const int32_t* data, uint16_t start, uint16_t data_size, uint32_t* total_bits) {
     double sum = 0;
     double mean = 0;
     uint32_t i, imean, parameter;
 
-    /* oŒ»‚·‚éƒf[ƒ^‚Ìâ‘Î’l‚Ì•½‹Ï‚ğ‹‚ß‚éB*/
+    /* Calculate the average of the absolute values â€‹â€‹of the data that appears. */
     for (i = 0; i < data_size; ++i) {
         sum += abs(data[start + i]);
     }
     mean = sum / data_size;
 
-    /* •½‹Ï‚ğ®”‚ÉŠÛ‚ß‚ñ‚¾’l‚Ì•\Œ»‚É•K—v‚Èƒrƒbƒg”‚ğƒpƒ‰ƒ[ƒ^‚Æ‚·‚éB*/
+    /* The number of bits required to express the average rounded to an integer is taken as a parameter. */
     imean = CLAMP((uint32_t)floor(mean), 0, UINT32_MAX);
     if (imean == 0){
-        /* •½‹Ï‚ªƒ[ƒ‚Ìê‡Aè—]‚ğƒ[ƒƒrƒbƒgo—Í(=–³o—Í)‚Å‚àOK */
+        /* If the average is zero, it is OK to output the remainder as zero bits (= no output). */
         parameter = 0;
     }
     else{
-        /* •½‹Ï‚ªƒ[ƒˆÈŠO‚Ìê‡AÅ“Kƒpƒ‰ƒ[ƒ^‚Í (32-•½‹Ï‚Ì•\Œ»‚É•K—v‚ÈÅ¬ƒrƒbƒg”) ‚Å„’è‰Â”\ */
+        /* If the mean is non-zero, the optimal parameters can be estimated as (32 - the minimum number of bits required to represent the mean) */
         parameter = CLAMP(32 - __builtin_clz(imean), 0, coder->rice_parameter_max);
     }
     
@@ -113,19 +111,19 @@ static uint32_t compute_optimal_rice_parameter(code* coder, const int32_t* data,
 }
 
 /*!
- * @brief                   ƒp[ƒeƒBƒVƒ‡ƒ“‚Åg—p‚·‚×‚«ƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğŒvZ‚µ‚Ü‚·B
- * @param *coder            •„†‰»Ší‚Ìƒnƒ“ƒhƒ‹
- * @param *data             ƒf[ƒ^‘S‘Ì‚Ìƒ|ƒCƒ“ƒ^
- * @param start             ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌŠJnˆÊ’u
- * @param partition_size    ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒTƒCƒY
- * @param *partition_bits   [o—Í]‹‚ß‚ç‚ê‚½ƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğg—p‚µ‚ÄƒGƒ“ƒgƒƒs[•„†‰»‚µ‚½ê‡‚Ìƒp[ƒeƒBƒVƒ‡ƒ“‘S‘Ì‚Ìƒrƒbƒg”
- * @return                  Å“K‚ÈƒGƒ“ƒgƒƒs[•„†‰»ƒpƒ‰ƒ[ƒ^
+ * @brief                   Calculates the entropy coding parameters that should be used on the partition.
+ * @param *coder            Pointer of code.
+ * @param *data             Pointer of data.
+ * @param start             Offset of partition begin.
+ * @param partition_size    Size of partition.
+ * @param *partition_bits   [OUT] The number of bits required for the entire partition when it is entropy coded using the calculated entropy coding parameters.
+ * @return                  Optimal entropy coding parameter.
  */
 static uint32_t compute_optimal_entropy_parameter(code* coder, const int32_t* data, uint16_t start, uint16_t partition_size, uint32_t* partition_bits) {
     bool is_blank_partition = true;
     uint16_t offset;
 
-    /* ƒuƒ‰ƒ“ƒNƒp[ƒeƒBƒVƒ‡ƒ“i‚·‚×‚Ä‚Ì’l‚ªƒ[ƒ‚Å‚ ‚éƒp[ƒeƒBƒVƒ‡ƒ“j‚Å‚ ‚é‚©”»’è‚·‚éB*/
+    /* Check blank partition. */
     for (offset = 0; offset < partition_size; ++offset) {
         if (data[offset + start] != 0) {
             is_blank_partition = false;
@@ -142,11 +140,11 @@ static uint32_t compute_optimal_entropy_parameter(code* coder, const int32_t* da
 }
 
 /*!
- * @brief               w’è‚³‚ê‚½ƒf[ƒ^‚É‘Î‚µ‚ÄÅ“K‚Æ‚È‚éƒp[ƒeƒBƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^A‚¨‚æ‚ÑA‚»‚ê‚¼‚ê‚Ìƒp[ƒeƒBƒVƒ‡ƒ“‚Åg—p‚·‚×‚«ƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğŒvZ‚µ‚Ü‚·B
- * @param *coder        •„†‰»Ší‚Ìƒnƒ“ƒhƒ‹
- * @param *data         ƒf[ƒ^‚Ìƒ|ƒCƒ“ƒ^
- * @param data_size     ƒf[ƒ^‚ÌƒTƒCƒY
- * @return              w’è‚³‚ê‚½ƒf[ƒ^‚É‘Î‚µ‚ÄÅ“K‚Æ‚È‚éƒp[ƒeƒBƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^
+ * @brief               For the given data, it computes the optimal partition parameters as well as the entropy coding parameters to use for each partition.
+ * @param *coder        Pointer of code.
+ * @param *data         Pointer of data.
+ * @param data_size     Size of data.
+ * @return              Optimal partition parameter.
  */
 static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* data, uint16_t data_size) {
     uint32_t partition_size;
@@ -166,23 +164,23 @@ static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* 
         partition_size = data_size / partition_count;
         size = 0;
 
-        /* ‚»‚ê‚¼‚ê‚Ìƒp[ƒeƒBƒVƒ‡ƒ“‚É‚Æ‚Á‚ÄÅ“K‚Æ‚È‚éƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğ‹‚ßAì‹Æ—Ìˆæ‚ÉŠi”[‚·‚é */
+        /* Calculate the optimal entropy coding parameters for each partition and store them in the work memory. */
         for (partition_index = 0; partition_index < partition_count; ++partition_index) {
             start = partition_size * partition_index;
 
-            /* ‚±‚Ìƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğì‹Æ—Ìˆæ‚É•Û‘¶ */
+            /* Save the entropy coding parameters of this partition in the working memory. */
             coder->workB[partition_index] = compute_optimal_entropy_parameter(coder, data, start, partition_size, &partition_bits);
             
-            /* ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒTƒCƒY‚ğ‰ÁZ */
+            /* Update partition size. */
             size += partition_bits;
         }
 
-        /* ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒTƒCƒY‚ÉAƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğ•Û‘¶‚·‚é‚½‚ß‚É—v‚·‚éƒrƒbƒg”‚ğ‰ÁZ */
+        /* To the size of the partition, add the number of bits required to store the entropy coding parameters. */
         size += PARTITION_PARAMETER_NEED_BITS;
 
-        /* ‚·‚Å‚É”­Œ©‚³‚ê‚½ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌÅ¬ƒTƒCƒY‚æ‚èA¡‰ñ‚µ‚½ƒpƒ‰ƒ[ƒ^‚É‚æ‚é
-         * ƒp[ƒeƒBƒVƒ‡ƒ“ƒTƒCƒY‚Ì‚Ù‚¤‚ª¬‚³‚¯‚ê‚ÎAÅ¬ƒTƒCƒY‚ğ’u‚«Š·‚¦Aì‹Æ—Ìˆæ‚ÉŠi”[‚³‚ê‚½A
-         * ‚·‚×‚Ä‚Ìƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğAo—Í—Ìˆæ‚ÉƒRƒs[‚·‚éB*/
+        /* If the partition size based on the parameters tried this time is smaller than the 
+           minimum size of partitions already found, the minimum size is replaced and the entropy 
+           coding parameters of all partitions stored in the working area are copied to the output area.*/
         if (min_size > size) {
             min_size = size;
             optimal_partition_parameter = trial_pp;
@@ -194,12 +192,12 @@ static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* 
 }
 
 /*!
- * @brief                   Rice•„†‚ğ—p‚¢‚Äƒp[ƒeƒBƒVƒ‡ƒ“‚ÉŠÜ‚Ü‚ê‚é—\‘ªc·‚ğƒrƒbƒgƒXƒgƒŠ[ƒ€‚É‘‚«‚İ‚Ü‚·B
- * @param *stream           ƒrƒbƒgƒXƒgƒŠ[ƒ€‚Ìƒnƒ“ƒhƒ‹
- * @param *data             ‘‚«‚Ş—\‘ªc·‚Ìƒ|ƒCƒ“ƒ^
- * @param start             ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌŠJnƒIƒtƒZƒbƒg
- * @param partition_size    ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒTƒCƒY
- * @param parameter         ƒ‰ƒCƒX•„†‰»‚Ìƒpƒ‰ƒ[ƒ^
+ * @brief                   Write residuals to bitstream as rice code.
+ * @param *stream           Pointer of bitstream.
+ * @param *data             Pointer of residuals.
+ * @param start             Offset of partition.
+ * @param partition_size    Size of partition.
+ * @param parameter         Rice parameter.
  */
 static void write_rice_partition(bit_stream* stream, const int32_t* data, uint16_t start, uint16_t partition_size, uint32_t parameter) {
     uint16_t offset;
@@ -210,12 +208,12 @@ static void write_rice_partition(bit_stream* stream, const int32_t* data, uint16
 }
 
 /*!
- * @brief                   Rice•„†‚ªg—p‚³‚ê‚½ƒp[ƒeƒBƒVƒ‡ƒ“‚ÉŠÜ‚Ü‚ê‚é—\‘ªc·‚ğ“Ç‚İ‚İ‚Ü‚·B
- * @param *stream           ƒrƒbƒgƒXƒgƒŠ[ƒ€‚Ìƒnƒ“ƒhƒ‹
- * @param *data             “Ç‚İ‚Ü‚ê‚½—\‘ªc·‚ğŠi”[‚·‚é—Ìˆæ‚Ìƒ|ƒCƒ“ƒ^
- * @param start             ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌŠJnƒIƒtƒZƒbƒg
- * @param partition_size    ƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒTƒCƒY
- * @param parameter         ƒ‰ƒCƒX•„†‰»‚Ìƒpƒ‰ƒ[ƒ^
+ * @brief                   Read the prediction residuals contained in the Rice-coded partition.
+ * @param *stream           Pointer of bitstream.
+ * @param *data             Pointer of data.
+ * @param start             Offset of partition
+ * @param partition_size    Size of partition
+ * @param parameter         Rice parameter
  */
 static void read_rice_partition(bit_stream* stream, int32_t* data, uint16_t start, uint16_t partition_size, uint32_t parameter) {
     uint16_t offset;
@@ -227,9 +225,9 @@ static void read_rice_partition(bit_stream* stream, int32_t* data, uint16_t star
 }
 
 /*!
- * @brief               w’è‚³‚ê‚½ƒrƒbƒgƒXƒgƒŠ[ƒ€‚ÉAw’è‚³‚ê‚½ƒTƒuƒuƒƒbƒN‚ğƒ‰ƒCƒX•„†‰»‚µ‚Ä‘‚«‚İ‚Ü‚·B
- * @param *coder        •„†‰»Ší‚Ìƒnƒ“ƒhƒ‹
- * @param *sub_block    ƒTƒuƒuƒƒbƒN‚Ìƒnƒ“ƒhƒ‹
+ * @brief               Writes the specified sub-block to the given bitstream using the Rice encoding.
+ * @param *coder        Pointer of coder.
+ * @param *sub_block    Pointer of subblock.
  */
 static void write_sub_block(code* coder, const sub_block* sub_block) {
     uint32_t p, start;
@@ -238,25 +236,25 @@ static void write_sub_block(code* coder, const sub_block* sub_block) {
     uint32_t partition_parameter;
     uint32_t partition_count;
 
-    /* ƒ‰ƒCƒX•„†‰»‚Ìƒp[ƒeƒBƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^‚ğŒvZ */
+    /* Calculate partition parameter. */
     partition_parameter = compute_optimal_partition_parameter(coder, sub_block->samples, sub_block->size);
 
-    /* ƒp[ƒeƒBƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^‚©‚çƒp[ƒeƒBƒVƒ‡ƒ“”‚Æƒp[ƒeƒBƒVƒ‡ƒ“‚ÌƒTƒCƒY‚ğŒvZ */
+    /* Compute the number of partitions and partition size from parameter. */
     partition_count = RESTORE_PARTITION_COUNT(partition_parameter);
     partition_size = sub_block->size / partition_count;
 
-    /* ƒp[ƒeƒBƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^‚ğ•Û‘¶‚·‚é */
+    /* Write partition parameter. */
     bit_stream_write_uint(coder->bitstream, partition_parameter - PARTITION_PARAMETER_MIN, PARTITION_PARAMETER_NEED_BITS);
 
-    /* ƒTƒuƒuƒƒbƒN‚ğƒGƒ“ƒgƒƒs[•„†‰»‚µ‚Ä‘‚«‚Ş */
+    /* Write all subblocks. */
     for (p = 0; p < partition_count; ++p) {
         start = partition_size * p;
         parameter = coder->workA[p];
 
-        /* ƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğ‘‚«‚Ş */
+        /* Write parameter of entropy coding. */
         bit_stream_write_uint(coder->bitstream, (uint32_t)(parameter), coder->bits_of_entropy_parameter);
 
-        /* ƒGƒ“ƒgƒƒs[•„†‚Ìƒpƒ‰ƒ[ƒ^‚ªRice•„†‚Ì”ÍˆÍ“à‚È‚çARice•„†‚Åƒp[ƒeƒBƒVƒ‡ƒ“‚ğ‘‚«‚Ş */
+        /* If the entropy parameter is Rice parameter, write the partitions as Rice codes.*/
         if (parameter <= coder->rice_parameter_max) {
             write_rice_partition(coder->bitstream, sub_block->samples, start, partition_size, parameter);
         }
@@ -264,9 +262,9 @@ static void write_sub_block(code* coder, const sub_block* sub_block) {
 }
 
 /*!
- * @brief               w’è‚³‚ê‚½ƒrƒbƒgƒXƒgƒŠ[ƒ€‚©‚çAƒ‰ƒCƒX•„†‰»‚³‚ê‚Ä‘‚«‚Ü‚ê‚½ƒTƒuƒuƒƒbƒN‚Ìƒf[ƒ^‚ğ“Ç‚İ‚İAw’è‚³‚ê‚½ƒTƒuƒuƒƒbƒN‚ÉŠi”[‚µ‚Ü‚·B
- * @param *coder        •„†‰»Ší‚Ìƒnƒ“ƒhƒ‹
- * @param *sub_block    ƒTƒuƒuƒƒbƒN‚Ìƒnƒ“ƒhƒ‹
+ * @brief               Read Rice encoded subblock.
+ * @param *coder        Pointer of code.
+ * @param *sub_block    Pointer of subblock.
  */
 static void read_sub_block(code* coder, sub_block* sub_block) {
     uint32_t parameter;
@@ -276,18 +274,18 @@ static void read_sub_block(code* coder, sub_block* sub_block) {
     uint32_t partition_parameter;
     uint32_t partition_count;
 
-    /* ƒp[ƒeƒBƒVƒ‡ƒ“ƒpƒ‰ƒ[ƒ^‚ğæ“¾ */
+    /* Read partition parameter. */
     partition_parameter = bit_stream_read_uint(coder->bitstream, PARTITION_PARAMETER_NEED_BITS) + PARTITION_PARAMETER_MIN;
 
-    /* ƒ‰ƒCƒX•„†‰»‚Ìƒp[ƒeƒBƒVƒ‡ƒ“”‚Æƒp[ƒeƒBƒVƒ‡ƒ“ƒTƒCƒY‚ğŒvZ */
+    /* Compute the number of partitions and partition size from parameter. */
     partition_count = RESTORE_PARTITION_COUNT(partition_parameter);
     partition_size = sub_block->size / partition_count;
 
-    /* ƒGƒ“ƒgƒƒs[•„†‰»‚³‚ê‚½®”‚ğ“Ç‚İ‚Ş */
+    /* Read all partitions. */
     for (p = 0; p < partition_count; ++p) {
         start = p * partition_size;
 
-        /* ƒGƒ“ƒgƒƒs[•„†‰»‚Ìƒpƒ‰ƒ[ƒ^‚ğæ“¾ */
+        /* Read parameter of entropy coding. */
         parameter = bit_stream_read_uint(coder->bitstream, coder->bits_of_entropy_parameter);
 
         if (parameter <= coder->rice_parameter_max){
@@ -302,10 +300,9 @@ static void read_sub_block(code* coder, sub_block* sub_block) {
 }
 
 /*!
- * @brief               ƒuƒƒbƒN‚ğ“Ç‚İ‘‚«‚·‚éAPI‚Ìƒnƒ“ƒhƒ‹‚ğ¶¬‚µ‚Ü‚·B
- * @param *stream       ƒrƒbƒgƒXƒgƒŠ[ƒ€‚Ìƒnƒ“ƒhƒ‹
- * @param fmt_version   ƒtƒH[ƒ}ƒbƒg‚Ìƒo[ƒWƒ‡ƒ“
- * @return              ƒuƒƒbƒN“Ç‚İ‘‚«API‚Ìƒnƒ“ƒhƒ‹
+ * @brief           Create new instance of code.
+ * @param *stream   Pointer of bit_stream.
+ * @return          Pointer of created instance.
  */
 code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_sample) {
     code* result = (code*)malloc(sizeof(code));
@@ -320,7 +317,6 @@ code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_samp
     result->workB = (uint32_t*)calloc(PARTITION_COUNT_MAX, sizeof(uint32_t));
 
     if (fmt_version == FORMAT_VERSION_1_0){
-        /* 16ƒrƒbƒgPCMƒf[ƒ^ˆ—‚É‚Í4ƒrƒbƒg”ÍˆÍ‚ÌƒGƒ“ƒgƒƒs[•„†‚ªA24ƒrƒbƒgPCMƒf[ƒ^ˆ—‚É‚Í5ƒrƒbƒg”ÍˆÍ‚ÌƒGƒ“ƒgƒƒs[•„†‰»ƒpƒ‰ƒ[ƒ^‚ğ—p‚¢‚é */
         if (bits_per_sample == 16){
             result->rice_parameter_max = RICE_PARAMETER_MAX_FOR_PCM16;
             result->blank_partition_parameter = BLANK_PARAMETER_FOR_PCM16;
@@ -340,8 +336,8 @@ code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_samp
 }
 
 /*!
- * @brief           ƒuƒƒbƒN‚ğ“Ç‚İ‘‚«‚·‚éAPI‚Ìƒnƒ“ƒhƒ‹‚ğ‰ğ•ú‚µ‚Ü‚·B
- * @param *coder    ƒuƒƒbƒN“Ç‚İ‘‚«API‚Ìƒnƒ“ƒhƒ‹
+ * @brief           Release specified instance.
+ * @param *coder    Pointer of code.
  */
 void code_free(code* coder) {
     free(coder->workA);
@@ -349,9 +345,9 @@ void code_free(code* coder) {
 }
 
 /*!
- * @brief           ƒuƒƒbƒN‚ğ‘‚«‚İ‚Ü‚·B
- * @param *coder    ƒuƒƒbƒN“Ç‚İ‘‚«API‚Ìƒnƒ“ƒhƒ‹
- * @param *block    ‘‚«‚ŞƒuƒƒbƒN‚Ìƒnƒ“ƒhƒ‹
+ * @brief           Write block to bitstream.
+ * @param *coder    Pointer of code.
+ * @param *block    Pointer of block.
  */
 void code_write_block(code* coder, const block* block) {
     uint8_t ch;
@@ -362,9 +358,9 @@ void code_write_block(code* coder, const block* block) {
 }
 
 /*!
- * @brief           ƒuƒƒbƒN‚ğ“Ç‚İ‚İ‚Ü‚·B
- * @param *coder    ƒuƒƒbƒN“Ç‚İ‘‚«API‚Ìƒnƒ“ƒhƒ‹
- * @param *block    “Ç‚İ‚ñ‚¾ƒf[ƒ^‚ğŠi”[‚·‚éƒuƒƒbƒN‚Ìƒnƒ“ƒhƒ‹
+ * @brief           Read block from bitstream.
+ * @param *coder    Pointer of code.
+ * @param *block    Pointer of block.
  */
 void code_read_block(code* coder, block* block) {
     uint8_t ch;
