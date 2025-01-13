@@ -32,11 +32,11 @@ namespace ZilophiXGUITool
             InitializeComponent();
         }
 
-        [DllImport("zilophixdll.dll")]
-        private static extern void EncodeFileA(string input, string output, ushort blockSize, bool useMidSideStereo, byte filterTaps);
+        [DllImport("zilophixdll.dll", CharSet = CharSet.Unicode)]
+        private static extern void EncodeFileW(string input, string output, ushort blockSize, bool useMidSideStereo, byte filterTaps);
 
-        [DllImport("zilophixdll.dll")]
-        private static extern void DecodeFileA(string input, string output);
+        [DllImport("zilophixdll.dll", CharSet = CharSet.Unicode)]
+        private static extern void DecodeFileW(string input, string output);
 
         /// <summary>
         /// Conversion
@@ -55,13 +55,13 @@ namespace ZilophiXGUITool
             {
                 string output = $"{this.convOutDir}\\{Path.GetFileNameWithoutExtension(input)}.zpx";
 
-                EncodeFileA(input, output, this.encBlockSize, this.encUseMidSideStereo, this.encSSLMSTaps);
+                EncodeFileW(input, output, this.encBlockSize, this.encUseMidSideStereo, this.encSSLMSTaps);
             }
             else if (extension == ".zpx")
             {
                 string output = $"{this.convOutDir}\\{Path.GetFileNameWithoutExtension(input)}.wav";
 
-                DecodeFileA(input, output);
+                DecodeFileW(input, output);
             }
         }
 
