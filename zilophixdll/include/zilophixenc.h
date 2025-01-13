@@ -111,4 +111,16 @@ void __declspec(dllexport) EncodeFileA(
     bool use_mid_side_stereo,
     uint8_t filter_taps);
 
+/*!
+* @brief                            Encode WAV input file and save to output file.
+* @param input                      Input file path.
+* @param output                     Output file path.
+*/
+void __declspec(dllexport) EncodeFileW(
+    LPCWSTR input,
+    LPCWSTR output,
+    uint16_t block_size,
+    bool use_mid_side_stereo,
+    uint8_t filter_taps);
+
 #endif

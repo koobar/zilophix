@@ -146,6 +146,29 @@ wave_file_writer* wave_file_writer_create(const char* path) {
 }
 
 /*!
+ * @brief           Create new instance of wave_file_writer.
+ * @param *path     File.
+ * @return          Pointer of wave_file_writer.
+ */
+wave_file_writer* wave_file_writer_create_file(FILE* file) {
+    wave_file_writer* result = (wave_file_writer*)malloc(sizeof(wave_file_writer));
+
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->wave_file = file;
+    result->sample_rate = 0;
+    result->bits_per_sample = 0;
+    result->num_channels = 0;
+    result->num_samples = 0;
+    result->flag_file_header_write = false;
+    result->flag_fmt_chunk_write = false;
+    result->flag_data_chunk_header_write = false;
+    return result;
+}
+
+/*!
  * @brief           Create or open WAV file.
  * @param *writer   Pointer of wave_file_writer.
  * @param *path     Path of WAV file.

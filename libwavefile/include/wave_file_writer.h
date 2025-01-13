@@ -25,6 +25,13 @@ typedef struct {
 wave_file_writer* wave_file_writer_create(const char* path);
 
 /*!
+ * @brief           Create new instance of wave_file_writer.
+ * @param *path     File.
+ * @return          Pointer of wave_file_writer.
+ */
+wave_file_writer* wave_file_writer_create_file(FILE* file);
+
+/*!
  * @brief           Create or open WAV file.
  * @param *writer   Pointer of wave_file_writer.
  * @param *path     Path of WAV file.

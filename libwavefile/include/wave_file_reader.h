@@ -24,6 +24,13 @@ typedef struct {
 wave_file_reader* wave_file_reader_create(const char* path);
 
 /*!
+ * @brief           Create new instance of wave_file_reader.
+ * @path            File.
+ * @return          New pointer of wave_file_reader.
+ */
+wave_file_reader* wave_file_reader_create_file(FILE* file);
+
+/*!
  * @brief           Open WAV file.
  * @param *reader   Pointer of wave_file_reader.
  * @param *path     WAV file path.

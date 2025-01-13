@@ -274,4 +274,11 @@ BYTEPTR __declspec(dllexport) DecoderGetPicture(HDECODER decoder);
 */
 void __declspec(dllexport) DecodeFileA(LPCSTR input, LPCSTR output);
 
+/*!
+* @brief            Decode input file and save to output file as Linear PCM WAV format.
+* @param input      Input file path.
+* @param output     Output file path.
+*/
+void __declspec(dllexport) DecodeFileW(LPCWSTR input, LPCWSTR output);
+
 #endif

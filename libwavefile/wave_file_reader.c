@@ -143,6 +143,38 @@ wave_file_reader* wave_file_reader_create(const char* path) {
 }
 
 /*!
+ * @brief           Create new instance of wave_file_reader.
+ * @path            File.
+ * @return          New pointer of wave_file_reader.
+ */
+wave_file_reader* wave_file_reader_create_file(FILE* file) {
+    uint32_t size;
+    wave_file_reader* result = (wave_file_reader*)malloc(sizeof(wave_file_reader));
+
+    if (result == NULL) {
+        return NULL;
+    }
+
+    /* Set file. */
+    result->wave_file = file;
+
+    /* Read fmt chunk. */
+    read_fmt_chunk(result);
+
+    /* Move to data chunk */
+    if (go_to_chunk(result, "data", 4, true)) {
+        /* Calculate number of samples. */
+        size = read_uint32(result->wave_file);
+        result->num_samples = size / (result->bits_per_sample / 8);
+    }
+    else {
+        result->num_samples = 0;
+    }
+
+    return result;
+}
+
+/*!
  * @brief           Open WAV file.
  * @param *reader   Pointer of wave_file_reader.
  * @param *path     WAV file path.
