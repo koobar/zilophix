@@ -203,7 +203,7 @@ static void write_rice_partition(bit_stream* stream, const int32_t* data, uint16
     uint16_t offset;
 
     for (offset = 0; offset < partition_size; ++offset) {
-        bit_stream_write_signed_rice(stream, data[offset + start], parameter);
+        bit_stream_write_rice_signed(stream, data[offset + start], parameter);
     }
 }
 

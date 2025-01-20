@@ -116,7 +116,7 @@ uint32_t bit_stream_read_unary(bit_stream* stream){
  * @param bits      The number of integer bits to read.
  * @return          Integer read.
  */
-uint32_t bit_stream_read_rice_signed(bit_stream* stream, uint32_t parameter){
+int32_t bit_stream_read_rice_signed(bit_stream* stream, uint32_t parameter){
     uint32_t quotient;
     uint32_t remainder;
 
@@ -178,7 +178,7 @@ void bit_stream_write_unary(bit_stream* stream, uint32_t value){
  * @param value     Signed integer to write.
  * @param parameter Rice parameter.
  */
-void bit_stream_write_signed_rice(bit_stream* stream, int32_t value, uint32_t parameter){
+void bit_stream_write_rice_signed(bit_stream* stream, int32_t value, uint32_t parameter){
     uint32_t val;
     uint32_t quotient;
     uint32_t remainder;
