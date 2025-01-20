@@ -10,7 +10,7 @@ static const int32_t shift_factor_table[2] = { 9, 8 };
 
 /*!
  * @brief           Create new SSLMS filter instance.
- * @return          Pointer of created instance.
+ * @return          Pointer to created instance.
  */
 lms* lms_create(uint8_t taps, uint8_t pcm_bits) {
     lms* result = (lms*)malloc(sizeof(lms));
@@ -31,7 +31,7 @@ lms* lms_create(uint8_t taps, uint8_t pcm_bits) {
 
 /*!
  * @brief           Release SSLMS filter.
- * @param *filter   Pointer of SSLMS filter.
+ * @param *filter   Pointer to SSLMS filter.
  */
 void lms_free(lms* filter) {
     free(filter->history);
@@ -41,7 +41,7 @@ void lms_free(lms* filter) {
 
 /*!
  * @brief           Initialize SSLMS filter.
- * @param *filter   Pointer of SSLMS filter.
+ * @param *filter   Pointer to SSLMS filter.
  */
 
 void lms_clear(lms* filter) {
@@ -52,7 +52,7 @@ void lms_clear(lms* filter) {
 
 /*!
  * @brief           Predict next sample.
- * @param *filter   Pointer of SSLMS filter.
+ * @param *filter   Pointer to SSLMS filter.
  * @return          Prediction
  */
 int32_t lms_predict(lms* filter) {
@@ -99,7 +99,7 @@ int32_t lms_predict(lms* filter) {
 
 /*!
  * @brief           Update SSLMS filter.
- * @param *filter   Pointer of SSLMS filter.
+ * @param *filter   Pointer to SSLMS filter.
  * @param sample    Actual sample.
  * @param residual  Prediction residual.
  */

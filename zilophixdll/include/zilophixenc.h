@@ -18,8 +18,8 @@ typedef encoder* HENCODER;
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
- * @param *tag                      The pointer of tag information.
- * @return                          The pointer of HENCODER.
+ * @param *tag                      Pointer to tag information.
+ * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromPathA(
     LPCSTR output,
@@ -42,8 +42,8 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathA(
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
- * @param *tag                      The pointer of tag information.
- * @return                          The pointer of HENCODER.
+ * @param *tag                      Pointer to tag information.
+ * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromPathW(
     LPCWSTR output,
@@ -66,8 +66,8 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathW(
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
- * @param *tag                      The pointer of tag information.
- * @return                          The pointer of HENCODER.
+ * @param *tag                      Pointer to tag information.
+ * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromFile(
     FILE* file,
@@ -82,20 +82,20 @@ HENCODER __declspec(dllexport) CreateEncoderFromFile(
 
 /*!
  * @brief                           Release encoder.
- * @param encoder                   The pointer of HENCODER.
+ * @param encoder                   Pointer to HENCODER.
  */
 void __declspec(dllexport) FreeEncoder(HENCODER encoder);
 
 /*!
  * @brief                           Encode and write sample.
- * @param encoder                   The pointer of HENCODER.
+ * @param encoder                   Pointer to HENCODER.
  * @param sample                    Sample
  */
 void __declspec(dllexport) EncoderWriteSample(HENCODER encoder, int sample);
 
 /*!
  * @brief                           Finalizes the encoding process. Be sure to call this function after all samples have been encoded.
- * @param encoder                   The pointer of HENCODER.
+ * @param encoder                   Pointer to HENCODER.
  */
 void __declspec(dllexport) EncoderEndWrite(HENCODER encoder);
 

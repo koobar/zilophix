@@ -51,7 +51,7 @@ static inline uint32_t clz(uint32_t x)
 
 /*!
  * @brief                   Calculates the number of bits required to Rice encode the given data with the specified parameters.
- * @param *data             Pointer of data
+ * @param *data             Pointer to data
  * @param data_size         Size of data.
  * @param parameter         Rice parameter
  * @return                  The number of bits required to Rice-encode the specified data with the specified parameters.
@@ -77,8 +77,8 @@ static uint32_t compute_rice_total_bits(const int32_t* data, const uint16_t star
 
 /*!
  * @brief               Calculates the optimal Rice coding parameters for the given data.
- * @param *coder        Pointer of code.
- * @param *data         Pointer of data.
+ * @param *coder        Pointer to code.
+ * @param *data         Pointer to data.
  * @param start         Offset of data begin.
  * @param data_size     Data size.
  * @param *total_bits   [OUT] The total number of bits of data when Rice-encoded with the obtained parameters
@@ -112,8 +112,8 @@ static uint32_t compute_optimal_rice_parameter(code* coder, const int32_t* data,
 
 /*!
  * @brief                   Calculates the entropy coding parameters that should be used on the partition.
- * @param *coder            Pointer of code.
- * @param *data             Pointer of data.
+ * @param *coder            Pointer to code.
+ * @param *data             Pointer to data.
  * @param start             Offset of partition begin.
  * @param partition_size    Size of partition.
  * @param *partition_bits   [OUT] The number of bits required for the entire partition when it is entropy coded using the calculated entropy coding parameters.
@@ -141,8 +141,8 @@ static uint32_t compute_optimal_entropy_parameter(code* coder, const int32_t* da
 
 /*!
  * @brief               For the given data, it computes the optimal partition parameters as well as the entropy coding parameters to use for each partition.
- * @param *coder        Pointer of code.
- * @param *data         Pointer of data.
+ * @param *coder        Pointer to code.
+ * @param *data         Pointer to data.
  * @param data_size     Size of data.
  * @return              Optimal partition parameter.
  */
@@ -193,8 +193,8 @@ static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* 
 
 /*!
  * @brief                   Write residuals to bitstream as rice code.
- * @param *stream           Pointer of bitstream.
- * @param *data             Pointer of residuals.
+ * @param *stream           Pointer to bitstream.
+ * @param *data             Pointer to residuals.
  * @param start             Offset of partition.
  * @param partition_size    Size of partition.
  * @param parameter         Rice parameter.
@@ -209,8 +209,8 @@ static void write_rice_partition(bit_stream* stream, const int32_t* data, uint16
 
 /*!
  * @brief                   Read the prediction residuals contained in the Rice-coded partition.
- * @param *stream           Pointer of bitstream.
- * @param *data             Pointer of data.
+ * @param *stream           Pointer to bitstream.
+ * @param *data             Pointer to data.
  * @param start             Offset of partition
  * @param partition_size    Size of partition
  * @param parameter         Rice parameter
@@ -226,8 +226,8 @@ static void read_rice_partition(bit_stream* stream, int32_t* data, uint16_t star
 
 /*!
  * @brief               Writes the specified sub-block to the given bitstream using the Rice encoding.
- * @param *coder        Pointer of coder.
- * @param *sub_block    Pointer of subblock.
+ * @param *coder        Pointer to coder.
+ * @param *sub_block    Pointer to subblock.
  */
 static void write_sub_block(code* coder, const sub_block* sub_block) {
     uint32_t p, start;
@@ -263,8 +263,8 @@ static void write_sub_block(code* coder, const sub_block* sub_block) {
 
 /*!
  * @brief               Read Rice encoded subblock.
- * @param *coder        Pointer of code.
- * @param *sub_block    Pointer of subblock.
+ * @param *coder        Pointer to code.
+ * @param *sub_block    Pointer to subblock.
  */
 static void read_sub_block(code* coder, sub_block* sub_block) {
     uint32_t parameter;
@@ -301,8 +301,8 @@ static void read_sub_block(code* coder, sub_block* sub_block) {
 
 /*!
  * @brief           Create new instance of code.
- * @param *stream   Pointer of bit_stream.
- * @return          Pointer of created instance.
+ * @param *stream   Pointer to bit_stream.
+ * @return          Pointer to created instance.
  */
 code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_sample) {
     code* result = (code*)malloc(sizeof(code));
@@ -337,7 +337,7 @@ code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_samp
 
 /*!
  * @brief           Release specified instance.
- * @param *coder    Pointer of code.
+ * @param *coder    Pointer to code.
  */
 void code_free(code* coder) {
     free(coder->workA);
@@ -346,8 +346,8 @@ void code_free(code* coder) {
 
 /*!
  * @brief           Write block to bitstream.
- * @param *coder    Pointer of code.
- * @param *block    Pointer of block.
+ * @param *coder    Pointer to code.
+ * @param *block    Pointer to block.
  */
 void code_write_block(code* coder, const block* block) {
     uint8_t ch;
@@ -359,8 +359,8 @@ void code_write_block(code* coder, const block* block) {
 
 /*!
  * @brief           Read block from bitstream.
- * @param *coder    Pointer of code.
- * @param *block    Pointer of block.
+ * @param *coder    Pointer to code.
+ * @param *block    Pointer to block.
  */
 void code_read_block(code* coder, block* block) {
     uint8_t ch;

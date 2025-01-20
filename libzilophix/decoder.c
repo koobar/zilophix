@@ -26,7 +26,7 @@ static bool is_supported_version(uint8_t version) {
 
 /*!
  * @brief           Check magic number.
- * @param *decoder  Pointer of decoder.
+ * @param *decoder  Pointer to decoder.
  * @return          Returns true if the opened file is in ZilophiX format, false if the file is in any other format.
  */
 static bool check_magic_number(decoder* decoder){
@@ -37,7 +37,7 @@ static bool check_magic_number(decoder* decoder){
 
 /*!
  * @brief           Read format informations.
- * @param *decoder  Pointer of decoder.
+ * @param *decoder  Pointer to decoder.
  */
 static void read_format_info(decoder* decoder){
     /* Read format version */
@@ -77,7 +77,7 @@ static void read_format_info(decoder* decoder){
 
 /*!
  * @brief           Read ZilophiX file header.
- * @param *decoder  Pointer of decoder.
+ * @param *decoder  Pointer to decoder.
  */
 static void read_header(decoder* decoder) {
     if (check_magic_number(decoder)){
@@ -91,7 +91,7 @@ static void read_header(decoder* decoder) {
 
 /*!
  * @brief           Decode monaural or no Mid-Side stereo block.
- * @param *decoder  Pointer of decoder.
+ * @param *decoder  Pointer to decoder.
  */
 static void decode_normal_block(decoder* decoder){
     uint8_t ch;
@@ -125,7 +125,7 @@ static void decode_normal_block(decoder* decoder){
 
 /*!
  * @brief           Decode Mid-Side stereo block.
- * @param *decoder  Pointer of decoder.
+ * @param *decoder  Pointer to decoder.
  */
 static void decode_midside_block(decoder* decoder){
     sub_block* lch = decoder->current_block->sub_blocks[0];
@@ -166,7 +166,7 @@ static void decode_midside_block(decoder* decoder){
 
 /*!
  * @brief           Decode current block.
- * @param *decoder  Pointer of decoder.
+ * @param *decoder  Pointer to decoder.
  */
 static void decode_current_block(decoder* decoder) {
     if (decoder->num_channels == 2 && decoder->use_mid_side_stereo){
@@ -179,7 +179,7 @@ static void decode_current_block(decoder* decoder) {
 
 /*!
  * @brief           Initialization decoder.
- * @param *decoder  Pointer of decoder.
+ * @param *decoder  Pointer to decoder.
  * @param *file     file.
  */
 static void decoder_init(decoder* decoder, FILE* file) {
@@ -213,8 +213,8 @@ static void decoder_init(decoder* decoder, FILE* file) {
 
 /*!
  * @brief                   Create new instance of decoder.
- * @param file*             Pointer of file.
- * @return                  Pointer of created instance.
+ * @param file*             Pointer to file.
+ * @return                  Pointer to created instance.
  */
 decoder* decoder_create(FILE* file) {
     decoder* result = (decoder*)malloc(sizeof(decoder));
@@ -228,7 +228,7 @@ decoder* decoder_create(FILE* file) {
 
 /*!
  * @brief                   Release specified decoder.
- * @param decoder           Pointer of decoder.
+ * @param decoder           Pointer to decoder.
  */
 void decoder_free(decoder* decoder) {
     uint8_t ch;
@@ -249,7 +249,7 @@ void decoder_free(decoder* decoder) {
 
 /*!
  * @brief                   Close decoding file.
- * @param decoder           Pointer of decoder.
+ * @param decoder           Pointer to decoder.
  */
 void decoder_close(decoder* decoder) {
     tag_free(decoder->tag);
@@ -258,7 +258,7 @@ void decoder_close(decoder* decoder) {
 
 /*!
  * @brief                   Force read next sample and return as PCM.
- * @param decoder           Pointer of decoder.
+ * @param decoder           Pointer to decoder.
  * @return                  Sample
  */
 static int32_t force_read_sample(decoder* decoder) {
@@ -286,7 +286,7 @@ static int32_t force_read_sample(decoder* decoder) {
 
 /*!
  * @brief                   Read next sample and return as PCM.
- * @param decoder           Pointer of decoder.
+ * @param decoder           Pointer to decoder.
  * @return                  Sample
  */
 int32_t decoder_read_sample(decoder* decoder) {
@@ -303,7 +303,7 @@ int32_t decoder_read_sample(decoder* decoder) {
 
 /*!
  * @brief                   Seek to specified sample offset.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  * @param sample_offset     Sample offset.
  */
 void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset) {
@@ -344,7 +344,7 @@ void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset) {
 
 /*!
  * @brief                   Seek to specific time in milliseconds.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  * @param sample_offset     Seek destination time in milliseconds.
  */
 void decoder_seek_milliseconds_to(decoder* decoder, uint32_t ms) {
@@ -356,7 +356,7 @@ void decoder_seek_milliseconds_to(decoder* decoder, uint32_t ms) {
 
 /*!
  * @brief                   Get playback duration in milliseconds.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  * @return                  Playback duration in milliseconds.
  */
 uint32_t decoder_get_duration_ms(decoder* decoder) {

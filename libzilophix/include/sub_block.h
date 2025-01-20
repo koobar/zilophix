@@ -11,7 +11,7 @@ typedef struct {
 
 /*!
  * @brief               Initialize subblock.
- * @param *sub_block    Pointer of subblock.
+ * @param *sub_block    Pointer to subblock.
  * @param size          The number of samples.
  * @param channel       Channel index.
  */
@@ -19,7 +19,7 @@ void sub_block_init(sub_block* sub_block, uint16_t size, uint8_t channel);
 
 /*!
  * @brief               Release subblock.
- * @param *sub_block    Pointer of subblock.
+ * @param *sub_block    Pointer to subblock.
  */
 void sub_block_free(sub_block* sub_block);
 

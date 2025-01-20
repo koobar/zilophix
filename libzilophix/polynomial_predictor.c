@@ -11,8 +11,8 @@
 #define K 4
 
 /*!
- * @brief               Create new instance of polynomial predictor.
- * @return              Pointer of created instance.
+ * @brief               Create new polynomial_predictor.
+ * @return              Pointer to created polynomial_predictor.
  */
 polynomial_predictor* polynomial_predictor_create() {
     polynomial_predictor* result = (polynomial_predictor*)malloc(sizeof(polynomial_predictor));
@@ -27,16 +27,16 @@ polynomial_predictor* polynomial_predictor_create() {
 }
 
 /*!
- * @brief               Release polynomial predictor.
- * @param *predictor    Pointer of polynomial predictor
+ * @brief               Release polynomial_predictor.
+ * @param *predictor    Pointer to polynomial_predictor
  */
 void polynomial_predictor_free(polynomial_predictor* predictor) {
     free(predictor->history);
 }
 
 /*!
- * @brief               Initialize polynomial predictor.
- * @param *predictor    Pointer of polynomial predictor
+ * @brief               Initialize polynomial_predictor.
+ * @param *predictor    Pointer to polynomial_predictor
  */
 void polynomial_predictor_clear(polynomial_predictor* predictor) {
     memset(predictor->history, 0, sizeof(int32_t) * POLYNOMIAL_PREDICATOR_MAX_HISTORY);
@@ -44,7 +44,7 @@ void polynomial_predictor_clear(polynomial_predictor* predictor) {
 
 /*!
  * @brief               Predict next sample.
- * @param *predictor    Pointer of polynomial predictor
+ * @param *predictor    Pointer to polynomial_predictor
  * @return              Prediction
  */
 int32_t polynomial_predictor_predict(polynomial_predictor* predictor) {
@@ -52,8 +52,8 @@ int32_t polynomial_predictor_predict(polynomial_predictor* predictor) {
 }
 
 /*!
- * @brief               Update polynomial predictor.
- * @param *predictor    Pointer of polynomial predictor
+ * @brief               Update polynomial_predictor.
+ * @param *predictor    Pointer to polynomial_predictor
  * @param sample        Actual sample.
  */
 void polynomial_predictor_update(polynomial_predictor* predictor, int32_t sample) {

@@ -8,7 +8,7 @@
 
 /*!
  * @brief           Write magic numbers
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
 */
 static void write_magic_number(encoder* encoder){
     write_uint8(encoder->output_file, 0x5A);
@@ -18,7 +18,7 @@ static void write_magic_number(encoder* encoder){
 
 /*!
  * @brief           Write format informations.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
 */
 static void write_format_info(encoder* encoder){
     /* Write format version. */
@@ -59,7 +59,7 @@ static void write_format_info(encoder* encoder){
 
 /*!
  * @brief           Write header.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  */
 static void write_header(encoder* encoder) {
     write_magic_number(encoder);
@@ -72,7 +72,7 @@ static void write_header(encoder* encoder) {
 
 /*!
  * @brief           Write audio data offset and audio data size.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
 */
 static void flush_audio_data(encoder* encoder){
     uint32_t current_len = (uint32_t)ftell(encoder->output_file);
@@ -92,7 +92,7 @@ static void flush_audio_data(encoder* encoder){
 
 /*!
  * @brief           Encode monaural or normal stereo block. 
- * @param *encoder  Pointer of encoder
+ * @param *encoder  Pointer to encoder
  */
 static void encode_current_block_normal(encoder* encoder){
     uint8_t ch;
@@ -125,7 +125,7 @@ static void encode_current_block_normal(encoder* encoder){
 
 /*!
  * @brief           Encode Mid-Side stereo block.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  */
 static void encode_current_block_midside(encoder* encoder){
     uint16_t offset;
@@ -170,7 +170,7 @@ static void encode_current_block_midside(encoder* encoder){
 
 /*!
  * @brief           Encode current block.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  */
 static void encode_current_block(encoder* encoder) {
     if (encoder->use_mid_side_stereo){
@@ -201,7 +201,7 @@ static uint32_t compute_block_count(uint32_t num_samples, uint8_t num_channels, 
 
 /*!
  * @brief                           Initialize encoder.
- * @param *encoder                  Pointer of encoder.
+ * @param *encoder                  Pointer to encoder.
  * @param *file                     Output file.
  * @param sample_rate               Sample rate.
  * @param bits_per_sample           Quantization bits.
@@ -306,7 +306,7 @@ encoder* encoder_create(
 
 /*!
  * @brief           Release encoder.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  */
 void encoder_free(encoder* encoder) {
     uint8_t ch;
@@ -329,7 +329,7 @@ void encoder_free(encoder* encoder) {
 
 /*!
  * @brief           Encode sample.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  * @param sample    Sample
  */
 void encoder_write_sample(encoder* encoder, int32_t sample) {
@@ -356,7 +356,7 @@ void encoder_write_sample(encoder* encoder, int32_t sample) {
 
 /*!
  * @brief           End encode.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  */
 void encoder_end_write(encoder* encoder) {
     if (encoder->current_sub_block_offset != 0) {

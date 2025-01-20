@@ -5,7 +5,7 @@
 #include "block.h"
 
 typedef struct {
-    bit_stream* bitstream;              /* Pointer of input bitstream */
+    bit_stream* bitstream;              /* Pointer to input bitstream */
     uint8_t bits_per_sample;
     uint8_t bits_of_entropy_parameter;
     uint8_t rice_parameter_max;
@@ -16,28 +16,28 @@ typedef struct {
 
 /*!
  * @brief           Create new instance of code.
- * @param *stream   Pointer of bit_stream.
- * @return          Pointer of created instance.
+ * @param *stream   Pointer to bit_stream.
+ * @return          Pointer to created instance.
  */
 code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_sample);
 
 /*!
  * @brief           Release specified instance.
- * @param *coder    Pointer of code.
+ * @param *coder    Pointer to code.
  */
 void code_free(code* coder);
 
 /*!
  * @brief           Write block to bitstream.
- * @param *coder    Pointer of code.
- * @param *block    Pointer of block.
+ * @param *coder    Pointer to code.
+ * @param *block    Pointer to block.
  */
 void code_write_block(code* coder, const block* block);
 
 /*!
  * @brief           Read block from bitstream.
- * @param *coder    Pointer of code.
- * @param *block    Pointer of block.
+ * @param *coder    Pointer to code.
+ * @param *block    Pointer to block.
  */
 void code_read_block(code* coder, block* block);
 

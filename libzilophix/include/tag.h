@@ -57,26 +57,26 @@ typedef struct {
 
 /*!
  * @brief                   Initialize tag information.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  */
 void tag_init(tag* tag);
 
 /*!
  * @brief                   Release tag information.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  */
 void tag_free(tag* tag);
 
 /*!
  * @brief                   Set image file to tag informations.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  * @param *picture_file     Picture file.
  */
 void tag_set_picture(tag* tag, FILE* picture_file);
 
 /*!
  * @brief                   Set image file to tag informations.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  * @param *picture_file     Path of image file.
  */
 void tag_set_picture_from_path(tag* tag, const char* path);
@@ -84,14 +84,14 @@ void tag_set_picture_from_path(tag* tag, const char* path);
 /*!
  * @brief                   Read tag informations.
  * @param *file             file
- * @param **tag             Pointer of pointer of tag information.
+ * @param **tag             Pointer to pointer of tag information.
  */
 void tag_read(FILE* file, tag** tag);
 
 /*!
  * @brief                   Write tag informations to file.
  * @param *file             file
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  */
 void tag_write(FILE* file, tag* tag);
 

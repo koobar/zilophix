@@ -273,7 +273,7 @@ static void print_encode_result(clock_t encode_start, clock_t encode_end) {
 
 /*!
  * @brief                   Print format informations.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  */
 static void print_format_info(decoder* decoder) {
     size_t buffer_size = sizeof(char) * 1024;
@@ -315,7 +315,7 @@ static void print_format_info(decoder* decoder) {
 
 /*!
  * @brief                   Print tag informations.
- * @param *decoder          Pointer of tag.
+ * @param *decoder          Pointer to tag.
  */
 static void print_tag(tag* ptag) {
     size_t buffer_size = sizeof(char) * 1024;
@@ -389,7 +389,7 @@ static void print_tag(tag* ptag) {
 
 /*!
  * @brief                   Print decode result.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  * @param output            Output path
  * @param decode_start      Start time
  * @param decode_end        Stop time

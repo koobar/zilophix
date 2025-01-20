@@ -5,7 +5,7 @@
 /*!
  * @brief           Write picture binary data.
  * @param *file     File
- * @param *tag      Pointer of tag informations.
+ * @param *tag      Pointer to tag informations.
  */
 static void tag_write_picture(FILE* file, tag* tag) {
     uint32_t offset;
@@ -25,7 +25,7 @@ static void tag_write_picture(FILE* file, tag* tag) {
 /*!
  * @brief           Read image data from file.
  * @param *file     File
- * @param **tag     Pointer of pointer of tag informations.
+ * @param **tag     Pointer to pointer of tag informations.
  * @param size      Size of image data.
  */
 static void tag_read_picture(FILE* file, tag** tag, uint32_t size) {
@@ -64,7 +64,7 @@ static int str_ends_with(const char* str, const char* end) {
 
 /*!
  * @brief                   Initialize tag information.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  */
 void tag_init(tag* tag) {
     const char* unknown = "\0";
@@ -92,7 +92,7 @@ void tag_init(tag* tag) {
 
 /*!
  * @brief                   Release tag information.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  */
 void tag_free(tag* tag) {
     if (tag == NULL) {
@@ -106,7 +106,7 @@ void tag_free(tag* tag) {
 
 /*!
  * @brief                   Set image file to tag informations.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  * @param *picture_file     Picture file.
  */
 void tag_set_picture(tag* tag, FILE* picture_file) {
@@ -139,7 +139,7 @@ void tag_set_picture(tag* tag, FILE* picture_file) {
 
 /*!
  * @brief                   Set image file to tag informations.
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  * @param *picture_file     Path of image file.
  */
 void tag_set_picture_from_path(tag* tag, const char* path) {
@@ -167,7 +167,7 @@ void tag_set_picture_from_path(tag* tag, const char* path) {
 /*!
  * @brief                   Read tag informations.
  * @param *file             file
- * @param **tag             Pointer of pointer of tag information.
+ * @param **tag             Pointer to pointer to tag information.
  */
 void tag_read(FILE* file, tag** ptag) {
     uint8_t num_tag_info, i, id;
@@ -257,7 +257,7 @@ void tag_read(FILE* file, tag** ptag) {
 /*!
  * @brief                   Write tag informations to file.
  * @param *file             file
- * @param *tag              Pointer of tag information.
+ * @param *tag              Pointer to tag information.
  */
 void tag_write(FILE* file, tag* tag) {
     uint32_t size;

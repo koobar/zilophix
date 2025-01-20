@@ -39,7 +39,7 @@ static void write_int16(FILE* file, const int16_t value) {
 
 /*!
  * @brief           Calculate chunk size.
- * @param *writer   Pointer of wave_file_writer.
+ * @param *writer   Pointer to wave_file_writer.
  * @return          Chunk size.
  */
 static uint32_t compute_chunk_size(const wave_file_writer* writer) {
@@ -53,7 +53,7 @@ static uint32_t compute_chunk_size(const wave_file_writer* writer) {
 
 /*!
  * @brief           Write wave file header.
- * @param *writer   Pointer of wave_file_writer
+ * @param *writer   Pointer to wave_file_writer
  */
 static void write_wave_header(const wave_file_writer* writer) {
     /* Write RIFF magic numbers. */
@@ -74,7 +74,7 @@ static void write_wave_header(const wave_file_writer* writer) {
 
 /*!
  * @brief           Write fmt chunk
- * @param *writer   Pointer of wave_file_writer
+ * @param *writer   Pointer to wave_file_writer
  */
 static void write_fmt_chunk(const wave_file_writer* writer) {
     uint32_t avr_bytes_per_sec;
@@ -112,7 +112,7 @@ static void write_fmt_chunk(const wave_file_writer* writer) {
 
 /*!
  * @brief           Write data chunk.
- * @param *writer   Pointer of wave_file_writer.
+ * @param *writer   Pointer to wave_file_writer.
  */
 static void write_data_chunk_header(const wave_file_writer* writer) {
     uint32_t bytes_per_sample, data_chunk_size;
@@ -130,9 +130,9 @@ static void write_data_chunk_header(const wave_file_writer* writer) {
 }
 
 /*!
- * @brief           Create new instance of wave_file_writer.
+ * @brief           Create new wave_file_writer.
  * @param *path     Output file path.
- * @return          Pointer of wave_file_writer.
+ * @return          Pointer to created wave_file_writer.
  */
 wave_file_writer* wave_file_writer_create(const char* path) {
     wave_file_writer* result = (wave_file_writer*)malloc(sizeof(wave_file_writer));
@@ -146,9 +146,9 @@ wave_file_writer* wave_file_writer_create(const char* path) {
 }
 
 /*!
- * @brief           Create new instance of wave_file_writer.
+ * @brief           Create new wave_file_writer.
  * @param *path     File.
- * @return          Pointer of wave_file_writer.
+ * @return          Pointer to created wave_file_writer.
  */
 wave_file_writer* wave_file_writer_create_file(FILE* file) {
     wave_file_writer* result = (wave_file_writer*)malloc(sizeof(wave_file_writer));
@@ -170,7 +170,7 @@ wave_file_writer* wave_file_writer_create_file(FILE* file) {
 
 /*!
  * @brief           Create or open WAV file.
- * @param *writer   Pointer of wave_file_writer.
+ * @param *writer   Pointer to wave_file_writer.
  * @param *path     Path of WAV file.
  */
 void wave_file_writer_open(wave_file_writer* writer, const char* path) {
@@ -186,7 +186,7 @@ void wave_file_writer_open(wave_file_writer* writer, const char* path) {
 
 /*!
  * @brief           Close WAV file.
- * @param *writer   Pointer of wave_file_writer.
+ * @param *writer   Pointer to wave_file_writer.
  */
 void wave_file_writer_close(const wave_file_writer* writer) {
     fclose(writer->wave_file);
@@ -195,7 +195,7 @@ void wave_file_writer_close(const wave_file_writer* writer) {
 
 /*!
  * @brief                   Set PCM format.
- * @param *writer           Pointer of wave_file_writer
+ * @param *writer           Pointer to wave_file_writer
  * @param sample_rate       Sample rate.
  * @param bits_per_sample   Quantization bits.
  * @param num_channels      Number of channels.
@@ -208,7 +208,7 @@ void wave_file_writer_set_pcm_format(wave_file_writer* writer, uint32_t sample_r
 
 /*!
  * @brief                   Set number of samples.
- * @param *writer           Pointer of wave_file_writer
+ * @param *writer           Pointer to wave_file_writer
  * @param num_samples       Number of samples.
  */
 void wave_file_writer_set_num_samples(wave_file_writer* writer, uint32_t num_samples) {
@@ -217,7 +217,7 @@ void wave_file_writer_set_num_samples(wave_file_writer* writer, uint32_t num_sam
 
 /*!
  * @brief                   Begin write samples.
- * @param *writer           Pointer of wave_file_writer.
+ * @param *writer           Pointer to wave_file_writer.
  */
 void wave_file_writer_begin_write(const wave_file_writer* writer) {
     write_wave_header(writer);
@@ -227,7 +227,7 @@ void wave_file_writer_begin_write(const wave_file_writer* writer) {
 
 /*!
  * @brief                   Write PCM sample to WAV file. You need call wave_file_writer_begin_write function before calling this function.
- * @param *writer           Pointer of wave_file_writer
+ * @param *writer           Pointer to wave_file_writer
  * @param sample            Sample
  */
 void wave_file_writer_write_sample(const wave_file_writer* writer, int32_t sample) {
@@ -246,7 +246,7 @@ void wave_file_writer_write_sample(const wave_file_writer* writer, int32_t sampl
 
 /*!
  * @brief                   Stop write sample. This function must be called after all samples are written.
- * @param *writer           Pointer of wave_file_reader.
+ * @param *writer           Pointer to wave_file_reader.
  */
 void wave_file_writer_end_write(const wave_file_writer* writer) {
     fflush(writer->wave_file);

@@ -31,9 +31,9 @@ typedef struct {
     lms** lms_filters;                                  /* SSLMS filters */
     polynomial_predictor** polynomial_predictors;       /* Polynomial predictors. */
 
-    tag* tag;                                           /* The pointer of tag information. */
-    code* coder;                                        /* The pointer of code. */
-    block* current_block;                               /* The pointer of encoding block. */
+    tag* tag;                                           /* The pointer to tag information. */
+    code* coder;                                        /* The pointer to code. */
+    block* current_block;                               /* The pointer to encoding block. */
     uint8_t current_sub_block_channel;                  /* Next sample offset. */
     uint16_t current_sub_block_offset;                  /* Next subblock offset. */
 } encoder;
@@ -63,20 +63,20 @@ encoder* encoder_create(
 
 /*!
  * @brief           Release encoder.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  */
 void encoder_free(encoder* encoder);
 
 /*!
  * @brief           Encode sample.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  * @param sample    Sample
  */
 void encoder_write_sample(encoder* encoder, int32_t sample);
 
 /*!
  * @brief           End encode.
- * @param *encoder  Pointer of encoder.
+ * @param *encoder  Pointer to encoder.
  */
 void encoder_end_write(encoder* encoder);
 

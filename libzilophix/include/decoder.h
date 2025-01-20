@@ -32,9 +32,9 @@ typedef struct {
     lms** lms_filters;                              /* SSLMS filters. */
     polynomial_predictor** polynomial_predictors;   /* Polynomial predictors. */
 
-    tag* tag;                                       /* The pointer of tag information. */
-    code* coder;                                    /* The pointer of code. */
-    block* current_block;                           /* The pointer of decoding block. */
+    tag* tag;                                       /* The pointer to tag information. */
+    code* coder;                                    /* The pointer to code. */
+    block* current_block;                           /* The pointer to decoding block. */
     uint8_t current_read_sub_block_channel;         /* The offset of subblock channel. */
     uint16_t current_read_sub_block_offset;         /* The offset of subblock sample reading offset. */
 
@@ -44,47 +44,47 @@ typedef struct {
 
 /*!
  * @brief                   Create new instance of decoder.
- * @param file*             Pointer of file.
- * @return                  Pointer of created instance.
+ * @param file*             Pointer to file.
+ * @return                  Pointer to created instance.
  */
 decoder* decoder_create(FILE* file);
 
 /*!
  * @brief                   Release specified decoder.
- * @param decoder           Pointer of decoder.
+ * @param decoder           Pointer to decoder.
  */
 void decoder_free(decoder* decoder);
 
 /*!
  * @brief                   Close decoding file.
- * @param decoder           Pointer of decoder.
+ * @param decoder           Pointer to decoder.
  */
 void decoder_close(decoder* decoder);
 
 /*!
  * @brief                   Read next sample and return as PCM.
- * @param decoder           Pointer of decoder.
+ * @param decoder           Pointer to decoder.
  * @return                  Sample
  */
 int32_t decoder_read_sample(decoder* decoder);
 
 /*!
  * @brief                   Seek to specified sample offset.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  * @param sample_offset     Sample offset.
  */
 void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset);
 
 /*!
  * @brief                   Seek to specific time in milliseconds.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  * @param sample_offset     Seek destination time in milliseconds.
  */
 void decoder_seek_milliseconds_to(decoder* decoder, uint32_t ms);
 
 /*!
  * @brief                   Get playback duration in milliseconds.
- * @param *decoder          Pointer of decoder.
+ * @param *decoder          Pointer to decoder.
  * @return                  Playback duration in milliseconds.
  */
 uint32_t decoder_get_duration_ms(decoder* decoder);
