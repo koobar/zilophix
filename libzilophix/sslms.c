@@ -1,4 +1,4 @@
-#include "./include/lms.h"
+#include "./include/sslms.h"
 #include "./include/macro.h"
 #include "./include/zilophix.h"
 #include "./include/errcode.h"
@@ -12,8 +12,8 @@ static const int32_t shift_factor_table[2] = { 9, 8 };
  * @brief           Create new SSLMS filter instance.
  * @return          Pointer to created instance.
  */
-lms* lms_create(uint8_t taps, uint8_t pcm_bits) {
-    lms* result = (lms*)malloc(sizeof(lms));
+sslms* sslms_create(uint8_t taps, uint8_t pcm_bits) {
+    sslms* result = (sslms*)malloc(sizeof(sslms));
 
     if (result == NULL){
         report_error(ERROR_LMS_CANNOT_ALLOCATE_MEMORY);
@@ -33,7 +33,7 @@ lms* lms_create(uint8_t taps, uint8_t pcm_bits) {
  * @brief           Release SSLMS filter.
  * @param *filter   Pointer to SSLMS filter.
  */
-void lms_free(lms* filter) {
+void sslms_free(sslms* filter) {
     free(filter->history);
     free(filter->sign);
     free(filter->weights);
@@ -44,7 +44,7 @@ void lms_free(lms* filter) {
  * @param *filter   Pointer to SSLMS filter.
  */
 
-void lms_clear(lms* filter) {
+void sslms_clear(sslms* filter) {
     memset(filter->history, 0, sizeof(int32_t) * filter->taps);
     memset(filter->sign, 0, sizeof(int8_t) * filter->taps);
     memset(filter->weights, 0, sizeof(int32_t) * filter->taps);
@@ -55,7 +55,7 @@ void lms_clear(lms* filter) {
  * @param *filter   Pointer to SSLMS filter.
  * @return          Prediction
  */
-int32_t lms_predict(lms* filter) {
+int32_t sslms_predict(sslms* filter) {
     int32_t sum = 0;
 
     /* It's a stupid way of writing it, but it works faster than a for statement. */
@@ -103,7 +103,7 @@ int32_t lms_predict(lms* filter) {
  * @param sample    Actual sample.
  * @param residual  Prediction residual.
  */
-void lms_update(lms* filter, int32_t sample, int32_t residual) {
+void sslms_update(sslms* filter, int32_t sample, int32_t residual) {
     int8_t sgn = SIGN(residual);
 
     /* It's a stupid way of writing it, but it works faster than a for statement. */

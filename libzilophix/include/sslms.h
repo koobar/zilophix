@@ -1,7 +1,7 @@
-#ifndef LMS_HEADER_INCLUDED
-#define LMS_HEADER_INCLUDED
+#ifndef SSLMS_HEADER_INCLUDED
+#define SSLMS_HEADER_INCLUDED
 
-#define LMS_MAX_TAPS    32
+#define SSLMS_MAX_TAPS    32
 
 #include <stdint.h>
 
@@ -11,32 +11,32 @@ typedef struct {
     int32_t* history;           /* The pointer to past samples.*/
     int8_t* sign;               /* The pointer to past sign. */
     int32_t* weights;           /* The pointer to weights. */
-} lms;
+} sslms;
 
 /*!
  * @brief           Create new SSLMS filter instance.
  * @return          Pointer to created instance.
  */
-lms* lms_create(uint8_t taps, uint8_t pcm_bits);
+sslms* sslms_create(uint8_t taps, uint8_t pcm_bits);
 
 /*!
  * @brief           Release SSLMS filter.
  * @param *filter   Pointer to SSLMS filter.
  */
-void lms_free(lms* filter);
+void sslms_free(sslms* filter);
 
 /*!
  * @brief           Initialize SSLMS filter.
  * @param *filter   Pointer to SSLMS filter.
  */
-void lms_clear(lms* filter);
+void sslms_clear(sslms* filter);
 
 /*!
  * @brief           Predict next sample.
  * @param *filter   Pointer to SSLMS filter.
  * @return          Prediction
  */
-int32_t lms_predict(lms* filter);
+int32_t sslms_predict(sslms* filter);
 
 /*!
  * @brief           Update SSLMS filter.
@@ -44,6 +44,6 @@ int32_t lms_predict(lms* filter);
  * @param sample    Actual sample.
  * @param residual  Prediction residual.
  */
-void lms_update(lms* filter, int32_t sample, int32_t residual);
+void sslms_update(sslms* filter, int32_t sample, int32_t residual);
 
 #endif

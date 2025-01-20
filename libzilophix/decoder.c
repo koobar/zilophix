@@ -96,7 +96,7 @@ static void read_header(decoder* decoder) {
 static void decode_normal_block(decoder* decoder){
     uint8_t ch;
     sub_block* sb = NULL;
-    lms* lms = NULL;
+    sslms* lms = NULL;
     polynomial_predictor* poly = NULL;
     uint16_t offset;
     int32_t residual;
@@ -104,14 +104,14 @@ static void decode_normal_block(decoder* decoder){
 
     for (ch = 0; ch < decoder->num_channels; ++ch) {
         sb = decoder->current_block->sub_blocks[ch];
-        lms = decoder->lms_filters[ch];
+        lms = decoder->sslms_filters[ch];
         poly = decoder->polynomial_predictors[ch];
 
         for (offset = 0; offset < sb->size; ++offset) {
             /* STEP 1. Restore polynomial filter prediction residual. */
             residual = sb->samples[offset];
-            sample = residual + lms_predict(lms);
-            lms_update(lms, sample, residual);
+            sample = residual + sslms_predict(lms);
+            sslms_update(lms, sample, residual);
 
             /* STEP 2. Polynomial prediction and restore PCM sample. */
             sample += polynomial_predictor_predict(poly);
@@ -130,8 +130,8 @@ static void decode_normal_block(decoder* decoder){
 static void decode_midside_block(decoder* decoder){
     sub_block* lch = decoder->current_block->sub_blocks[0];
     sub_block* rch = decoder->current_block->sub_blocks[1];
-    lms* llms = decoder->lms_filters[0];
-    lms* rlms = decoder->lms_filters[1];
+    sslms* llms = decoder->sslms_filters[0];
+    sslms* rlms = decoder->sslms_filters[1];
     polynomial_predictor* lpoly = decoder->polynomial_predictors[0];
     polynomial_predictor* rpoly = decoder->polynomial_predictors[1];
     int32_t left;
@@ -142,10 +142,10 @@ static void decode_midside_block(decoder* decoder){
 
     for (offset = 0; offset < decoder->block_size; ++offset) {
         /* STEP 1. Restore polynomial filter prediction residuals. */
-        mid = lch->samples[offset] + lms_predict(llms);
-        side = rch->samples[offset] + lms_predict(rlms);
-        lms_update(llms, mid, lch->samples[offset]);
-        lms_update(rlms, side, rch->samples[offset]);
+        mid = lch->samples[offset] + sslms_predict(llms);
+        side = rch->samples[offset] + sslms_predict(rlms);
+        sslms_update(llms, mid, lch->samples[offset]);
+        sslms_update(rlms, side, rch->samples[offset]);
 
         /* STEP 2. Polynomial prediction and restore Mid-Side stereo PCM samples.*/
         mid += polynomial_predictor_predict(lpoly);
@@ -192,7 +192,7 @@ static void decoder_init(decoder* decoder, FILE* file) {
     /* Read header */
     read_header(decoder);
 
-    decoder->lms_filters = (lms**)malloc(sizeof(lms*) * decoder->num_channels);
+    decoder->sslms_filters = (sslms**)malloc(sizeof(sslms*) * decoder->num_channels);
     decoder->polynomial_predictors = (polynomial_predictor**)malloc(sizeof(polynomial_predictor*) * decoder->num_channels);
     decoder->coder = code_create(decoder->bit_stream, decoder->format_version, decoder->bits_per_sample);
     decoder->current_block = (block*)malloc(sizeof(block));
@@ -206,7 +206,7 @@ static void decoder_init(decoder* decoder, FILE* file) {
 
     /* Initialize SSLMS filters and polynomial predictors. */
     for (ch = 0; ch < decoder->num_channels; ++ch) {
-        decoder->lms_filters[ch] = lms_create(decoder->filter_taps, decoder->bits_per_sample);
+        decoder->sslms_filters[ch] = sslms_create(decoder->filter_taps, decoder->bits_per_sample);
         decoder->polynomial_predictors[ch] = polynomial_predictor_create();
     }
 }
@@ -235,12 +235,12 @@ void decoder_free(decoder* decoder) {
 
     /* Release all filters. */
     for (ch = 0; ch < decoder->num_channels; ++ch) {
-        lms_free(decoder->lms_filters[ch]);
+        sslms_free(decoder->sslms_filters[ch]);
         polynomial_predictor_free(decoder->polynomial_predictors[ch]);
     }
 
     free(decoder->bit_stream);
-    free(decoder->lms_filters);
+    free(decoder->sslms_filters);
     free(decoder->polynomial_predictors);
     free(decoder->coder);
     block_free(decoder->current_block);
@@ -325,7 +325,7 @@ void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset) {
 
         /* Initialize all filters. */
         for (ch = 0; ch < decoder->num_channels; ++ch) {
-            lms_clear(decoder->lms_filters[ch]);
+            sslms_clear(decoder->sslms_filters[ch]);
             polynomial_predictor_clear(decoder->polynomial_predictors[ch]);
         }
         offset = 0;

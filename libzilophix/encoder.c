@@ -100,12 +100,12 @@ static void encode_current_block_normal(encoder* encoder){
     int32_t sample, residual;
     sub_block* sb = NULL;
     polynomial_predictor* poly = NULL;
-    lms* lms = NULL;
+    sslms* lms = NULL;
 
     for (ch = 0; ch < encoder->num_channels; ++ch) {
         sb = encoder->current_block->sub_blocks[ch];
         poly = encoder->polynomial_predictors[ch];
-        lms = encoder->lms_filters[ch];
+        lms = encoder->sslms_filters[ch];
 
         for (offset = 0; offset < sb->size; ++offset) {
             /* STEP 1. Polynomial prediction. */
@@ -114,8 +114,8 @@ static void encode_current_block_normal(encoder* encoder){
 
             /* STEP 2. SSLMS prediction. */
             sample = residual;
-            residual -= lms_predict(lms);
-            lms_update(lms, sample, residual);
+            residual -= sslms_predict(lms);
+            sslms_update(lms, sample, residual);
 
             /* STEP 3. Output */
             sb->samples[offset] = residual;
@@ -137,8 +137,8 @@ static void encode_current_block_midside(encoder* encoder){
     sub_block* rch = encoder->current_block->sub_blocks[1];
     polynomial_predictor* lpoly = encoder->polynomial_predictors[0];
     polynomial_predictor* rpoly = encoder->polynomial_predictors[1];
-    lms* llms = encoder->lms_filters[0];
-    lms* rlms = encoder->lms_filters[1];
+    sslms* llms = encoder->sslms_filters[0];
+    sslms* rlms = encoder->sslms_filters[1];
 
     for (offset = 0; offset < encoder->block_size; ++offset){
         left = lch->samples[offset];
@@ -157,10 +157,10 @@ static void encode_current_block_midside(encoder* encoder){
         rch->samples[offset] = side;
 
         /* STEP 3. SSLMS prediction. */
-        mid -= lms_predict(llms);
-        side -= lms_predict(rlms);
-        lms_update(llms, lch->samples[offset], mid);
-        lms_update(rlms, rch->samples[offset], side);
+        mid -= sslms_predict(llms);
+        side -= sslms_predict(rlms);
+        sslms_update(llms, lch->samples[offset], mid);
+        sslms_update(rlms, rch->samples[offset], side);
 
         /* STEP 4. Output */
         lch->samples[offset] = mid;
@@ -225,8 +225,8 @@ static void init(
     tag* tag) {
     uint8_t ch;
 
-    if (filter_taps > LMS_MAX_TAPS) {
-        filter_taps = LMS_MAX_TAPS;
+    if (filter_taps > SSLMS_MAX_TAPS) {
+        filter_taps = SSLMS_MAX_TAPS;
     }
 
     encoder->output_file = file;
@@ -239,7 +239,7 @@ static void init(
     encoder->block_size = block_size;
     encoder->use_mid_side_stereo = use_mid_side_stereo;
     encoder->num_blocks = compute_block_count(num_samples, num_channels, block_size);
-    encoder->lms_filters = (lms**)malloc(sizeof(lms*) * num_channels);
+    encoder->sslms_filters = (sslms**)malloc(sizeof(sslms*) * num_channels);
     encoder->polynomial_predictors = (polynomial_predictor**)malloc(sizeof(polynomial_predictor*) * num_channels);
     encoder->coder = code_create(encoder->output_bit_stream, FORMAT_VERSION_CURRENT, encoder->bits_per_sample);
     encoder->current_block = (block*)malloc(sizeof(block));
@@ -252,7 +252,7 @@ static void init(
 
     /* Initialize all filters. */
     for (ch = 0; ch < num_channels; ++ch) {
-        encoder->lms_filters[ch] = lms_create(filter_taps, bits_per_sample);
+        encoder->sslms_filters[ch] = sslms_create(filter_taps, bits_per_sample);
         encoder->polynomial_predictors[ch] = polynomial_predictor_create();
     }
 
@@ -313,12 +313,12 @@ void encoder_free(encoder* encoder) {
 
     /* Release all filters. */
     for (ch = 0; ch < encoder->num_channels; ++ch) {
-        lms_free(encoder->lms_filters[ch]);
+        sslms_free(encoder->sslms_filters[ch]);
         polynomial_predictor_free(encoder->polynomial_predictors[ch]);
     }
 
     free(encoder->output_bit_stream);
-    free(encoder->lms_filters);
+    free(encoder->sslms_filters);
     free(encoder->polynomial_predictors);
     free(encoder->coder);
 

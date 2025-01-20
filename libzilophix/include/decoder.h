@@ -2,7 +2,7 @@
 #define DECODER_HEADER_INCLUDED
 
 #include "bit_stream.h"
-#include "lms.h"
+#include "sslms.h"
 #include "block.h"
 #include "code.h"
 #include "tag.h"
@@ -29,7 +29,7 @@ typedef struct {
     uint32_t audio_data_begin;
     uint32_t audio_data_size;
 
-    lms** lms_filters;                              /* SSLMS filters. */
+    sslms** sslms_filters;                          /* SSLMS filters. */
     polynomial_predictor** polynomial_predictors;   /* Polynomial predictors. */
 
     tag* tag;                                       /* The pointer to tag information. */

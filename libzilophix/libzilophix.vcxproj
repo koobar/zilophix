@@ -26,7 +26,7 @@
     <ClCompile Include="encoder.c" />
     <ClCompile Include="errcode.c" />
     <ClCompile Include="file_access.c" />
-    <ClCompile Include="lms.c" />
+    <ClCompile Include="sslms.c" />
     <ClCompile Include="polynomial_predictor.c" />
     <ClCompile Include="sub_block.c" />
     <ClCompile Include="tag.c" />
@@ -53,7 +53,7 @@
     <ClInclude Include="include\file_access.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
-    <ClInclude Include="include\lms.h">
+    <ClInclude Include="include\sslms.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
     <ClInclude Include="include\macro.h">
