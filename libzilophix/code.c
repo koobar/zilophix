@@ -11,10 +11,9 @@
 #define RESTORE_PARTITION_COUNT(partition_parameter)            (LSHIFT(1, partition_parameter))
 #define RESTORE_PARTITION_SIZE(data_size, partition_parameter)  ((data_size) / RESTORE_PARTITION_COUNT(partition_parameter))
 
-#define PARTITION_PARAMETER_MIN                 1
-#define PARTITION_PARAMETER_MAX                 PARTITION_PARAMETER_MIN + 3
-#define PARTITION_PARAMETER_NEED_BITS           2
-#define PARTITION_COUNT_MAX                     RESTORE_PARTITION_COUNT(PARTITION_PARAMETER_MAX)
+#define MINIMUM_PARTITION_PARAMETER_FOR_VER_1_0     1
+#define MINIMUM_PARTITION_PARAMETER_FOR_VER_1_1     0
+#define PARTITION_PARAMETER_NEED_BITS               2
 
 #define RICE_PARAMETER_MAX_FOR_PCM16            14
 #define BLANK_PARAMETER_FOR_PCM16               15
@@ -159,7 +158,7 @@ static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* 
     min_size = UINT32_MAX;
     optimal_partition_parameter = 0;
 
-    for (trial_pp = PARTITION_PARAMETER_MIN; trial_pp <= PARTITION_PARAMETER_MAX; ++trial_pp) {
+    for (trial_pp = coder->minimum_partition_parameter; trial_pp <= coder->maximum_partition_parameter; ++trial_pp) {
         partition_count = RESTORE_PARTITION_COUNT(trial_pp);
         partition_size = data_size / partition_count;
         size = 0;
@@ -176,7 +175,7 @@ static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* 
         }
 
         /* To the size of the partition, add the number of bits required to store the entropy coding parameters. */
-        size += PARTITION_PARAMETER_NEED_BITS;
+        size += coder->bits_of_partition_parameter;
 
         /* If the partition size based on the parameters tried this time is smaller than the 
            minimum size of partitions already found, the minimum size is replaced and the entropy 
@@ -184,7 +183,7 @@ static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* 
         if (min_size > size) {
             min_size = size;
             optimal_partition_parameter = trial_pp;
-            memcpy(coder->workA, coder->workB, sizeof(uint32_t) * PARTITION_COUNT_MAX);
+            memcpy(coder->workA, coder->workB, sizeof(uint32_t) * coder->maximum_partition_count);
         }
     }
 
@@ -244,7 +243,7 @@ static void write_sub_block(code* coder, const sub_block* sub_block) {
     partition_size = sub_block->size / partition_count;
 
     /* Write partition parameter. */
-    bit_stream_write_uint(coder->bitstream, partition_parameter - PARTITION_PARAMETER_MIN, PARTITION_PARAMETER_NEED_BITS);
+    bit_stream_write_uint(coder->bitstream, partition_parameter - coder->minimum_partition_parameter, coder->bits_of_partition_parameter);
 
     /* Write all subblocks. */
     for (p = 0; p < partition_count; ++p) {
@@ -275,7 +274,7 @@ static void read_sub_block(code* coder, sub_block* sub_block) {
     uint32_t partition_count;
 
     /* Read partition parameter. */
-    partition_parameter = bit_stream_read_uint(coder->bitstream, PARTITION_PARAMETER_NEED_BITS) + PARTITION_PARAMETER_MIN;
+    partition_parameter = bit_stream_read_uint(coder->bitstream, coder->bits_of_partition_parameter) + coder->minimum_partition_parameter;
 
     /* Compute the number of partitions and partition size from parameter. */
     partition_count = RESTORE_PARTITION_COUNT(partition_parameter);
@@ -310,27 +309,37 @@ code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_samp
     if (result == NULL) {
         return NULL;
     }
+    
+    if (bits_per_sample == 16) {
+        result->rice_parameter_max = RICE_PARAMETER_MAX_FOR_PCM16;
+        result->blank_partition_parameter = BLANK_PARAMETER_FOR_PCM16;
+        result->bits_of_entropy_parameter = ENTROPY_PARAMETER_NEED_BITS_FOR_PCM16;
+    }
+    else if (bits_per_sample == 24) {
+        result->rice_parameter_max = RICE_PARAMETER_MAX_FOR_PCM24;
+        result->blank_partition_parameter = BLANK_PARAMETER_FOR_PCM24;
+        result->bits_of_entropy_parameter = ENTROPY_PARAMETER_NEED_BITS_FOR_PCM24;
+    }
+
+    switch (fmt_version) {
+    case FORMAT_VERSION_1_0:
+        result->minimum_partition_parameter = MINIMUM_PARTITION_PARAMETER_FOR_VER_1_0;
+        break;
+    case FORMAT_VERSION_1_1:
+        result->minimum_partition_parameter = MINIMUM_PARTITION_PARAMETER_FOR_VER_1_1;
+        break;
+    default:
+        report_error(ERROR_DECODER_UNSUPPORTED_FORMAT_VERSION);
+        break;
+    }
 
     result->bitstream = stream;
     result->bits_per_sample = bits_per_sample;
-    result->workA = (uint32_t*)calloc(PARTITION_COUNT_MAX, sizeof(uint32_t));
-    result->workB = (uint32_t*)calloc(PARTITION_COUNT_MAX, sizeof(uint32_t));
-
-    if (fmt_version == FORMAT_VERSION_1_0){
-        if (bits_per_sample == 16){
-            result->rice_parameter_max = RICE_PARAMETER_MAX_FOR_PCM16;
-            result->blank_partition_parameter = BLANK_PARAMETER_FOR_PCM16;
-            result->bits_of_entropy_parameter = ENTROPY_PARAMETER_NEED_BITS_FOR_PCM16;
-        }
-        else if (bits_per_sample == 24){
-            result->rice_parameter_max = RICE_PARAMETER_MAX_FOR_PCM24;
-            result->blank_partition_parameter = BLANK_PARAMETER_FOR_PCM24;
-            result->bits_of_entropy_parameter = ENTROPY_PARAMETER_NEED_BITS_FOR_PCM24;
-        }
-    }
-    else{
-        report_error(ERROR_DECODER_UNSUPPORTED_FORMAT_VERSION);
-    }
+    result->maximum_partition_parameter = result->minimum_partition_parameter + 3;
+    result->maximum_partition_count = RESTORE_PARTITION_COUNT(result->maximum_partition_parameter);
+    result->bits_of_partition_parameter = PARTITION_PARAMETER_NEED_BITS;
+    result->workA = (uint32_t*)calloc(result->maximum_partition_count, sizeof(uint32_t));
+    result->workB = (uint32_t*)calloc(result->maximum_partition_count, sizeof(uint32_t));
 
     return result;
 }

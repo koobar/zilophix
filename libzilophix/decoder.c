@@ -3,8 +3,9 @@
 #include "./include/decoder.h"
 #include "./include/errcode.h"
 #include "./include/sub_block.h"
+#include "./include/zilophix.h"
 
-const static uint8_t supported_format_versions[2] = { 0x01, 0x10 };
+const static uint8_t supported_format_versions[2] = { FORMAT_VERSION_1_0, FORMAT_VERSION_1_1 };
 
 /*! 
  * @brief           Check version

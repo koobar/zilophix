@@ -187,9 +187,9 @@ static void print_logo() {
     print("ZilophiX (ZpX): The free and open-source lossless audio codec.");
     print("Copyright (c) 2024-2025 koobar. Released under WTFPL version 2.");
     print_return();
-    print("Codec version:   1.0");
-    print("Tool version:    1.01");
-    print("Build:           2025/01/11");
+    print("Codec version:   1.1");
+    print("Tool version:    1.1");
+    print("Build:           2025/01/21");
 }
 
 /*!
