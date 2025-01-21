@@ -12,7 +12,7 @@ static char* output_file_path = NULL;
 static bool use_mid_side_stereo = false;
 static bool is_silent_mode = false;
 static bool is_help_mode = false;
-static uint16_t block_size = 1024;
+static uint16_t block_size = 0;
 static uint8_t filter_taps = 4;
 
 static const char* tag_title;

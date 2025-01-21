@@ -229,6 +229,24 @@ static void init(
         filter_taps = SSLMS_MAX_TAPS;
     }
 
+    if (block_size == 0) {
+        switch (sample_rate) {
+        case 8000:
+        case 11025:
+        case 22050:
+        case 32000:
+            block_size = 1024;
+            break;
+        case 44100:
+        case 48000:
+            block_size = 2048;
+            break;
+        default:
+            block_size = 1024;
+            break;
+        }
+    }
+
     encoder->output_file = file;
     encoder->output_bit_stream = bit_stream_create(encoder->output_file, BIT_STREAM_MODE_WRITE);
     encoder->sample_rate = sample_rate;

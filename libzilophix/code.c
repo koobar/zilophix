@@ -15,13 +15,13 @@
 #define MINIMUM_PARTITION_PARAMETER_FOR_VER_1_1     0
 #define PARTITION_PARAMETER_NEED_BITS               2
 
-#define RICE_PARAMETER_MAX_FOR_PCM16            14
-#define BLANK_PARAMETER_FOR_PCM16               15
-#define ENTROPY_PARAMETER_NEED_BITS_FOR_PCM16   4
+#define RICE_PARAMETER_MAX_FOR_PCM16                14
+#define BLANK_PARAMETER_FOR_PCM16                   15
+#define ENTROPY_PARAMETER_NEED_BITS_FOR_PCM16       4
 
-#define RICE_PARAMETER_MAX_FOR_PCM24            30
-#define BLANK_PARAMETER_FOR_PCM24               31
-#define ENTROPY_PARAMETER_NEED_BITS_FOR_PCM24   5
+#define RICE_PARAMETER_MAX_FOR_PCM24                30
+#define BLANK_PARAMETER_FOR_PCM24                   31
+#define ENTROPY_PARAMETER_NEED_BITS_FOR_PCM24       5
 
 #ifdef _MSC_VER
 #define __builtin_clz(x) clz(x)
@@ -169,7 +169,7 @@ static uint32_t compute_optimal_partition_parameter(code* coder, const int32_t* 
 
             /* Save the entropy coding parameters of this partition in the working memory. */
             coder->workB[partition_index] = compute_optimal_entropy_parameter(coder, data, start, partition_size, &partition_bits);
-            
+
             /* Update partition size. */
             size += partition_bits;
         }
