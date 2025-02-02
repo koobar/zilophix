@@ -45,7 +45,7 @@
     <ClCompile Include="sub_block.c">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="tag.c">
+    <ClCompile Include="zilophix.c">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -81,9 +81,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\sub_block.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tag.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="include\zilophix.h">

@@ -62,6 +62,14 @@ uint16_t read_uint16(FILE* file);
 uint32_t read_uint32(FILE* file);
 
 /*!
+ * @brief       Reads the specified number of bytes from the specified file pointer
+ * @param file  The file pointer
+ * @param pmem  Pointer to the allocated memory
+ * @param size  Data size
+ */
+void read_mem(FILE* file, void* pmem, uint32_t size);
+
+/*!
  * @brief       Writes a boolean value to the file pointed to by the given file pointer.
  * @param file  The file pointer
  * @param value The value to be written
@@ -117,5 +125,12 @@ void write_int16(FILE* file, int16_t value);
  */
 void write_int32(FILE* file, int32_t value);
 
+/*!
+ * @brief       Writes the specified number of bytes to the specified file pointer
+ * @param file  The file pointer
+ * @param pmem  Pointer to the allocated memory.
+ * @param size  Data size
+ */
+void write_mem(FILE* file, void* pmem, uint32_t size);
 
 #endif

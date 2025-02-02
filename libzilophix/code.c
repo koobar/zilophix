@@ -326,6 +326,7 @@ code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_samp
         result->minimum_partition_parameter = MINIMUM_PARTITION_PARAMETER_FOR_VER_1_0;
         break;
     case FORMAT_VERSION_1_1:
+    case FORMAT_VERSION_1_2:
         result->minimum_partition_parameter = MINIMUM_PARTITION_PARAMETER_FOR_VER_1_1;
         break;
     default:

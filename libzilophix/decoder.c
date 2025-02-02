@@ -5,7 +5,7 @@
 #include "./include/sub_block.h"
 #include "./include/zilophix.h"
 
-const static uint8_t supported_format_versions[2] = { FORMAT_VERSION_1_0, FORMAT_VERSION_1_1 };
+const static uint8_t supported_format_versions[1] = { FORMAT_VERSION_1_2 };
 
 /*! 
  * @brief           Check version
@@ -41,38 +41,10 @@ static bool check_magic_number(decoder* decoder){
  * @param *decoder  Pointer to decoder.
  */
 static void read_format_info(decoder* decoder){
-    /* Read format version */
-    decoder->format_version = read_uint8(decoder->file);
+    read_mem(decoder->file, &decoder->header, sizeof(zilophix_header));
 
-    if (!is_supported_version(decoder->format_version)) {
+    if (!is_supported_version(decoder->header.format_version)) {
         report_error(ERROR_DECODER_UNSUPPORTED_FORMAT_VERSION);
-        return;
-    }
-
-    /* Read PCM format informations. */
-    decoder->sample_rate = read_uint32(decoder->file);
-    decoder->bits_per_sample = read_uint8(decoder->file);
-    decoder->num_channels = read_uint8(decoder->file);
-    decoder->num_total_samples = read_uint32(decoder->file);
-
-    /* Read Zilophix encode informations. */
-    decoder->filter_taps = read_uint8(decoder->file);
-    decoder->block_size = read_uint16(decoder->file);
-    decoder->use_mid_side_stereo = read_bool(decoder->file);
-    decoder->num_blocks = read_uint32(decoder->file);
-
-    /* Read reserved codes. (If unused or unimplemented, it will be zero.) */
-    decoder->reserved1 = read_uint8(decoder->file);
-    decoder->reserved2 = read_uint8(decoder->file);
-
-    /* Get offset of audio data */
-    if (read_char(decoder->file) == 'A' && read_char(decoder->file) == 'D' && read_char(decoder->file) == 'D' && read_char(decoder->file) == 'R'){
-        decoder->audio_data_begin = read_uint32(decoder->file);
-    }
-
-    /* Get size of audio data. */
-    if (read_char(decoder->file) == 'S' && read_char(decoder->file) == 'I' && read_char(decoder->file) == 'Z' && read_char(decoder->file) == 'E'){
-        decoder->audio_data_size = read_uint32(decoder->file);
     }
 }
 
@@ -83,7 +55,6 @@ static void read_format_info(decoder* decoder){
 static void read_header(decoder* decoder) {
     if (check_magic_number(decoder)){
         read_format_info(decoder);
-        tag_read(decoder->file, &decoder->tag);
     }
     else {
         report_error(ERROR_DECODER_INVALID_MAGIC_NUMBER);
@@ -103,7 +74,7 @@ static void decode_normal_block(decoder* decoder){
     int32_t residual;
     int32_t sample;
 
-    for (ch = 0; ch < decoder->num_channels; ++ch) {
+    for (ch = 0; ch < decoder->header.num_channels; ++ch) {
         sb = decoder->current_block->sub_blocks[ch];
         lms = decoder->sslms_filters[ch];
         poly = decoder->polynomial_predictors[ch];
@@ -141,7 +112,7 @@ static void decode_midside_block(decoder* decoder){
     int32_t side;
     uint16_t offset;
 
-    for (offset = 0; offset < decoder->block_size; ++offset) {
+    for (offset = 0; offset < decoder->header.block_size; ++offset) {
         /* STEP 1. Restore polynomial filter prediction residuals. */
         mid = lch->samples[offset] + sslms_predict(llms);
         side = rch->samples[offset] + sslms_predict(rlms);
@@ -170,7 +141,7 @@ static void decode_midside_block(decoder* decoder){
  * @param *decoder  Pointer to decoder.
  */
 static void decode_current_block(decoder* decoder) {
-    if (decoder->num_channels == 2 && decoder->use_mid_side_stereo){
+    if (decoder->header.num_channels == 2 && decoder->header.use_mid_side_stereo){
         decode_midside_block(decoder);
     }
     else{
@@ -193,9 +164,9 @@ static void decoder_init(decoder* decoder, FILE* file) {
     /* Read header */
     read_header(decoder);
 
-    decoder->sslms_filters = (sslms**)malloc(sizeof(sslms*) * decoder->num_channels);
-    decoder->polynomial_predictors = (polynomial_predictor**)malloc(sizeof(polynomial_predictor*) * decoder->num_channels);
-    decoder->coder = code_create(decoder->bit_stream, decoder->format_version, decoder->bits_per_sample);
+    decoder->sslms_filters = (sslms**)malloc(sizeof(sslms*) * decoder->header.num_channels);
+    decoder->polynomial_predictors = (polynomial_predictor**)malloc(sizeof(polynomial_predictor*) * decoder->header.num_channels);
+    decoder->coder = code_create(decoder->bit_stream, decoder->header.format_version, decoder->header.bits_per_sample);
     decoder->current_block = (block*)malloc(sizeof(block));
     decoder->current_read_sub_block_channel = 0;
     decoder->current_read_sub_block_offset = 0;
@@ -203,11 +174,11 @@ static void decoder_init(decoder* decoder, FILE* file) {
     decoder->is_seeking = false;
 
     /* Initialize blocks */
-    block_init(decoder->current_block, decoder->block_size, decoder->num_channels);
+    block_init(decoder->current_block, decoder->header.block_size, decoder->header.num_channels);
 
     /* Initialize SSLMS filters and polynomial predictors. */
-    for (ch = 0; ch < decoder->num_channels; ++ch) {
-        decoder->sslms_filters[ch] = sslms_create(decoder->filter_taps, decoder->bits_per_sample);
+    for (ch = 0; ch < decoder->header.num_channels; ++ch) {
+        decoder->sslms_filters[ch] = sslms_create(decoder->header.filter_taps, decoder->header.bits_per_sample);
         decoder->polynomial_predictors[ch] = polynomial_predictor_create();
     }
 }
@@ -222,7 +193,7 @@ decoder* decoder_create(FILE* file) {
     decoder_init(result, file);
     
     /* Seek to audio data begin offset. */
-    fseek(result->file, result->audio_data_begin, SEEK_SET);
+    fseek(result->file, result->header.audio_data_offset, SEEK_SET);
     
     return result;
 }
@@ -235,7 +206,7 @@ void decoder_free(decoder* decoder) {
     uint8_t ch;
 
     /* Release all filters. */
-    for (ch = 0; ch < decoder->num_channels; ++ch) {
+    for (ch = 0; ch < decoder->header.num_channels; ++ch) {
         sslms_free(decoder->sslms_filters[ch]);
         polynomial_predictor_free(decoder->polynomial_predictors[ch]);
     }
@@ -253,7 +224,6 @@ void decoder_free(decoder* decoder) {
  * @param decoder           Pointer to decoder.
  */
 void decoder_close(decoder* decoder) {
-    tag_free(decoder->tag);
     fclose(decoder->file);
 }
 
@@ -272,11 +242,11 @@ static int32_t force_read_sample(decoder* decoder) {
 
     sample = (int32_t)decoder->current_block->sub_blocks[decoder->current_read_sub_block_channel++]->samples[decoder->current_read_sub_block_offset];
 
-    if (decoder->current_read_sub_block_channel == decoder->num_channels) {
+    if (decoder->current_read_sub_block_channel == decoder->header.num_channels) {
         decoder->current_read_sub_block_channel = 0;
         ++decoder->current_read_sub_block_offset;
 
-        if (decoder->current_read_sub_block_offset == decoder->block_size) {
+        if (decoder->current_read_sub_block_offset == decoder->header.block_size) {
             decoder->current_read_sub_block_offset = 0;
         }
     }
@@ -295,7 +265,7 @@ int32_t decoder_read_sample(decoder* decoder) {
         return 0;
     }
 
-    if (decoder->num_samples_read >= decoder->num_total_samples) {
+    if (decoder->num_samples_read >= decoder->header.num_samples) {
         return 0;
     }
 
@@ -316,7 +286,7 @@ void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset) {
     /* In the case of a backward seek (moving the playback position back to a previous point),
        decoding is restarted from the beginning of the file. */
     if (sample_offset < decoder->num_samples_read) {
-        fseek(decoder->file, decoder->audio_data_begin, SEEK_SET);
+        fseek(decoder->file, decoder->header.audio_data_offset, SEEK_SET);
         bit_stream_init(decoder->bit_stream);
 
         /* Initialize block. */
@@ -325,7 +295,7 @@ void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset) {
         decoder->num_samples_read = 0;
 
         /* Initialize all filters. */
-        for (ch = 0; ch < decoder->num_channels; ++ch) {
+        for (ch = 0; ch < decoder->header.num_channels; ++ch) {
             sslms_clear(decoder->sslms_filters[ch]);
             polynomial_predictor_clear(decoder->polynomial_predictors[ch]);
         }
@@ -349,7 +319,7 @@ void decoder_seek_sample_to(decoder* decoder, uint32_t sample_offset) {
  * @param sample_offset     Seek destination time in milliseconds.
  */
 void decoder_seek_milliseconds_to(decoder* decoder, uint32_t ms) {
-    uint32_t samples_per_ms = (decoder->sample_rate * decoder->num_channels) / 1000;
+    uint32_t samples_per_ms = (decoder->header.sample_rate * decoder->header.num_channels) / 1000;
     uint32_t offset = ms * samples_per_ms;
 
     decoder_seek_sample_to(decoder, offset);
@@ -361,8 +331,8 @@ void decoder_seek_milliseconds_to(decoder* decoder, uint32_t ms) {
  * @return                  Playback duration in milliseconds.
  */
 uint32_t decoder_get_duration_ms(decoder* decoder) {
-    uint32_t samples_per_ms = (decoder->sample_rate * decoder->num_channels) / 1000;
-    uint32_t total_ms = decoder->num_total_samples / samples_per_ms;
+    uint32_t samples_per_ms = (decoder->header.sample_rate * decoder->header.num_channels) / 1000;
+    uint32_t total_ms = decoder->header.num_samples / samples_per_ms;
 
     return total_ms;
 }

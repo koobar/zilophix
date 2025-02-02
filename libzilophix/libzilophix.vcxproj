@@ -29,7 +29,7 @@
     <ClCompile Include="sslms.c" />
     <ClCompile Include="polynomial_predictor.c" />
     <ClCompile Include="sub_block.c" />
-    <ClCompile Include="tag.c" />
+    <ClCompile Include="zilophix.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\bit_stream.h">
@@ -63,9 +63,6 @@
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
     <ClInclude Include="include\sub_block.h">
-      <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
-    <ClInclude Include="include\tag.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
     <ClInclude Include="include\zilophix.h">

@@ -136,6 +136,16 @@ uint32_t read_uint32(FILE* file) {
 }
 
 /*!
+ * @brief       Reads the specified number of bytes from the specified file pointer
+ * @param file  The file pointer
+ * @param pmem  Pointer to the allocated memory
+ * @param size  Data size
+ */
+void read_mem(FILE* file, void* pmem, uint32_t size) {
+    fread(pmem, size, 1, file);
+}
+
+/*!
  * @brief       Writes a boolean value to the file pointed to by the given file pointer.
  * @param file  The file pointer
  * @param value The value to be written
@@ -247,4 +257,14 @@ void write_int32(FILE* file, int32_t value) {
     if (actual_write < 1) {
         report_error(ERROR_FILE_ACCESS_FAILED_TO_WRITE_INT32);
     }
+}
+
+/*!
+ * @brief       Writes the specified number of bytes to the specified file pointer
+ * @param file  The file pointer
+ * @param pmem  Pointer to the allocated memory.
+ * @param size  Data size
+ */
+void write_mem(FILE* file, void* pmem, uint32_t size) {
+    fwrite(pmem, size, 1, file);
 }

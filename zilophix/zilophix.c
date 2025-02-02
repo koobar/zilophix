@@ -6,6 +6,7 @@
 #include "wave_file_writer.h"
 #include <stdbool.h>
 #include <time.h>
+#include <string.h>
 
 static char* input_file_path = NULL;
 static char* output_file_path = NULL;
@@ -14,27 +15,6 @@ static bool is_silent_mode = false;
 static bool is_help_mode = false;
 static uint16_t block_size = 0;
 static uint8_t filter_taps = 4;
-
-static const char* tag_title;
-static const char* tag_album;
-static const char* tag_artist;
-static const char* tag_album_artist;
-static const char* tag_subtitle;
-static const char* tag_publisher;
-static const char* tag_composer;
-static const char* tag_songwriter;
-static const char* tag_conductor;
-static const char* tag_copyright;
-static const char* tag_genre;
-static const char* tag_comment;
-static uint16_t tag_year;
-static uint16_t tag_track_number;
-static uint16_t tag_track_count;
-static uint16_t tag_disc;
-static uint16_t tag_rate;
-static const char* tag_picture_path;
-
-static bool has_tag = false;
 
 /*!
  * @brief               Parse command line arguments.
@@ -66,91 +46,6 @@ static void parse_commandline_args(int argc, char* argv[]) {
         }
         else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
             is_help_mode = true;
-        }
-        else if (strcmp(argv[i], "--title") == 0) {
-            tag_title = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--album") == 0) {
-            tag_album = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--artist") == 0) {
-            tag_artist = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--album-artist") == 0) {
-            tag_album_artist = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--subtitle") == 0) {
-            tag_subtitle = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--publisher") == 0) {
-            tag_publisher = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--composer") == 0) {
-            tag_composer = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--songwriter") == 0) {
-            tag_songwriter = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--conductor") == 0) {
-            tag_conductor = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--copyright") == 0) {
-            tag_copyright = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--genre") == 0) {
-            tag_genre = argv[i + 1];
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--year") == 0) {
-            tag_year = (uint16_t)atoi(argv[i + 1]);
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--track-number") == 0) {
-            tag_track_number = (uint16_t)atoi(argv[i + 1]);
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--track-count") == 0) {
-            tag_track_count = (uint16_t)atoi(argv[i + 1]);
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--disc") == 0) {
-            tag_disc = (uint16_t)atoi(argv[i + 1]);
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--rate") == 0) {
-            tag_rate = (uint16_t)atoi(argv[i + 1]);
-            ++i;
-            has_tag = true;
-        }
-        else if (strcmp(argv[i], "--picture") == 0) {
-            tag_picture_path = argv[i + 1];
-            ++i;
-            has_tag = true;
         }
     }
 }
@@ -187,9 +82,9 @@ static void print_logo() {
     print("ZilophiX (ZpX): The free and open-source lossless audio codec.");
     print("Copyright (c) 2024-2025 koobar. Released under WTFPL version 2.");
     print_return();
-    print("Codec version:   1.1");
-    print("Tool version:    1.1");
-    print("Build:           2025/02/01");
+    print("Codec version:   1.2");
+    print("Tool version:    1.2");
+    print("Build:           2025/02/02");
 }
 
 /*!
@@ -206,24 +101,6 @@ static void print_usage() {
     printf("    --out|--output              Specify the output file path.\n");
     printf("    -ms|-midside                Uses mid-side stereo. Compression rates are often improved.\n");
     printf("    -silent|-s                  Don't display any text.\n");
-    printf("    --title                     Set the title in tag information.\n");
-    printf("    --album                     Set the album in tag information.\n");
-    printf("    --artist                    Set the artist in tag information.\n");
-    printf("    --album-artist              Set the album artist in tag information.\n");
-    printf("    --subtitle                  Set the subtitle in tag information.\n");
-    printf("    --publisher                 Set the publisher in tag information.\n");
-    printf("    --composer                  Set the composer in tag information.\n");
-    printf("    --songwriter                Set the songwriter in tag information.\n");
-    printf("    --conductor                 Set the conductor in tag information.\n");
-    printf("    --copyright                 Set the copyright notices in tag information.\n");
-    printf("    --comment                   Set the comment in tag information.\n");
-    printf("    --genre                     Set the genre in tag information.\n");
-    printf("    --year                      Set the year in tag information.\n");
-    printf("    --track-number              Set the track number in tag information.\n");
-    printf("    --track-count               Set the track count in tag information.\n");
-    printf("    --disc                      Set the disc number in tag information.\n");
-    printf("    --rate                      Set the rate in ptag information.\n");
-    printf("    --picture                   Set the picture such as cover, album art, thumbnail in tag information.\n");
     printf("    -h|-help                    Display this text.\n");
 }
 
@@ -286,102 +163,28 @@ static void print_format_info(decoder* decoder) {
     sprintf_s(buffer, buffer_size, "[FORMAT]\0");
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "Sample rate:       %d Hz\0", decoder->sample_rate);
+    sprintf_s(buffer, buffer_size, "Sample rate:       %d Hz\0", decoder->header.sample_rate);
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "Bits per sample:   %d Bits\0", decoder->bits_per_sample);
+    sprintf_s(buffer, buffer_size, "Bits per sample:   %d Bits\0", decoder->header.bits_per_sample);
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "channels:          %d Channels\0", decoder->num_channels);
+    sprintf_s(buffer, buffer_size, "channels:          %d Channels\0", decoder->header.num_channels);
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "Mid-Side stereo:   %s\0", decoder->use_mid_side_stereo ? "Yes" : "No");
+    sprintf_s(buffer, buffer_size, "Mid-Side stereo:   %s\0", decoder->header.use_mid_side_stereo ? "Yes" : "No");
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "SSLMS filter taps: %d\0", decoder->filter_taps);
+    sprintf_s(buffer, buffer_size, "SSLMS filter taps: %d\0", decoder->header.filter_taps);
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "Block size:        %d Samples\0", decoder->block_size);
+    sprintf_s(buffer, buffer_size, "Block size:        %d Samples\0", decoder->header.block_size);
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "Total samples:     %d Samples\0", decoder->num_total_samples);
+    sprintf_s(buffer, buffer_size, "Total samples:     %d Samples\0", decoder->header.num_samples);
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "Total blocks:      %d Blocks\0", decoder->num_blocks);
-    print(buffer);
-
-    free(buffer);
-}
-
-/*!
- * @brief                   Print tag informations.
- * @param *decoder          Pointer to tag.
- */
-static void print_tag(tag* ptag) {
-    size_t buffer_size = sizeof(char) * 1024;
-    char* buffer = (char*)malloc(buffer_size);
-
-    if (buffer == NULL) {
-        return;
-    }
-
-    if (ptag == NULL) {
-        free(buffer);
-        return;
-    }
-
-    sprintf_s(buffer, buffer_size, "[TAG INFORMATION]\0");
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Title:        %s\0", ptag->title);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Album:        %s\0", ptag->album);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Artist:       %s\0", ptag->artist);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Album-artist: %s\0", ptag->album_artist);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Subtitle:     %s\0", ptag->subtitle);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Publisher:    %s\0", ptag->publisher);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Composer:     %s\0", ptag->composer);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Songwriter:   %s\0", ptag->songwriter);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Conductor:    %s\0", ptag->conductor);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Copyright:    %s\0", ptag->copyright);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Comment:      %s\0", ptag->comment);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Genre:        %s\0", ptag->genre);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Year:         %d\0", ptag->year);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Track number: %d\0", ptag->track_number);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Track count:  %d\0", ptag->track_count);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Disc number:  %d\0", ptag->disc);
-    print(buffer);
-
-    sprintf_s(buffer, buffer_size, "Rating:       %d\0", ptag->rate);
+    sprintf_s(buffer, buffer_size, "Total blocks:      %d Blocks\0", decoder->header.num_blocks);
     print(buffer);
 
     free(buffer);
@@ -418,9 +221,6 @@ static void print_decode_result(decoder* decoder, clock_t decode_start, clock_t 
     
     /* フォーマット情報を出力 */
     print_format_info(decoder);
-
-    /* タグ情報を出力 */
-    print_tag(decoder->tag);
     
     free(buffer);
 }
@@ -434,7 +234,6 @@ static void encode() {
     encoder* encoder = NULL;
     uint32_t n, i;
     clock_t start, end;
-    tag* ptag;
 
     /* Delete old file. */
     remove(output_file_path);
@@ -444,35 +243,6 @@ static void encode() {
 
     /* Get the number of samples from WAV file. */
     n = wave_file_reader_get_num_samples(reader);
-
-    if (has_tag) {
-        ptag = (tag*)malloc(sizeof(tag));
-        tag_init(ptag);
-        if (tag_title != NULL) ptag->title = tag_title;
-        if (tag_album != NULL) ptag->album = tag_album;
-        if (tag_artist != NULL) ptag->artist = tag_artist;
-        if (tag_album_artist != NULL) ptag->album_artist = tag_album_artist;
-        if (tag_subtitle != NULL) ptag->subtitle = tag_subtitle;
-        if (tag_publisher != NULL) ptag->publisher = tag_publisher;
-        if (tag_composer != NULL) ptag->composer = tag_composer;
-        if (tag_songwriter != NULL) ptag->songwriter = tag_songwriter;
-        if (tag_conductor != NULL) ptag->conductor = tag_conductor;
-        if (tag_copyright != NULL) ptag->copyright = tag_copyright;
-        if (tag_genre != NULL) ptag->genre = tag_genre;
-        if (tag_comment != NULL) ptag->comment = tag_comment;
-        ptag->year = tag_year;
-        ptag->track_number = tag_track_number;
-        ptag->track_count = tag_track_count;
-        ptag->disc = tag_disc;
-        ptag->rate = tag_rate;
-
-        if (tag_picture_path != NULL) {
-            tag_set_picture_from_path(ptag, tag_picture_path);
-        }
-    }
-    else {
-        ptag = NULL;
-    }
 
     /* Create new instance of encoder. */
     output_file = fopen(output_file_path, "wb");
@@ -484,8 +254,7 @@ static void encode() {
         n,
         block_size,
         use_mid_side_stereo,
-        filter_taps,
-        ptag);
+        filter_taps);
 
     /* Save start time. */
     start = clock();
@@ -524,15 +293,15 @@ static void decode() {
 
     /* Create new WAV file writer and set pcm format and the number of samples. */
     writer = wave_file_writer_create(output_file_path);
-    wave_file_writer_set_pcm_format(writer, decoder->sample_rate, decoder->bits_per_sample, decoder->num_channels);
-    wave_file_writer_set_num_samples(writer, decoder->num_total_samples);
+    wave_file_writer_set_pcm_format(writer, decoder->header.sample_rate, decoder->header.bits_per_sample, decoder->header.num_channels);
+    wave_file_writer_set_num_samples(writer, decoder->header.num_samples);
 
     /* Save start time */
     start = clock();
     wave_file_writer_begin_write(writer);
 
     /* Decode and write all samples. */
-    for (i = 0; i < decoder->num_total_samples; ++i) {
+    for (i = 0; i < decoder->header.num_samples; ++i) {
         wave_file_writer_write_sample(writer, decoder_read_sample(decoder));
     }
     wave_file_writer_end_write(writer);
