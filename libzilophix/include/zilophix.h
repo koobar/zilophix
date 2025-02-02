@@ -20,6 +20,7 @@
 #define HEADER_OFFSET_OF_AUDIO_DATA_OFFSET      SIZE_OF_MAGIC_NUMBER + offsetof(zilophix_header, audio_data_offset)
 #define HEADER_OFFSET_OF_AUDIO_DATA_SIZE        SIZE_OF_MAGIC_NUMBER + offsetof(zilophix_header, audio_data_size)
 
+#pragma pack(push, 1)
 typedef struct {
     uint8_t format_version;                             /* Format version. */
     uint32_t sample_rate;                               /* Sample rate */
@@ -37,7 +38,10 @@ typedef struct {
     uint32_t audio_data_offset;                         /* The offset of audio data. */
     uint32_t id_audio_data_size;
     uint32_t audio_data_size;                           /* The size of audio data. */
+    uint8_t reserved3;                                  /* Reserved. */
+
 } zilophix_header;
+#pragma pack(pop)
 
 void zilophix_header_init(zilophix_header* header);
 

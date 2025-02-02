@@ -5,7 +5,7 @@
 #include "./include/sub_block.h"
 #include "./include/zilophix.h"
 
-const static uint8_t supported_format_versions[1] = { FORMAT_VERSION_1_2 };
+const static uint8_t supported_format_versions[3] = { FORMAT_VERSION_1_0, FORMAT_VERSION_1_1, FORMAT_VERSION_1_2 };
 
 /*! 
  * @brief           Check version
