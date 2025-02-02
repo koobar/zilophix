@@ -18,7 +18,6 @@ typedef encoder* HENCODER;
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
- * @param *tag                      Pointer to tag information.
  * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromPathA(
@@ -29,8 +28,7 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathA(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps,
-    tag* tag);
+    uint8_t filter_taps);
 
 /*!
  * @brief                           Create new instance of encoder.
@@ -42,7 +40,6 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathA(
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
- * @param *tag                      Pointer to tag information.
  * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromPathW(
@@ -53,8 +50,7 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathW(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps,
-    tag* tag);
+    uint8_t filter_taps);
 
 /*!
  * @brief                           Create new instance of encoder from file.
@@ -66,7 +62,6 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathW(
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
- * @param *tag                      Pointer to tag information.
  * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) CreateEncoderFromFile(
@@ -77,8 +72,7 @@ HENCODER __declspec(dllexport) CreateEncoderFromFile(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps,
-    tag* tag);
+    uint8_t filter_taps);
 
 /*!
  * @brief                           Release encoder.

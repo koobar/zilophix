@@ -6,6 +6,7 @@
 #include "block.h"
 #include "code.h"
 #include "polynomial_predictor.h"
+#include "zilophix.h"
 #include <stdbool.h>
 
 typedef struct {

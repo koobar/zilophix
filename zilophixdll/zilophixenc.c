@@ -11,8 +11,7 @@ HENCODER CreateEncoderFromPathA(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps,
-    tag* tag) {
+    uint8_t filter_taps) {
     FILE* output_file = NULL;
 
     set_on_error_exit(false);
@@ -26,8 +25,7 @@ HENCODER CreateEncoderFromPathA(
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps,
-        tag);
+        filter_taps);
 }
 
 HENCODER CreateEncoderFromPathW(
@@ -38,8 +36,7 @@ HENCODER CreateEncoderFromPathW(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps,
-    tag* tag) {
+    uint8_t filter_taps) {
     FILE* file;
     
     set_on_error_exit(false);
@@ -53,8 +50,7 @@ HENCODER CreateEncoderFromPathW(
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps,
-        tag);
+        filter_taps);
 }
 
 HENCODER CreateEncoderFromFile(
@@ -65,8 +61,7 @@ HENCODER CreateEncoderFromFile(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps,
-    tag* tag) {
+    uint8_t filter_taps) {
     set_on_error_exit(false);
     return encoder_create(
         file,
@@ -76,8 +71,7 @@ HENCODER CreateEncoderFromFile(
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps,
-        tag);
+        filter_taps);
 }
 
 void FreeEncoder(HENCODER encoder) {
@@ -109,8 +103,7 @@ void EncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps,
-        NULL);
+        filter_taps);
 
     /* Encode all samples. */
     for (i = 0; i < num_samples; ++i){
@@ -140,8 +133,7 @@ void __declspec(dllexport) EncodeFileW(LPCWSTR input, LPCWSTR output, uint16_t b
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps,
-        NULL);
+        filter_taps);
 
     /* Encode all samples. */
     for (i = 0; i < num_samples; ++i) {
