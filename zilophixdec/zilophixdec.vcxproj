@@ -19,34 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\zilophixdec.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="zilophixdec.c" />
-    <ClCompile Include="zilophixdll.c" />
-    <ClCompile Include="zilophixenc.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\zilophixdec.h">
-      <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
-    <ClInclude Include="include\zilophixdll.h">
-      <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
-    <ClInclude Include="include\zilophixenc.h">
-      <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\libwavefile\libwavefile.vcxproj">
-      <Project>{98ede8a5-7984-4a48-b426-fd69275c40bc}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\libzilophix\libzilophix.vcxproj">
-      <Project>{9bfef971-96a0-48c1-b9a8-f9db49305bf2}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{1652f3b3-9418-40b8-bf80-178f018f9156}</ProjectGuid>
-    <RootNamespace>zilophixdll</RootNamespace>
+    <ProjectGuid>{fb05eeb2-0d4d-4447-aee5-481035349f54}</ProjectGuid>
+    <RootNamespace>zilophixdec</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -95,30 +77,34 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\bin\x86\zilophixdll\</OutDir>
-    <IntDir>..\..\obj\x86\zilophixdll\</IntDir>
-    <ExternalIncludePath>..\libwavefile\include;..\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>D:\devdata\projects\zilophix\src\libwavefile\include;D:\devdata\projects\zilophix\src\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\devdata\projects\zilophix\bin\x86\libwavefile;D:\devdata\projects\zilophix\bin\x86\libzilophix;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\x86\zilophixdec\</OutDir>
+    <IntDir>..\..\obj\x86\zilophixdec\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\bin\x86\zilophixdll\</OutDir>
-    <IntDir>..\..\obj\x86\zilophixdll\</IntDir>
-    <ExternalIncludePath>..\libwavefile\include;..\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>D:\devdata\projects\zilophix\src\libwavefile\include;D:\devdata\projects\zilophix\src\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\devdata\projects\zilophix\bin\x86\libwavefile;D:\devdata\projects\zilophix\bin\x86\libzilophix;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\x86\zilophixdec\</OutDir>
+    <IntDir>..\..\obj\x86\zilophixdec\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExternalIncludePath>..\libwavefile\include;..\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>..\..\bin\x64\zilophixdll\</OutDir>
-    <IntDir>..\..\obj\x64\zilophixdll\</IntDir>
+    <ExternalIncludePath>D:\devdata\projects\zilophix\src\libwavefile\include;D:\devdata\projects\zilophix\src\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\devdata\projects\zilophix\bin\x64\libwavefile;D:\devdata\projects\zilophix\bin\x64\libzilophix;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\x64\zilophixdec\</OutDir>
+    <IntDir>..\..\obj\x64\zilophixdec\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ExternalIncludePath>..\libwavefile\include;..\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>..\..\bin\x64\zilophixdll\</OutDir>
-    <IntDir>..\..\obj\x64\zilophixdll\</IntDir>
+    <ExternalIncludePath>D:\devdata\projects\zilophix\src\libwavefile\include;D:\devdata\projects\zilophix\src\libzilophix\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>D:\devdata\projects\zilophix\bin\x64\libwavefile;D:\devdata\projects\zilophix\bin\x64\libzilophix;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\bin\x64\zilophixdec\</OutDir>
+    <IntDir>..\..\obj\x64\zilophixdec\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;ZILOPHIXDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;ZILOPHIXDEC_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -130,7 +116,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>libzilophix.lib;libwavefile.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\bin\x86\libzilophix;..\..\bin\x86\libwavefile;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
@@ -142,23 +127,21 @@ xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;ZILOPHIXDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;ZILOPHIXDEC_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <CompileAs>CompileAsC</CompileAs>
-      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>libzilophix.lib;libwavefile.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\bin\x86\libzilophix;..\..\bin\x86\libwavefile;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>if exist "$(OutDirFullPath)include" rd /s /q "$(OutDirFullPath)include"
@@ -168,8 +151,8 @@ xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;ZILOPHIXDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;ZILOPHIXDEC_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -180,7 +163,6 @@ xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\..\bin\x64\libwavefile;..\..\bin\x64\libzilophix;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libzilophix.lib;libwavefile.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -193,22 +175,20 @@ xcopy "$(ProjectDir)include" "$(OutDirFullPath)include\" /r /c </Command>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;ZILOPHIXDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;ZILOPHIXDEC_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <CompileAs>CompileAsC</CompileAs>
-      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>..\..\bin\x64\libwavefile;..\..\bin\x64\libzilophix;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libzilophix.lib;libwavefile.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>

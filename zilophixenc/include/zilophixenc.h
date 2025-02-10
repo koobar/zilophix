@@ -6,7 +6,8 @@
 #include <stdbool.h>
 #include <Windows.h>
 
-typedef encoder* HENCODER;
+typedef encoder ENCODER;
+typedef ENCODER* HENCODER;
 
 /*!
  * @brief                           Create new instance of encoder (ANSI).
@@ -20,7 +21,7 @@ typedef encoder* HENCODER;
  * @param filter_taps               The taps of SSLMS filter.
  * @return                          Pointer to HENCODER.
  */
-HENCODER __declspec(dllexport) CreateEncoderFromPathA(
+HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathA(
     LPCSTR output,
     uint32_t sample_rate,
     uint8_t bits_per_sample,
@@ -42,7 +43,7 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathA(
  * @param filter_taps               The taps of SSLMS filter.
  * @return                          Pointer to HENCODER.
  */
-HENCODER __declspec(dllexport) CreateEncoderFromPathW(
+HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathW(
     LPCWSTR output,
     uint32_t sample_rate,
     uint8_t bits_per_sample,
@@ -64,7 +65,7 @@ HENCODER __declspec(dllexport) CreateEncoderFromPathW(
  * @param filter_taps               The taps of SSLMS filter.
  * @return                          Pointer to HENCODER.
  */
-HENCODER __declspec(dllexport) CreateEncoderFromFile(
+HENCODER __declspec(dllexport) ZpXCreateEncoderFromFile(
     FILE* file,
     uint32_t sample_rate,
     uint8_t bits_per_sample,
@@ -78,27 +79,27 @@ HENCODER __declspec(dllexport) CreateEncoderFromFile(
  * @brief                           Release encoder.
  * @param encoder                   Pointer to HENCODER.
  */
-void __declspec(dllexport) FreeEncoder(HENCODER encoder);
+void __declspec(dllexport) ZpXFreeEncoder(HENCODER encoder);
 
 /*!
  * @brief                           Encode and write sample.
  * @param encoder                   Pointer to HENCODER.
  * @param sample                    Sample
  */
-void __declspec(dllexport) EncoderWriteSample(HENCODER encoder, int sample);
+void __declspec(dllexport) ZpXWriteSample(HENCODER encoder, int sample);
 
 /*!
  * @brief                           Finalizes the encoding process. Be sure to call this function after all samples have been encoded.
  * @param encoder                   Pointer to HENCODER.
  */
-void __declspec(dllexport) EncoderEndWrite(HENCODER encoder);
+void __declspec(dllexport) ZpXEndWrite(HENCODER encoder);
 
 /*!
 * @brief                            Encode WAV input file and save to output file.
 * @param input                      Input file path.
 * @param output                     Output file path.
 */
-void __declspec(dllexport) EncodeFileA(
+void __declspec(dllexport) ZpXEncodeFileA(
     LPCSTR input,
     LPCSTR output,
     uint16_t block_size,
@@ -110,7 +111,7 @@ void __declspec(dllexport) EncodeFileA(
 * @param input                      Input file path.
 * @param output                     Output file path.
 */
-void __declspec(dllexport) EncodeFileW(
+void __declspec(dllexport) ZpXEncodeFileW(
     LPCWSTR input,
     LPCWSTR output,
     uint16_t block_size,

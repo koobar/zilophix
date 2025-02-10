@@ -3,7 +3,7 @@
 #include "errcode.h"
 #include <stdio.h>
 
-HENCODER CreateEncoderFromPathA(
+HENCODER ZpXCreateEncoderFromPathA(
     LPCSTR output,
     uint32_t sample_rate,
     uint8_t bits_per_sample,
@@ -28,7 +28,7 @@ HENCODER CreateEncoderFromPathA(
         filter_taps);
 }
 
-HENCODER CreateEncoderFromPathW(
+HENCODER ZpXCreateEncoderFromPathW(
     LPCWSTR output,
     uint32_t sample_rate,
     uint8_t bits_per_sample,
@@ -53,7 +53,7 @@ HENCODER CreateEncoderFromPathW(
         filter_taps);
 }
 
-HENCODER CreateEncoderFromFile(
+HENCODER ZpXCreateEncoderFromFile(
     FILE* file,
     uint32_t sample_rate,
     uint8_t bits_per_sample,
@@ -74,20 +74,20 @@ HENCODER CreateEncoderFromFile(
         filter_taps);
 }
 
-void FreeEncoder(HENCODER encoder) {
+void ZpXFreeEncoder(HENCODER encoder) {
     encoder_free(encoder);
     set_on_error_exit(true);
 }
 
-void EncoderWriteSample(HENCODER encoder, int sample) {
+void ZpXWriteSample(HENCODER encoder, int sample) {
     encoder_write_sample(encoder, sample);
 }
 
-void EncoderEndWrite(HENCODER encoder) {
+void ZpXEndWrite(HENCODER encoder) {
     encoder_end_write(encoder);
 }
 
-void EncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps){
+void ZpXEncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps){
     uint32_t i;
     
     /* Open input WAV file. */
@@ -116,7 +116,7 @@ void EncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_
     encoder_free(encoder);
 }
 
-void __declspec(dllexport) EncodeFileW(LPCWSTR input, LPCWSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps) {
+void __declspec(dllexport) ZpXEncodeFileW(LPCWSTR input, LPCWSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps) {
     uint32_t i;
 
     /* Open input WAV file. */

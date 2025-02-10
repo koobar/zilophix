@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <wchar.h>
 
-HDECODER CreateDecoderA(LPCSTR path) {
+HDECODER ZpXCreateDecoderA(LPCSTR path) {
     FILE* file = NULL;
 
     set_on_error_exit(false);
@@ -13,7 +13,7 @@ HDECODER CreateDecoderA(LPCSTR path) {
     return decoder_create(file);
 }
 
-HDECODER CreateDecoderW(LPCWSTR path) {
+HDECODER ZpXCreateDecoderW(LPCWSTR path) {
     FILE* file = NULL;
 
     set_on_error_exit(false);
@@ -22,20 +22,20 @@ HDECODER CreateDecoderW(LPCWSTR path) {
     return decoder_create(file);
 }
 
-void DecoderCloseFile(HDECODER decoder) {
+void ZpXCloseFile(HDECODER decoder) {
     if (decoder != NULL) {
         decoder_close(decoder);
     }
 }
 
-void FreeDecoder(HDECODER decoder) {
+void ZpXFreeDecoder(HDECODER decoder) {
     if (decoder != NULL) {
         decoder_free(decoder);
         set_on_error_exit(true);
     }
 }
 
-uint32_t DecoderGetSampleRate(HDECODER decoder) {
+uint32_t ZpXGetSampleRate(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -43,7 +43,7 @@ uint32_t DecoderGetSampleRate(HDECODER decoder) {
     return decoder->header.sample_rate;
 }
 
-uint32_t DecoderGetChannels(HDECODER decoder) {
+uint32_t ZpXGetChannels(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -51,7 +51,7 @@ uint32_t DecoderGetChannels(HDECODER decoder) {
     return (uint32_t)decoder->header.num_channels;
 }
 
-uint32_t DecoderGetBitsPerSample(HDECODER decoder) {
+uint32_t ZpXGetBitsPerSample(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -59,7 +59,7 @@ uint32_t DecoderGetBitsPerSample(HDECODER decoder) {
     return (uint32_t)decoder->header.bits_per_sample;
 }
 
-uint32_t DecoderGetNumTotalSamples(HDECODER decoder) {
+uint32_t ZpXGetNumTotalSamples(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -67,7 +67,7 @@ uint32_t DecoderGetNumTotalSamples(HDECODER decoder) {
     return decoder->header.num_samples;
 }
 
-uint16_t DecoderGetBlockSize(HDECODER decoder) {
+uint16_t ZpXGetBlockSize(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -75,7 +75,7 @@ uint16_t DecoderGetBlockSize(HDECODER decoder) {
     return decoder->header.block_size;
 }
 
-uint32_t DecoderGetNumBlocks(HDECODER decoder) {
+uint32_t ZpXGetNumBlocks(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -83,7 +83,7 @@ uint32_t DecoderGetNumBlocks(HDECODER decoder) {
     return decoder->header.num_blocks;
 }
 
-bool DecoderGetUseMidSideStereo(HDECODER decoder) {
+bool ZpXGetUseMidSideStereo(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -91,7 +91,7 @@ bool DecoderGetUseMidSideStereo(HDECODER decoder) {
     return decoder->header.use_mid_side_stereo;
 }
 
-int DecoderReadSample(HDECODER decoder) {
+int ZpXReadSample(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -99,7 +99,7 @@ int DecoderReadSample(HDECODER decoder) {
     return decoder_read_sample(decoder);
 }
 
-uint32_t DecoderGetSampleOffset(HDECODER decoder) {
+uint32_t ZpXGetSampleOffset(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -107,7 +107,7 @@ uint32_t DecoderGetSampleOffset(HDECODER decoder) {
     return decoder->num_samples_read;
 }
 
-void DecoderSetSampleOffset(HDECODER decoder, uint32_t offset) {
+void ZpXSetSampleOffset(HDECODER decoder, uint32_t offset) {
     if (decoder == NULL) {
         return;
     }
@@ -115,7 +115,7 @@ void DecoderSetSampleOffset(HDECODER decoder, uint32_t offset) {
     decoder_seek_sample_to(decoder, offset);
 }
 
-void DecoderSeekTo(HDECODER decoder, uint32_t msec) {
+void ZpXSeekTo(HDECODER decoder, uint32_t msec) {
     if (decoder == NULL) {
         return;
     }
@@ -123,7 +123,7 @@ void DecoderSeekTo(HDECODER decoder, uint32_t msec) {
     decoder_seek_milliseconds_to(decoder, msec);
 }
 
-uint32_t DecoderGetDurationMsec(HDECODER decoder) {
+uint32_t ZpXGetDurationMsec(HDECODER decoder) {
     if (decoder == NULL) {
         return 0;
     }
@@ -131,7 +131,7 @@ uint32_t DecoderGetDurationMsec(HDECODER decoder) {
     return decoder_get_duration_ms(decoder);
 }
 
-void DecodeFileA(LPCSTR input, LPCSTR output){
+void ZpXDecodeFileA(LPCSTR input, LPCSTR output){
     FILE* input_file = fopen(input, "rb");
     decoder* decoder = decoder_create(input_file);
     wave_file_writer* writer = wave_file_writer_create(output);
@@ -154,7 +154,7 @@ void DecodeFileA(LPCSTR input, LPCSTR output){
     decoder_free(decoder);
 }
 
-void DecodeFileW(LPCWSTR input, LPCWSTR output) {
+void ZpXDecodeFileW(LPCWSTR input, LPCWSTR output) {
     FILE* input_file = _wfopen(input, L"rb");
     FILE* output_file = _wfopen(output, L"wb");
     decoder* decoder = decoder_create(input_file);

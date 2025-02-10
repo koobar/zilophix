@@ -149,8 +149,12 @@ rem 古いファイルがあれば削除します。
 set dllname="zilophixdll.dll"
 if exist "%25dllname%25" (del "%25dllname%25")
 
-rem zilophixdllをZilophiXGUIToolの出力ディレクトリにコピーします。
-cd "..\zilophixdll"
-copy "zilophixdll.dll" "$(TargetDir)"</PostBuildEvent>
+rem zilophixenc.dllをZilophiXGUIToolの出力ディレクトリにコピーします。
+cd "..\zilophixenc"
+copy "zilophixenc.dll" "$(TargetDir)"
+
+rem zilophixdec.dllをZilophiXGUIToolの出力ディレクトリにコピーします。
+cd "..\zilophixdec"
+copy "zilophixdec.dll" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

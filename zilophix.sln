@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.35425.106
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libzilophix", "libzilophix\libzilophix.vcxproj", "{9BFEF971-96A0-48C1-B9A8-F9DB49305BF2}"
 EndProject
@@ -9,11 +9,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zilophix", "zilophix\ziloph
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libwavefile", "libwavefile\libwavefile.vcxproj", "{98EDE8A5-7984-4A48-B426-FD69275C40BC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zilophixdll", "zilophixdll\zilophixdll.vcxproj", "{1652F3B3-9418-40B8-BF80-178F018F9156}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zilophixenc", "zilophixenc\zilophixenc.vcxproj", "{1652F3B3-9418-40B8-BF80-178F018F9156}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZilophiXGUITool", "ZilophiXGUITool\ZilophiXGUITool.csproj", "{1F25CCE9-3C9B-46F5-97F6-0A2FB1F319C3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1652F3B3-9418-40B8-BF80-178F018F9156} = {1652F3B3-9418-40B8-BF80-178F018F9156}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zilophixdec", "zilophixdec\zilophixdec.vcxproj", "{FB05EEB2-0D4D-4447-AEE5-481035349F54}"
+	ProjectSection(ProjectDependencies) = postProject
+		{98EDE8A5-7984-4A48-B426-FD69275C40BC} = {98EDE8A5-7984-4A48-B426-FD69275C40BC}
+		{9BFEF971-96A0-48C1-B9A8-F9DB49305BF2} = {9BFEF971-96A0-48C1-B9A8-F9DB49305BF2}
 	EndProjectSection
 EndProject
 Global
@@ -64,6 +70,14 @@ Global
 		{1F25CCE9-3C9B-46F5-97F6-0A2FB1F319C3}.Release|x64.Build.0 = Release|x64
 		{1F25CCE9-3C9B-46F5-97F6-0A2FB1F319C3}.Release|x86.ActiveCfg = Release|x86
 		{1F25CCE9-3C9B-46F5-97F6-0A2FB1F319C3}.Release|x86.Build.0 = Release|x86
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Debug|x64.ActiveCfg = Debug|x64
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Debug|x64.Build.0 = Debug|x64
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Debug|x86.ActiveCfg = Debug|Win32
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Debug|x86.Build.0 = Debug|Win32
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Release|x64.ActiveCfg = Release|x64
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Release|x64.Build.0 = Release|x64
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Release|x86.ActiveCfg = Release|Win32
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
