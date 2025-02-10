@@ -83,8 +83,8 @@ static void print_logo() {
     print("Copyright (c) 2024-2025 koobar. Released under WTFPL version 2.");
     print_return();
     print("Codec version:   1.2");
-    print("Tool version:    1.2");
-    print("Build:           2025/02/02");
+    print("Tool version:    1.21");
+    print("Build:           2025/02/10");
 }
 
 /*!

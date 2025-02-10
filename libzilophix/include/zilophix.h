@@ -13,7 +13,7 @@
 #define FORMAT_VERSION_1_2                      0x12                        /* Version code of ZilophiX 1.2 */
 
 #define FORMAT_VERSION_CURRENT                  FORMAT_VERSION_1_2          /* The version code of the encoder output data. */
-#define CURRENT_FORMAT_VERSION_NAME             "1.2"                       /* Current format version name. */
+#define CURRENT_FORMAT_VERSION_NAME             "1.21"                      /* Current format version name. */
 #define ZILOPHIX_DECODER_FORMAT_VERSION         FORMAT_VERSION_1_0          /* The version code of the decoder that can decode the code. */
 
 #define SIZE_OF_MAGIC_NUMBER                    3
