@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libzilophix", "libzilophix\libzilophix.vcxproj", "{9BFEF971-96A0-48C1-B9A8-F9DB49305BF2}"
 EndProject
@@ -14,6 +14,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZilophiXGUITool", "ZilophiXGUITool\ZilophiXGUITool.csproj", "{1F25CCE9-3C9B-46F5-97F6-0A2FB1F319C3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1652F3B3-9418-40B8-BF80-178F018F9156} = {1652F3B3-9418-40B8-BF80-178F018F9156}
+		{FB05EEB2-0D4D-4447-AEE5-481035349F54} = {FB05EEB2-0D4D-4447-AEE5-481035349F54}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zilophixdec", "zilophixdec\zilophixdec.vcxproj", "{FB05EEB2-0D4D-4447-AEE5-481035349F54}"

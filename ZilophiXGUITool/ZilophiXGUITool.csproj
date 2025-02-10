@@ -146,7 +146,9 @@
 cd "$(TargetDir)"
 
 rem 古いファイルがあれば削除します。
-set dllname="zilophixdll.dll"
+set dllname="zilophixenc.dll"
+if exist "%25dllname%25" (del "%25dllname%25")
+set dllname="zilophixdec.dll"
 if exist "%25dllname%25" (del "%25dllname%25")
 
 rem zilophixenc.dllをZilophiXGUIToolの出力ディレクトリにコピーします。
