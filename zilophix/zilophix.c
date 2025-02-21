@@ -83,8 +83,8 @@ static void print_logo() {
     print("Copyright (c) 2024-2025 koobar. Released under WTFPL version 2.");
     print_return();
     print("Codec version:   1.2");
-    print("Tool version:    1.21");
-    print("Build:           2025/02/10");
+    print("Tool version:    1.22");
+    print("Build:           2025/02/21");
 }
 
 /*!
@@ -92,7 +92,7 @@ static void print_logo() {
  */
 static void print_usage() {
     printf("Usage:      zilophix [options]\n");
-    printf("Example:    zilophix --bs 1024 -ms --in <input> --out <output>\n");
+    printf("Example:    zilophix --bs 2048 -ms --in <input> --out <output>\n");
     printf("\n");
     printf("Options:\n");
     printf("    --bs|--blocksize            Specify the number of samples per block. (default = 1024)\n");

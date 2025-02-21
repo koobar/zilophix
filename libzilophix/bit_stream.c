@@ -22,17 +22,20 @@ static const uint32_t bit_mask_table[32] = {
     0x10000000, 0x20000000, 0x40000000, 0x80000000
 };
 
-static void write_buffer(bit_stream* stream) {
+static inline void write_buffer(bit_stream* stream) {
     /* Write buffer to file. */
     fwrite(&stream->buffer, stream->max_buffer_bytes, 1, stream->file);
     stream->buffer_position = 0;
     stream->buffer = 0;
 }
 
-static void read_buffer(bit_stream* stream){
+static inline void read_buffer(bit_stream* stream){
     /* Read binary data from file and store to buffer. */
     fread(&stream->buffer, stream->max_buffer_bytes, 1, stream->file);
 }
+
+#pragma warning(push)
+#pragma warning(disable: 6011)
 
 /*!
  * @brief           Create new instance of bit_stream.
@@ -51,6 +54,8 @@ bit_stream* bit_stream_create(FILE* file, uint32_t mode) {
 
     return stream;
 }
+
+#pragma warning(pop)
 
 /*!
  * @brief           Initialize bit_stream instance.

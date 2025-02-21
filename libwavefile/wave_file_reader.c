@@ -7,7 +7,7 @@
  * @param file  file
  * @return      value
  */
-static uint8_t read_uint8(FILE* file) {
+static inline uint8_t read_uint8(FILE* file) {
     uint8_t value;
     fread(&value, sizeof(uint8_t), 1, file);
 
@@ -19,7 +19,7 @@ static uint8_t read_uint8(FILE* file) {
  * @param file  file
  * @return      value
  */
-static uint16_t read_uint16(FILE* file) {
+static inline uint16_t read_uint16(FILE* file) {
     uint16_t value;
     fread(&value, sizeof(uint16_t), 1, file);
 
@@ -31,7 +31,7 @@ static uint16_t read_uint16(FILE* file) {
  * @param file  file
  * @return      value
  */
-static uint32_t read_uint32(FILE* file) {
+static inline uint32_t read_uint32(FILE* file) {
     uint32_t value;
     fread(&value, sizeof(uint32_t), 1, file);
 
@@ -43,7 +43,7 @@ static uint32_t read_uint32(FILE* file) {
  * @param file  file
  * @return      value
  */
-static int16_t read_int16(FILE* file) {
+static inline int16_t read_int16(FILE* file) {
     int16_t value;
     fread(&value, sizeof(int16_t), 1, file);
 
@@ -55,7 +55,7 @@ static int16_t read_int16(FILE* file) {
  * @param file  File
  * @return      Value
  */
-static char read_char(FILE* file) {
+static inline char read_char(FILE* file) {
     char value;
     fread(&value, sizeof(char), 1, file);
 
@@ -69,7 +69,7 @@ static char read_char(FILE* file) {
  * @param n         Number of chars
  * @return          A value indicating whether a byte sequence corresponding to the specified ASCII character has occurred.
  */
-static bool check_match_next_bytes(const wave_file_reader* reader, const char* data, uint32_t n) {
+static inline bool check_match_next_bytes(const wave_file_reader* reader, const char* data, uint32_t n) {
     register uint32_t i;
     register char read;
 
@@ -92,7 +92,7 @@ static bool check_match_next_bytes(const wave_file_reader* reader, const char* d
  * @param find_from_begin   Flag indicating whether to seek chunks from the beginning of the file
  * @return                  A value indicating whether a chunk with the specified name was found.
  */
-static bool go_to_chunk(const wave_file_reader* reader, const char* chunk_name, uint32_t n, bool find_from_begin) {
+static inline bool go_to_chunk(const wave_file_reader* reader, const char* chunk_name, uint32_t n, bool find_from_begin) {
     if (find_from_begin) {
         fseek(reader->wave_file, 0, SEEK_SET);
     }
@@ -109,7 +109,7 @@ static bool go_to_chunk(const wave_file_reader* reader, const char* chunk_name, 
 /*!
  * @brief                   Read fmt chunk.
  */
-static void read_fmt_chunk(wave_file_reader* reader) {
+static inline void read_fmt_chunk(wave_file_reader* reader) {
     uint16_t audio_format;
 
     if (go_to_chunk(reader, "fmt ", 4, true)) {

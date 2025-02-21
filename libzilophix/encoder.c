@@ -7,13 +7,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DUMMY_VALUE                     0xFFFFFFFF  
+#define DUMMY_VALUE         0xFFFFFFFF  
 
 /*!
  * @brief           Write magic numbers
  * @param *encoder  Pointer to encoder.
 */
-static void write_magic_number(encoder* encoder){
+static inline void write_magic_number(encoder* encoder){
     write_uint8(encoder->output_file, 0x5A);
     write_uint8(encoder->output_file, 0x70);
     write_uint8(encoder->output_file, 0x58);
@@ -23,7 +23,7 @@ static void write_magic_number(encoder* encoder){
  * @brief           Write header.
  * @param *encoder  Pointer to encoder.
  */
-static void write_header(encoder* encoder) {
+static inline void write_header(encoder* encoder) {
     write_magic_number(encoder);
     write_mem(encoder->output_file, &encoder->header, sizeof(zilophix_header));
 }
@@ -32,7 +32,7 @@ static void write_header(encoder* encoder) {
  * @brief           Write audio data offset and audio data size.
  * @param *encoder  Pointer to encoder.
 */
-static void flush_audio_data(encoder* encoder){
+static inline void flush_audio_data(encoder* encoder){
     uint32_t current_len = (uint32_t)ftell(encoder->output_file);
     uint32_t data_size = current_len - (encoder->audio_data_begin_position);
 
@@ -52,7 +52,7 @@ static void flush_audio_data(encoder* encoder){
  * @brief           Encode monaural or normal stereo block. 
  * @param *encoder  Pointer to encoder
  */
-static void encode_current_block_normal(encoder* encoder){
+static inline void encode_current_block_normal(encoder* encoder){
     uint8_t ch;
     uint16_t offset;
     int32_t sample, residual;
@@ -85,7 +85,7 @@ static void encode_current_block_normal(encoder* encoder){
  * @brief           Encode Mid-Side stereo block.
  * @param *encoder  Pointer to encoder.
  */
-static void encode_current_block_midside(encoder* encoder){
+static inline void encode_current_block_midside(encoder* encoder){
     uint16_t offset;
     int32_t left;
     int32_t right;
@@ -130,7 +130,7 @@ static void encode_current_block_midside(encoder* encoder){
  * @brief           Encode current block.
  * @param *encoder  Pointer to encoder.
  */
-static void encode_current_block(encoder* encoder) {
+static inline void encode_current_block(encoder* encoder) {
     if (encoder->header.use_mid_side_stereo){
         encode_current_block_midside(encoder);
     }
@@ -146,7 +146,7 @@ static void encode_current_block(encoder* encoder) {
  * @param block_size    The number of block size.
  * @return              The number of blocks.
  */
-static uint32_t compute_block_count(uint32_t num_samples, uint8_t num_channels, uint16_t block_size) {
+static inline uint32_t compute_block_count(uint32_t num_samples, uint8_t num_channels, uint16_t block_size) {
     uint32_t num_samples_per_ch = num_samples / num_channels;
     uint32_t num_blocks = num_samples_per_ch / block_size;
 
@@ -156,6 +156,9 @@ static uint32_t compute_block_count(uint32_t num_samples, uint8_t num_channels, 
 
     return num_blocks;
 }
+
+#pragma warning(push)
+#pragma warning(disable: 6011)
 
 /*!
  * @brief                           Initialize encoder.
@@ -239,6 +242,8 @@ static void init(
 
     encoder->audio_data_begin_position = (uint32_t)ftell(encoder->output_file);
 }
+
+#pragma warning(pop)
 
 /*!
  * @brief                           Create new instance of encoder.

@@ -12,7 +12,7 @@ const static uint8_t supported_format_versions[3] = { FORMAT_VERSION_1_0, FORMAT
  * @param version   Version number
  * @return          Returns true if the version is supported, false if the version is not supported.
  */
-static bool is_supported_version(uint8_t version) {
+static inline bool is_supported_version(uint8_t version) {
     size_t n = sizeof(supported_format_versions) / sizeof(supported_format_versions[0]);
     size_t i;
 
@@ -30,7 +30,7 @@ static bool is_supported_version(uint8_t version) {
  * @param *decoder  Pointer to decoder.
  * @return          Returns true if the opened file is in ZilophiX format, false if the file is in any other format.
  */
-static bool check_magic_number(decoder* decoder){
+static inline bool check_magic_number(decoder* decoder){
     return  read_uint8(decoder->file) == 0x5A &&
             read_uint8(decoder->file) == 0x70 &&
             read_uint8(decoder->file) == 0x58;
@@ -40,7 +40,7 @@ static bool check_magic_number(decoder* decoder){
  * @brief           Read format informations.
  * @param *decoder  Pointer to decoder.
  */
-static void read_format_info(decoder* decoder){
+static inline void read_format_info(decoder* decoder){
     read_mem(decoder->file, &decoder->header, sizeof(zilophix_header));
 
     if (!is_supported_version(decoder->header.format_version)) {
@@ -52,7 +52,7 @@ static void read_format_info(decoder* decoder){
  * @brief           Read ZilophiX file header.
  * @param *decoder  Pointer to decoder.
  */
-static void read_header(decoder* decoder) {
+static inline void read_header(decoder* decoder) {
     if (check_magic_number(decoder)){
         read_format_info(decoder);
     }
@@ -65,7 +65,7 @@ static void read_header(decoder* decoder) {
  * @brief           Decode monaural or no Mid-Side stereo block.
  * @param *decoder  Pointer to decoder.
  */
-static void decode_normal_block(decoder* decoder){
+static inline void decode_normal_block(decoder* decoder){
     uint8_t ch;
     sub_block* sb = NULL;
     sslms* lms = NULL;
@@ -99,7 +99,7 @@ static void decode_normal_block(decoder* decoder){
  * @brief           Decode Mid-Side stereo block.
  * @param *decoder  Pointer to decoder.
  */
-static void decode_midside_block(decoder* decoder){
+static inline void decode_midside_block(decoder* decoder){
     sub_block* lch = decoder->current_block->sub_blocks[0];
     sub_block* rch = decoder->current_block->sub_blocks[1];
     sslms* llms = decoder->sslms_filters[0];
@@ -140,7 +140,7 @@ static void decode_midside_block(decoder* decoder){
  * @brief           Decode current block.
  * @param *decoder  Pointer to decoder.
  */
-static void decode_current_block(decoder* decoder) {
+static inline void decode_current_block(decoder* decoder) {
     if (decoder->header.num_channels == 2 && decoder->header.use_mid_side_stereo){
         decode_midside_block(decoder);
     }
@@ -149,12 +149,15 @@ static void decode_current_block(decoder* decoder) {
     }
 }
 
+#pragma warning(push)
+#pragma warning(disable: 6011)
+
 /*!
  * @brief           Initialization decoder.
  * @param *decoder  Pointer to decoder.
  * @param *file     file.
  */
-static void decoder_init(decoder* decoder, FILE* file) {
+static inline void decoder_init(decoder* decoder, FILE* file) {
     uint8_t ch;
 
     /* Initialize bitstream */
@@ -198,6 +201,8 @@ decoder* decoder_create(FILE* file) {
     return result;
 }
 
+#pragma warning(pop)
+
 /*!
  * @brief                   Release specified decoder.
  * @param decoder           Pointer to decoder.
@@ -232,7 +237,7 @@ void decoder_close(decoder* decoder) {
  * @param decoder           Pointer to decoder.
  * @return                  Sample
  */
-static int32_t force_read_sample(decoder* decoder) {
+static inline int32_t force_read_sample(decoder* decoder) {
     int32_t sample;
 
     if (decoder->current_read_sub_block_offset == 0 && decoder->current_read_sub_block_channel == 0) {

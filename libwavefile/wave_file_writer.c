@@ -6,7 +6,7 @@
  * @param file  File
  * @param value Value to write
  */
-static void write_char(FILE* file, const char value) {
+static inline void write_char(FILE* file, const char value) {
     fwrite(&value, sizeof(char), 1, file);
 }
 
@@ -15,7 +15,7 @@ static void write_char(FILE* file, const char value) {
  * @param file  File
  * @param value Value to write
  */
-static void write_uint16(FILE* file, const uint16_t value) {
+static inline void write_uint16(FILE* file, const uint16_t value) {
     fwrite(&value, sizeof(uint16_t), 1, file);
 }
 
@@ -24,7 +24,7 @@ static void write_uint16(FILE* file, const uint16_t value) {
  * @param file  File
  * @param value Value to write
  */
-static void write_uint32(FILE* file, const uint32_t value) {
+static inline void write_uint32(FILE* file, const uint32_t value) {
     fwrite(&value, sizeof(uint32_t), 1, file);
 }
 
@@ -33,7 +33,7 @@ static void write_uint32(FILE* file, const uint32_t value) {
  * @param file  File
  * @param value Value to write
  */
-static void write_int16(FILE* file, const int16_t value) {
+static inline void write_int16(FILE* file, const int16_t value) {
     fwrite(&value, sizeof(int16_t), 1, file);
 }
 
@@ -42,7 +42,7 @@ static void write_int16(FILE* file, const int16_t value) {
  * @param *writer   Pointer to wave_file_writer.
  * @return          Chunk size.
  */
-static uint32_t compute_chunk_size(const wave_file_writer* writer) {
+static inline uint32_t compute_chunk_size(const wave_file_writer* writer) {
     uint32_t size_of_fmt_chunk = 24;
     uint32_t bytes_per_sample = writer->bits_per_sample / 8;
     uint32_t size_of_data_chunk = 4 + writer->num_samples * bytes_per_sample;
@@ -55,7 +55,7 @@ static uint32_t compute_chunk_size(const wave_file_writer* writer) {
  * @brief           Write wave file header.
  * @param *writer   Pointer to wave_file_writer
  */
-static void write_wave_header(const wave_file_writer* writer) {
+static inline void write_wave_header(const wave_file_writer* writer) {
     /* Write RIFF magic numbers. */
     write_char(writer->wave_file, 0x52);
     write_char(writer->wave_file, 0x49);
@@ -76,7 +76,7 @@ static void write_wave_header(const wave_file_writer* writer) {
  * @brief           Write fmt chunk
  * @param *writer   Pointer to wave_file_writer
  */
-static void write_fmt_chunk(const wave_file_writer* writer) {
+static inline void write_fmt_chunk(const wave_file_writer* writer) {
     uint32_t avr_bytes_per_sec;
     uint16_t block_size;
 
@@ -114,7 +114,7 @@ static void write_fmt_chunk(const wave_file_writer* writer) {
  * @brief           Write data chunk.
  * @param *writer   Pointer to wave_file_writer.
  */
-static void write_data_chunk_header(const wave_file_writer* writer) {
+static inline void write_data_chunk_header(const wave_file_writer* writer) {
     uint32_t bytes_per_sample, data_chunk_size;
 
     /* Write 'data' as ASCII string. */
