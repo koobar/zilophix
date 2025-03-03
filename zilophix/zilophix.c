@@ -15,6 +15,7 @@ static bool is_silent_mode = false;
 static bool is_help_mode = false;
 static uint16_t block_size = 0;
 static uint8_t filter_taps = 4;
+static uint8_t output_format_version = FORMAT_VERSION_CURRENT;
 
 /*!
  * @brief               Parse command line arguments.
@@ -46,6 +47,22 @@ static void parse_commandline_args(int argc, char* argv[]) {
         }
         else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
             is_help_mode = true;
+        }
+        else if (strcmp(argv[i], "--format_version") == 0 || strcmp(argv[i], "--fmtver") == 0) {
+            ++i;
+
+            if (strcmp(argv[i], "1.0") == 0) {
+                output_format_version = FORMAT_VERSION_1_0;
+            }
+            else if (strcmp(argv[i], "1.1") == 0) {
+                output_format_version = FORMAT_VERSION_1_1;
+            }
+            else if (strcmp(argv[i], "1.2") == 0) {
+                output_format_version = FORMAT_VERSION_1_2;
+            }
+            else if (strcmp(argv[i], "1.3") == 0) {
+                output_format_version = FORMAT_VERSION_1_3;
+            }
         }
     }
 }
@@ -82,9 +99,9 @@ static void print_logo() {
     print("ZilophiX (ZpX): The free and open-source lossless audio codec.");
     print("Copyright (c) 2024-2025 koobar. Released under WTFPL version 2.");
     print_return();
-    print("Codec version:   1.2");
-    print("Tool version:    1.22");
-    print("Build:           2025/02/21");
+    print("Codec version:   1.3");
+    print("Tool version:    1.3");
+    print("Build:           2025/03/04");
 }
 
 /*!
@@ -101,6 +118,7 @@ static void print_usage() {
     printf("    --out|--output              Specify the output file path.\n");
     printf("    -ms|-midside                Uses mid-side stereo. Compression rates are often improved.\n");
     printf("    -silent|-s                  Don't display any text.\n");
+    printf("    --format_version|--fmtver   Specify the encoder output format version. (e.g. --fmtver 1.3)\n");
     printf("    -h|-help                    Display this text.\n");
 }
 
@@ -121,16 +139,15 @@ static void print_encode_result(clock_t encode_start, clock_t encode_end) {
     }
 
     print("Encode completed.");
-
-    sprintf_s(buffer, buffer_size, "Output: %s\0", output_file_path);
-    print(buffer);
-
     print_return();
 
     sprintf_s(buffer, buffer_size, "[RESULT]\0");
     print(buffer);
 
     sprintf_s(buffer, buffer_size, "Elapsed time: %d msec.\0", encode_end - encode_start);
+    print(buffer);
+
+    sprintf_s(buffer, buffer_size, "Output path: %s\0", output_file_path);
     print(buffer);
 
     src_file_size = get_file_size(input_file_path);
@@ -143,6 +160,9 @@ static void print_encode_result(clock_t encode_start, clock_t encode_end) {
     print(buffer);
 
     sprintf_s(buffer, buffer_size, "Compression rate: %.2f%% of the original file size.\0", ((double)dst_file_size / src_file_size) * 100.0);
+    print(buffer);
+
+    sprintf_s(buffer, buffer_size, "Format version: %s\0", zilophix_get_version_name(output_format_version));
     print(buffer);
 
     free(buffer);
@@ -161,6 +181,9 @@ static void print_format_info(decoder* decoder) {
     }
 
     sprintf_s(buffer, buffer_size, "[FORMAT]\0");
+    print(buffer);
+
+    sprintf_s(buffer, buffer_size, "Format version:    %s\0", zilophix_get_version_name(decoder->header.format_version));
     print(buffer);
 
     sprintf_s(buffer, buffer_size, "Sample rate:       %d Hz\0", decoder->header.sample_rate);
@@ -254,7 +277,8 @@ static void encode() {
         n,
         block_size,
         use_mid_side_stereo,
-        filter_taps);
+        filter_taps,
+        output_format_version);
 
     /* Save start time. */
     start = clock();

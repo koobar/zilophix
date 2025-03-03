@@ -171,8 +171,9 @@ static inline uint32_t compute_block_count(uint32_t num_samples, uint8_t num_cha
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
+ * @param output_format_version     Output format version.
  */
-static void init(
+static inline void init(
     encoder* encoder, 
     FILE* file, 
     uint32_t sample_rate, 
@@ -181,7 +182,8 @@ static void init(
     uint32_t num_samples, 
     uint16_t block_size, 
     bool use_mid_side_stereo, 
-    uint8_t filter_taps) {
+    uint8_t filter_taps,
+    uint8_t output_format_version) {
     uint8_t ch;
 
     if (filter_taps > SSLMS_MAX_TAPS) {
@@ -207,7 +209,7 @@ static void init(
     }
 
     zilophix_header_init(&encoder->header);
-    encoder->header.format_version = FORMAT_VERSION_CURRENT;
+    encoder->header.format_version = output_format_version;
     encoder->header.sample_rate = sample_rate;
     encoder->header.bits_per_sample = bits_per_sample;
     encoder->header.num_channels = num_channels;
@@ -219,11 +221,16 @@ static void init(
     encoder->header.audio_data_offset = DUMMY_VALUE;
     encoder->header.audio_data_size = DUMMY_VALUE;
 
+    /* If SSLMS filter shift coefficient is not specified, use default coefficients. */
+    if (encoder->header.sslms_shift == 0) {
+        encoder->header.sslms_shift = zilophix_get_sslms_shift_coefficient(filter_taps, output_format_version, bits_per_sample);
+    }
+
     encoder->output_file = file;
     encoder->output_bit_stream = bit_stream_create(encoder->output_file, BIT_STREAM_MODE_WRITE);
     encoder->sslms_filters = (sslms**)malloc(sizeof(sslms*) * num_channels);
     encoder->polynomial_predictors = (polynomial_predictor**)malloc(sizeof(polynomial_predictor*) * num_channels);
-    encoder->coder = code_create(encoder->output_bit_stream, FORMAT_VERSION_CURRENT, bits_per_sample);
+    encoder->coder = code_create(encoder->output_bit_stream, output_format_version, bits_per_sample);
     encoder->current_block = (block*)malloc(sizeof(block));
     encoder->current_sub_block_channel = 0;
     encoder->current_sub_block_offset = 0;
@@ -233,7 +240,7 @@ static void init(
 
     /* Initialize all filters. */
     for (ch = 0; ch < num_channels; ++ch) {
-        encoder->sslms_filters[ch] = sslms_create(filter_taps, bits_per_sample);
+        encoder->sslms_filters[ch] = sslms_create(filter_taps, encoder->header.sslms_shift);
         encoder->polynomial_predictors[ch] = polynomial_predictor_create();
     }
 
@@ -255,6 +262,7 @@ static void init(
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filters.
+ * @param output_format_version     Output format version.
  */
 encoder* encoder_create(
     FILE* file,
@@ -264,7 +272,8 @@ encoder* encoder_create(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps) {
+    uint8_t filter_taps,
+    uint8_t output_format_version) {
     encoder* result = (encoder*)malloc(sizeof(encoder));
 
     if (result == NULL) {
@@ -281,7 +290,8 @@ encoder* encoder_create(
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps);
+        filter_taps,
+        output_format_version);
 
     return result;
 }

@@ -5,7 +5,7 @@
 #include "./include/sub_block.h"
 #include "./include/zilophix.h"
 
-const static uint8_t supported_format_versions[3] = { FORMAT_VERSION_1_0, FORMAT_VERSION_1_1, FORMAT_VERSION_1_2 };
+const static uint8_t supported_format_versions[4] = { FORMAT_VERSION_1_0, FORMAT_VERSION_1_1, FORMAT_VERSION_1_2, FORMAT_VERSION_1_3 };
 
 /*! 
  * @brief           Check version
@@ -179,9 +179,18 @@ static inline void decoder_init(decoder* decoder, FILE* file) {
     /* Initialize blocks */
     block_init(decoder->current_block, decoder->header.block_size, decoder->header.num_channels);
 
+    /* If the format version is 1.2 or earlier, use default SSLMS shift coefficient for format version 1.2. */
+    if (decoder->header.format_version <= FORMAT_VERSION_1_2) {
+        decoder->header.sslms_shift = zilophix_get_sslms_shift_coefficient(
+            decoder->header.filter_taps,
+            FORMAT_VERSION_1_2,
+            decoder->header.bits_per_sample
+        );
+    }
+
     /* Initialize SSLMS filters and polynomial predictors. */
     for (ch = 0; ch < decoder->header.num_channels; ++ch) {
-        decoder->sslms_filters[ch] = sslms_create(decoder->header.filter_taps, decoder->header.bits_per_sample);
+        decoder->sslms_filters[ch] = sslms_create(decoder->header.filter_taps, decoder->header.sslms_shift);
         decoder->polynomial_predictors[ch] = polynomial_predictor_create();
     }
 }

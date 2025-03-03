@@ -12,6 +12,7 @@
 typedef struct {
     FILE* output_file;                                  /* Output file. */
     bit_stream* output_bit_stream;                      /* Output bitstream. */
+    uint8_t format_version;                             /* Output format version. */
     uint32_t audio_data_begin_position;
 
     sslms** sslms_filters;                              /* SSLMS filters */
@@ -35,6 +36,7 @@ typedef struct {
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filters.
+ * @param output_format_version     Output format version.
  */
 encoder* encoder_create(
     FILE* file,
@@ -44,7 +46,8 @@ encoder* encoder_create(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps);
+    uint8_t filter_taps,
+    uint8_t output_format_version);
 
 /*!
  * @brief           Release encoder.

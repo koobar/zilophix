@@ -17,7 +17,7 @@ typedef struct {
  * @brief           Create new SSLMS filter instance.
  * @return          Pointer to created instance.
  */
-sslms* sslms_create(uint8_t taps, uint8_t pcm_bits);
+sslms* sslms_create(uint8_t taps, uint8_t shift);
 
 /*!
  * @brief           Release SSLMS filter.

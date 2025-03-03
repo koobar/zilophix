@@ -11,7 +11,8 @@ HENCODER ZpXCreateEncoderFromPathA(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps) {
+    uint8_t filter_taps,
+    uint8_t output_format_version) {
     FILE* output_file = NULL;
 
     set_on_error_exit(false);
@@ -25,7 +26,8 @@ HENCODER ZpXCreateEncoderFromPathA(
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps);
+        filter_taps,
+        output_format_version);
 }
 
 HENCODER ZpXCreateEncoderFromPathW(
@@ -36,7 +38,8 @@ HENCODER ZpXCreateEncoderFromPathW(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps) {
+    uint8_t filter_taps,
+    uint8_t output_format_version) {
     FILE* file;
     
     set_on_error_exit(false);
@@ -50,7 +53,8 @@ HENCODER ZpXCreateEncoderFromPathW(
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps);
+        filter_taps,
+        output_format_version);
 }
 
 HENCODER ZpXCreateEncoderFromFile(
@@ -61,7 +65,8 @@ HENCODER ZpXCreateEncoderFromFile(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps) {
+    uint8_t filter_taps,
+    uint8_t output_format_version) {
     set_on_error_exit(false);
     return encoder_create(
         file,
@@ -71,7 +76,8 @@ HENCODER ZpXCreateEncoderFromFile(
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps);
+        filter_taps,
+        output_format_version);
 }
 
 void ZpXFreeEncoder(HENCODER encoder) {
@@ -87,7 +93,7 @@ void ZpXEndWrite(HENCODER encoder) {
     encoder_end_write(encoder);
 }
 
-void ZpXEncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps){
+void ZpXEncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps, uint8_t output_format_version){
     uint32_t i;
     
     /* Open input WAV file. */
@@ -103,7 +109,8 @@ void ZpXEncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_m
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps);
+        filter_taps,
+        output_format_version);
 
     /* Encode all samples. */
     for (i = 0; i < num_samples; ++i){
@@ -116,7 +123,7 @@ void ZpXEncodeFileA(LPCSTR input, LPCSTR output, uint16_t block_size, bool use_m
     encoder_free(encoder);
 }
 
-void __declspec(dllexport) ZpXEncodeFileW(LPCWSTR input, LPCWSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps) {
+void __declspec(dllexport) ZpXEncodeFileW(LPCWSTR input, LPCWSTR output, uint16_t block_size, bool use_mid_side_stereo, uint8_t filter_taps, uint8_t output_format_version) {
     uint32_t i;
 
     /* Open input WAV file. */
@@ -133,7 +140,8 @@ void __declspec(dllexport) ZpXEncodeFileW(LPCWSTR input, LPCWSTR output, uint16_
         num_samples,
         block_size,
         use_mid_side_stereo,
-        filter_taps);
+        filter_taps,
+        output_format_version);
 
     /* Encode all samples. */
     for (i = 0; i < num_samples; ++i) {

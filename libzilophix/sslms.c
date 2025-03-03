@@ -5,14 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Shift factor table: { for 16-bits pcm, for 24-bits pcm }*/
-static const int32_t shift_factor_table[2] = { 9, 8 };
-
 /*!
  * @brief           Create new SSLMS filter instance.
  * @return          Pointer to created instance.
  */
-sslms* sslms_create(uint8_t taps, uint8_t pcm_bits) {
+sslms* sslms_create(uint8_t taps, uint8_t shift) {
     sslms* result = (sslms*)malloc(sizeof(sslms));
 
     if (result == NULL){
@@ -24,7 +21,7 @@ sslms* sslms_create(uint8_t taps, uint8_t pcm_bits) {
     result->sign = (int8_t*)calloc(taps, sizeof(int8_t));
     result->weights = (int32_t*)calloc(taps, sizeof(int32_t));
     result->taps = taps;
-    result->shift = shift_factor_table[RSHIFT(pcm_bits, 3) - 2];
+    result->shift = shift;
 
     return result;
 }

@@ -19,6 +19,7 @@ typedef ENCODER* HENCODER;
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
+ * @param output_format_version     Output format version.
  * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathA(
@@ -29,7 +30,8 @@ HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathA(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps);
+    uint8_t filter_taps,
+    uint8_t output_format_version);
 
 /*!
  * @brief                           Create new instance of encoder.
@@ -41,6 +43,7 @@ HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathA(
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
+ * @param output_format_version     Output format version.
  * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathW(
@@ -51,7 +54,8 @@ HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathW(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps);
+    uint8_t filter_taps,
+    uint8_t output_format_version);
 
 /*!
  * @brief                           Create new instance of encoder from file.
@@ -63,6 +67,7 @@ HENCODER __declspec(dllexport) ZpXCreateEncoderFromPathW(
  * @param block_size                Block size.
  * @param use_mid_side_stereo       Mid-Side stereo flag.
  * @param filter_taps               The taps of SSLMS filter.
+ * @param output_format_version     Output format version.
  * @return                          Pointer to HENCODER.
  */
 HENCODER __declspec(dllexport) ZpXCreateEncoderFromFile(
@@ -73,7 +78,8 @@ HENCODER __declspec(dllexport) ZpXCreateEncoderFromFile(
     uint32_t num_samples,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps);
+    uint8_t filter_taps,
+    uint8_t output_format_version);
 
 /*!
  * @brief                           Release encoder.
@@ -98,24 +104,28 @@ void __declspec(dllexport) ZpXEndWrite(HENCODER encoder);
 * @brief                            Encode WAV input file and save to output file.
 * @param input                      Input file path.
 * @param output                     Output file path.
+* @param output_format_version      Output format version.
 */
 void __declspec(dllexport) ZpXEncodeFileA(
     LPCSTR input,
     LPCSTR output,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps);
+    uint8_t filter_taps,
+    uint8_t output_format_version);
 
 /*!
 * @brief                            Encode WAV input file and save to output file.
 * @param input                      Input file path.
 * @param output                     Output file path.
+* @param output_format_version      Output format version.
 */
 void __declspec(dllexport) ZpXEncodeFileW(
     LPCWSTR input,
     LPCWSTR output,
     uint16_t block_size,
     bool use_mid_side_stereo,
-    uint8_t filter_taps);
+    uint8_t filter_taps,
+    uint8_t output_format_version);
 
 #endif

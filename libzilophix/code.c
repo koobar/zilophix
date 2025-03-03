@@ -393,6 +393,7 @@ code* code_create(bit_stream* stream, uint8_t fmt_version, uint8_t bits_per_samp
         return code_create_fmt_ver_1_0(stream, bits_per_sample);
     case FORMAT_VERSION_1_1:
     case FORMAT_VERSION_1_2:
+    case FORMAT_VERSION_1_3:
         return code_create_fmt_ver_1_1_compatible(stream, bits_per_sample);
     default:
         report_error(ERROR_DECODER_UNSUPPORTED_FORMAT_VERSION);

@@ -16,6 +16,4 @@
 #define MAX(x, y)                           (((x) > (y)) ? (x) : (y))
 #define CLAMP(value, min, max)              (MIN(MAX((value), (min)), (max)))
 
-#define POLYNOMIAL_PREDICATOR_MAX_HISTORY   2
-
 #endif

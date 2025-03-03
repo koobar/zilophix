@@ -1,3 +1,4 @@
+#include "./include/zilophix.h"
 #include "./include/macro.h"
 #include "./include/errcode.h"
 #include "./include/polynomial_predictor.h"

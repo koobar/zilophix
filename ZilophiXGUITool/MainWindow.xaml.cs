@@ -11,6 +11,12 @@ namespace ZilophiXGUITool
 {
     public partial class MainWindow : Window
     {
+        // Private constants.
+        private const byte FORMAT_VERSION_1_0 = 0x10;
+        private const byte FORMAT_VERSION_1_1 = 0x11;
+        private const byte FORMAT_VERSION_1_2 = 0x12;
+        private const byte FORMAT_VERSION_1_3 = 0x13;
+
         // Private fields.
         private readonly List<string> targetFiles;
         private readonly BackgroundWorker worker;
@@ -33,7 +39,7 @@ namespace ZilophiXGUITool
         }
 
         [DllImport("zilophixenc.dll", CharSet = CharSet.Unicode)]
-        private static extern void ZpXEncodeFileW(string input, string output, ushort blockSize, bool useMidSideStereo, byte filterTaps);
+        private static extern void ZpXEncodeFileW(string input, string output, ushort blockSize, bool useMidSideStereo, byte filterTaps, byte output_format_version);
 
         [DllImport("zilophixdec.dll", CharSet = CharSet.Unicode)]
         private static extern void ZpXDecodeFileW(string input, string output);
@@ -55,7 +61,7 @@ namespace ZilophiXGUITool
             {
                 string output = $"{this.convOutDir}\\{Path.GetFileNameWithoutExtension(input)}.zpx";
 
-                ZpXEncodeFileW(input, output, this.encBlockSize, this.encUseMidSideStereo, this.encSSLMSTaps);
+                ZpXEncodeFileW(input, output, this.encBlockSize, this.encUseMidSideStereo, this.encSSLMSTaps, FORMAT_VERSION_1_3);
             }
             else if (extension == ".zpx")
             {
