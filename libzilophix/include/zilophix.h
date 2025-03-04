@@ -37,7 +37,7 @@ typedef struct {
     uint32_t audio_data_offset;                         /* The offset of audio data. */
     uint32_t id_audio_data_size;
     uint32_t audio_data_size;                           /* The size of audio data. */
-    uint8_t reserved3;                                  /* Reserved. */
+    uint8_t reserved2;                                  /* Reserved. */
 
 } zilophix_header;
 #pragma pack(pop)
