@@ -6,7 +6,7 @@
 #include <stddef.h>
 
 #define LIBZILOPHIX_VERSION_MAJOR               1                           /* Library major version */
-#define LIBZILOPHIX_VERSION_MINOR               2                           /* Library minor version  */
+#define LIBZILOPHIX_VERSION_MINOR               31                          /* Library minor version  */
 
 #define FORMAT_VERSION_1_0                      0x10                        /* Version code of ZilophiX 1.0 */
 #define FORMAT_VERSION_1_1                      0x11                        /* Version code of ZilophiX 1.1 */

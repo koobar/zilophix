@@ -49,80 +49,51 @@ static inline void flush_audio_data(encoder* encoder){
 }
 
 /*!
- * @brief           Encode monaural or normal stereo block. 
- * @param *encoder  Pointer to encoder
+ * @brief           Encode subblock
+ * @param *poly     The pointer to polynomial predictor.
+ * @param *sslms    The pointer to SSLMS filter.
+ * @param *sb       The pointer to subblock.
  */
-static inline void encode_current_block_normal(encoder* encoder){
-    uint8_t ch;
+static inline void encode_subblock(polynomial_predictor* poly, sslms* sslms, sub_block* sb) {
     uint16_t offset;
     int32_t sample, residual;
-    sub_block* sb = NULL;
-    polynomial_predictor* poly = NULL;
-    sslms* lms = NULL;
 
-    for (ch = 0; ch < encoder->header.num_channels; ++ch) {
-        sb = encoder->current_block->sub_blocks[ch];
-        poly = encoder->polynomial_predictors[ch];
-        lms = encoder->sslms_filters[ch];
+    for (offset = 0; offset < sb->size; ++offset) {
+        /* STEP 1. Polynomial prediction. */
+        residual = sb->samples[offset] - polynomial_predictor_predict(poly);
+        polynomial_predictor_update(poly, sb->samples[offset]);
 
-        for (offset = 0; offset < sb->size; ++offset) {
-            /* STEP 1. Polynomial prediction. */
-            residual = sb->samples[offset] - polynomial_predictor_predict(poly);
-            polynomial_predictor_update(poly, sb->samples[offset]);
+        /* STEP 2. SSLMS prediction. */
+        sample = residual;
+        residual -= sslms_predict(sslms);
+        sslms_update(sslms, sample, residual);
 
-            /* STEP 2. SSLMS prediction. */
-            sample = residual;
-            residual -= sslms_predict(lms);
-            sslms_update(lms, sample, residual);
-
-            /* STEP 3. Output */
-            sb->samples[offset] = residual;
-        }
+        /* STEP 3. Output */
+        sb->samples[offset] = residual;
     }
 }
 
 /*!
- * @brief           Encode Mid-Side stereo block.
- * @param *encoder  Pointer to encoder.
+ * @brief           Convert independent stereo to mid-side stereo.
+ * @param *block    The pointer to block.
  */
-static inline void encode_current_block_midside(encoder* encoder){
+static inline void conv_independent_to_midside(block* block) {
     uint16_t offset;
-    int32_t left;
-    int32_t right;
-    int32_t mid;
-    int32_t side;
-    sub_block* lch = encoder->current_block->sub_blocks[0];
-    sub_block* rch = encoder->current_block->sub_blocks[1];
-    polynomial_predictor* lpoly = encoder->polynomial_predictors[0];
-    polynomial_predictor* rpoly = encoder->polynomial_predictors[1];
-    sslms* llms = encoder->sslms_filters[0];
-    sslms* rlms = encoder->sslms_filters[1];
+    int32_t mid, side, left, right;
 
-    for (offset = 0; offset < encoder->header.block_size; ++offset){
-        left = lch->samples[offset];
-        right = rch->samples[offset];
+    if (block->num_channels != 2) {
+        return;
+    }
 
-        /* STEP 1. Convert to Mid-Side stereo. */
-        lch->samples[offset] = mid = RSHIFT(left + right, 1);
-        rch->samples[offset] = side = left - right;
+    for (offset = 0; offset < block->size; ++offset) {
+        left = block->sub_blocks[0]->samples[offset];
+        right = block->sub_blocks[1]->samples[offset];
 
-        /* STEP 2. Polynomial prediction. */
-        mid -= polynomial_predictor_predict(lpoly);
-        side -= polynomial_predictor_predict(rpoly);
-        polynomial_predictor_update(lpoly, lch->samples[offset]);
-        polynomial_predictor_update(rpoly, rch->samples[offset]);
-        lch->samples[offset] = mid;
-        rch->samples[offset] = side;
+        mid = RSHIFT(left + right, 1);
+        side = left - right;
 
-        /* STEP 3. SSLMS prediction. */
-        mid -= sslms_predict(llms);
-        side -= sslms_predict(rlms);
-        sslms_update(llms, lch->samples[offset], mid);
-        sslms_update(rlms, rch->samples[offset], side);
-
-        /* STEP 4. Output */
-        lch->samples[offset] = mid;
-        rch->samples[offset] = side;
+        block->sub_blocks[0]->samples[offset] = mid;
+        block->sub_blocks[1]->samples[offset] = side;
     }
 }
 
@@ -131,11 +102,14 @@ static inline void encode_current_block_midside(encoder* encoder){
  * @param *encoder  Pointer to encoder.
  */
 static inline void encode_current_block(encoder* encoder) {
-    if (encoder->header.use_mid_side_stereo){
-        encode_current_block_midside(encoder);
+    uint8_t ch;
+
+    if (encoder->header.use_mid_side_stereo) {
+        conv_independent_to_midside(encoder->current_block);
     }
-    else{
-        encode_current_block_normal(encoder);
+
+    for (ch = 0; ch < encoder->header.num_channels; ++ch) {
+        encode_subblock(encoder->polynomial_predictors[ch], encoder->sslms_filters[ch], encoder->current_block->sub_blocks[ch]);
     }
 }
 

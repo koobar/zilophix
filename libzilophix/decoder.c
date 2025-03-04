@@ -5,21 +5,14 @@
 #include "./include/sub_block.h"
 #include "./include/zilophix.h"
 
-const static uint8_t supported_format_versions[4] = { FORMAT_VERSION_1_0, FORMAT_VERSION_1_1, FORMAT_VERSION_1_2, FORMAT_VERSION_1_3 };
-
 /*! 
  * @brief           Check version
  * @param version   Version number
  * @return          Returns true if the version is supported, false if the version is not supported.
  */
 static inline bool is_supported_version(uint8_t version) {
-    size_t n = sizeof(supported_format_versions) / sizeof(supported_format_versions[0]);
-    size_t i;
-
-    for (i = 0; i < n; ++i) {
-        if (supported_format_versions[i] == version) {
-            return true;
-        }
+    if (version <= FORMAT_VERSION_CURRENT) {
+        return true;
     }
 
     return false;
@@ -62,77 +55,53 @@ static inline void read_header(decoder* decoder) {
 }
 
 /*!
- * @brief           Decode monaural or no Mid-Side stereo block.
- * @param *decoder  Pointer to decoder.
+ * @brief           Decode subblock.
+ * @param *poly     The pointer to polynomial predictor.
+ * @param *sslms    The pointer to SSLMS filter.
+ * @param *sb       The pointer to subblock.
  */
-static inline void decode_normal_block(decoder* decoder){
-    uint8_t ch;
-    sub_block* sb = NULL;
-    sslms* lms = NULL;
-    polynomial_predictor* poly = NULL;
+static inline void decode_sub_block(polynomial_predictor* poly, sslms* sslms, sub_block* sb) {
     uint16_t offset;
     int32_t residual;
     int32_t sample;
 
-    for (ch = 0; ch < decoder->header.num_channels; ++ch) {
-        sb = decoder->current_block->sub_blocks[ch];
-        lms = decoder->sslms_filters[ch];
-        poly = decoder->polynomial_predictors[ch];
+    for (offset = 0; offset < sb->size; ++offset) {
+        /* STEP 1. Restore polynomial filter prediction residual. */
+        residual = sb->samples[offset];
+        sample = residual + sslms_predict(sslms);
+        sslms_update(sslms, sample, residual);
 
-        for (offset = 0; offset < sb->size; ++offset) {
-            /* STEP 1. Restore polynomial filter prediction residual. */
-            residual = sb->samples[offset];
-            sample = residual + sslms_predict(lms);
-            sslms_update(lms, sample, residual);
+        /* STEP 2. Polynomial prediction and restore PCM sample. */
+        sample += polynomial_predictor_predict(poly);
+        polynomial_predictor_update(poly, sample);
 
-            /* STEP 2. Polynomial prediction and restore PCM sample. */
-            sample += polynomial_predictor_predict(poly);
-            polynomial_predictor_update(poly, sample);
-
-            /* STEP 3. Store restored sample to subblock. */
-            sb->samples[offset] = sample;
-        }
+        /* STEP 3. Store restored sample to subblock. */
+        sb->samples[offset] = sample;
     }
 }
 
 /*!
- * @brief           Decode Mid-Side stereo block.
- * @param *decoder  Pointer to decoder.
+ * @brief           Convert mid-side stereo to independent stereo.
+ * @param *block    The pointer to block.
  */
-static inline void decode_midside_block(decoder* decoder){
-    sub_block* lch = decoder->current_block->sub_blocks[0];
-    sub_block* rch = decoder->current_block->sub_blocks[1];
-    sslms* llms = decoder->sslms_filters[0];
-    sslms* rlms = decoder->sslms_filters[1];
-    polynomial_predictor* lpoly = decoder->polynomial_predictors[0];
-    polynomial_predictor* rpoly = decoder->polynomial_predictors[1];
-    int32_t left;
-    int32_t right;
-    int32_t mid;
-    int32_t side;
+static inline void conv_midside_to_independent(block* block) {
     uint16_t offset;
+    int32_t mid, side, left, right;
 
-    for (offset = 0; offset < decoder->header.block_size; ++offset) {
-        /* STEP 1. Restore polynomial filter prediction residuals. */
-        mid = lch->samples[offset] + sslms_predict(llms);
-        side = rch->samples[offset] + sslms_predict(rlms);
-        sslms_update(llms, mid, lch->samples[offset]);
-        sslms_update(rlms, side, rch->samples[offset]);
+    if (block->num_channels != 2) {
+        return;
+    }
 
-        /* STEP 2. Polynomial prediction and restore Mid-Side stereo PCM samples.*/
-        mid += polynomial_predictor_predict(lpoly);
-        side += polynomial_predictor_predict(rpoly);
-        polynomial_predictor_update(lpoly, mid);
-        polynomial_predictor_update(rpoly, side);
+    for (offset = 0; offset < block->size; ++offset) {
+        mid = block->sub_blocks[0]->samples[offset];
+        side = block->sub_blocks[1]->samples[offset];
 
-        /* STEP 3. Convert Mid-Side stereo to simple stereo. */
         mid = LSHIFT(mid, 1) | (side & 1);
         left = RSHIFT(mid + side, 1);
         right = RSHIFT(mid - side, 1);
 
-        /* STEP 4. Store left and right sample to subblocks. */
-        lch->samples[offset] = left;
-        rch->samples[offset] = right;
+        block->sub_blocks[0]->samples[offset] = left;
+        block->sub_blocks[1]->samples[offset] = right;
     }
 }
 
@@ -141,11 +110,14 @@ static inline void decode_midside_block(decoder* decoder){
  * @param *decoder  Pointer to decoder.
  */
 static inline void decode_current_block(decoder* decoder) {
-    if (decoder->header.num_channels == 2 && decoder->header.use_mid_side_stereo){
-        decode_midside_block(decoder);
+    uint8_t ch;
+
+    for (ch = 0; ch < decoder->header.num_channels; ++ch) {
+        decode_sub_block(decoder->polynomial_predictors[ch], decoder->sslms_filters[ch], decoder->current_block->sub_blocks[ch]);
     }
-    else{
-        decode_normal_block(decoder);
+
+    if (decoder->header.use_mid_side_stereo) {
+        conv_midside_to_independent(decoder->current_block);
     }
 }
 
