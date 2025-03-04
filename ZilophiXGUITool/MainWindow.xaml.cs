@@ -24,6 +24,7 @@ namespace ZilophiXGUITool
         private ushort encBlockSize;
         private bool encUseMidSideStereo;
         private byte encSSLMSTaps;
+        private byte encFormatVersion;
 
         // Constructor
         public MainWindow()
@@ -61,7 +62,7 @@ namespace ZilophiXGUITool
             {
                 string output = $"{this.convOutDir}\\{Path.GetFileNameWithoutExtension(input)}.zpx";
 
-                ZpXEncodeFileW(input, output, this.encBlockSize, this.encUseMidSideStereo, this.encSSLMSTaps, FORMAT_VERSION_1_3);
+                ZpXEncodeFileW(input, output, this.encBlockSize, this.encUseMidSideStereo, this.encSSLMSTaps, this.encFormatVersion);
             }
             else if (extension == ".zpx")
             {
@@ -80,6 +81,12 @@ namespace ZilophiXGUITool
             this.encBlockSize = Convert.ToUInt16(((ComboBoxItem)this.BlockSizeComboBox.SelectedItem).Tag);
             this.encUseMidSideStereo = this.UseMidSideConvertingCheckBox.IsChecked.Value;
             this.encSSLMSTaps = (byte)this.SSLMSFilterTapsTrack.Value;
+            this.encFormatVersion = FORMAT_VERSION_1_3;
+            
+            if (this.MaintainCompatibilityWithOlderVersions.IsChecked.Value)
+            {
+                this.encFormatVersion = FORMAT_VERSION_1_2;
+            }
 
             this.BlockSizeComboBox.IsEnabled = false;
             this.UseMidSideConvertingCheckBox.IsEnabled = false;

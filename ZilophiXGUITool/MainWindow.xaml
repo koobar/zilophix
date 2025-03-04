@@ -103,7 +103,11 @@
                     <ComboBoxItem Content="4096 Samples" Tag="4096"/>
                     <ComboBoxItem Content="8192 Samples" Tag="8192"/>
                 </ComboBox>
-                <CheckBox x:Name="UseMidSideConvertingCheckBox" Content="Use Mid-Side stereo." HorizontalAlignment="Left" Margin="0,5,0,0"/>
+
+                <StackPanel Orientation="Vertical" Margin="0,5,0,0" HorizontalAlignment="Left">
+                    <CheckBox x:Name="UseMidSideConvertingCheckBox" Content="Use Mid-Side stereo." HorizontalAlignment="Left"/>
+                    <CheckBox x:Name="MaintainCompatibilityWithOlderVersions" Content="Maintain compatibility with older versions." Margin="0,5,0,0" HorizontalAlignment="Left"/>
+                </StackPanel>
             </StackPanel>
         </GroupBox>
 
