@@ -412,7 +412,4 @@ int main(int argc, char* argv[]) {
     else{
         print("[Fatal Error] No input file.");
     }
-
-    free(input_file_path);
-    free(output_file_path);
 }
