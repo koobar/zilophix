@@ -11,6 +11,9 @@
 #define FORMAT_VERSION_1_3                      0x13                        /* Version code of ZilophiX 1.3 */
 
 #define FORMAT_VERSION_CURRENT                  FORMAT_VERSION_1_3          /* The version code of the current version. */
+
+#define LIBRARY_BUILD_DATE                      "2025/03/06"                /* Library build date. */
+#define CURRENT_LIBRARY_VERSION_NAME            "1.4"                       /* Current library version name. */
 #define CURRENT_FORMAT_VERSION_NAME             "1.3"                       /* Current format version name. */
 
 #define SIZE_OF_MAGIC_NUMBER                    3
@@ -18,6 +21,8 @@
 #define HEADER_OFFSET_OF_AUDIO_DATA_SIZE        SIZE_OF_MAGIC_NUMBER + offsetof(zilophix_header, audio_data_size)
 
 #define POLYNOMIAL_PREDICATOR_MAX_HISTORY       2
+
+#define SSLMS_MAX_TAPS                          32
 
 #pragma pack(push, 1)
 typedef struct {

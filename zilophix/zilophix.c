@@ -63,6 +63,9 @@ static void parse_commandline_args(int argc, char* argv[]) {
             else if (strcmp(argv[i], "1.3") == 0) {
                 output_format_version = FORMAT_VERSION_1_3;
             }
+            else if (strcmp(argv[i], "current") == 0 || strcmp(argv[i], "latest") == 0) {
+                output_format_version = FORMAT_VERSION_CURRENT;
+            }
         }
     }
 }
@@ -77,6 +80,30 @@ static void print(const char* str) {
         printf("\n");
     }
 }
+
+#pragma warning(push)
+#pragma warning(disable: 6387)
+
+/*!
+ * @brief           Print versions.
+ */
+static void print_versions() {
+    size_t buffer_size = sizeof(char) * 1024;
+    char* buffer = (char*)malloc(buffer_size);
+
+    sprintf(buffer, "Tool version:    %s", CURRENT_LIBRARY_VERSION_NAME);
+    print(buffer);
+
+    sprintf(buffer, "Codec version:   %s", CURRENT_FORMAT_VERSION_NAME);
+    print(buffer);
+
+    sprintf(buffer, "Build date:      %s", LIBRARY_BUILD_DATE);
+    print(buffer);
+
+    free(buffer);
+}
+
+#pragma warning(pop)
 
 /*!
  * @brief           Print line separator.
@@ -99,9 +126,10 @@ static void print_logo() {
     print("ZilophiX (ZpX): The free and open-source lossless audio codec.");
     print("Copyright (c) 2024-2025 koobar. Released under WTFPL version 2.");
     print_return();
-    print("Codec version:   1.3");
-    print("Tool version:    1.3");
-    print("Build:           2025/03/04");
+    print_versions();
+    print_return();
+    print("To see how to use it, type this:");
+    print("  zilophix -h.");
 }
 
 /*!
@@ -112,13 +140,13 @@ static void print_usage() {
     printf("Example:    zilophix --bs 2048 -ms --in <input> --out <output>\n");
     printf("\n");
     printf("Options:\n");
-    printf("    --bs|--blocksize            Specify the number of samples per block. (default = 1024)\n");
+    printf("    --bs|--blocksize            Specify the number of samples per block. (default = 2048)\n");
     printf("    --taps|--filter-taps        Specify the Sign-Sign LMS adaptive filter taps between 1 and 32.\n");
     printf("    --in|--input                Specify the input file path.\n");
     printf("    --out|--output              Specify the output file path.\n");
     printf("    -ms|-midside                Uses mid-side stereo. Compression rates are often improved.\n");
     printf("    -silent|-s                  Don't display any text.\n");
-    printf("    --format_version|--fmtver   Specify the encoder output format version. (e.g. --fmtver 1.3)\n");
+    printf("    --format_version|--fmtver   Specify the encoder output format version. (e.g. --fmtver current)\n");
     printf("    -h|-help                    Display this text.\n");
 }
 
@@ -137,9 +165,6 @@ static void print_encode_result(clock_t encode_start, clock_t encode_end) {
     if (buffer == NULL) {
         return;
     }
-
-    print("Encode completed.");
-    print_return();
 
     sprintf_s(buffer, buffer_size, "[RESULT]\0");
     print(buffer);
@@ -192,7 +217,7 @@ static void print_format_info(decoder* decoder) {
     sprintf_s(buffer, buffer_size, "Bits per sample:   %d Bits\0", decoder->header.bits_per_sample);
     print(buffer);
 
-    sprintf_s(buffer, buffer_size, "channels:          %d Channels\0", decoder->header.num_channels);
+    sprintf_s(buffer, buffer_size, "Channels:          %d Channels\0", decoder->header.num_channels);
     print(buffer);
 
     sprintf_s(buffer, buffer_size, "Mid-Side stereo:   %s\0", decoder->header.use_mid_side_stereo ? "Yes" : "No");
@@ -227,9 +252,6 @@ static void print_decode_result(decoder* decoder, clock_t decode_start, clock_t 
     if (buffer == NULL) {
         return;
     }
-
-    print("Decode completed.");
-    print_return();
 
     sprintf_s(buffer, buffer_size, "[RESULT]\0");
     print(buffer);

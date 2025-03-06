@@ -1,8 +1,6 @@
 #ifndef SSLMS_HEADER_INCLUDED
 #define SSLMS_HEADER_INCLUDED
 
-#define SSLMS_MAX_TAPS    32
-
 #include <stdint.h>
 
 typedef struct {
