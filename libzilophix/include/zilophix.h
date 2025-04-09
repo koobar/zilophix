@@ -12,7 +12,7 @@
 
 #define FORMAT_VERSION_CURRENT                  FORMAT_VERSION_1_3          /* The version code of the current version. */
 
-#define LIBRARY_BUILD_DATE                      "2025/03/06"                /* Library build date. */
+#define LIBRARY_BUILD_DATE                      "2025/04/09"                /* Library build date. */
 #define CURRENT_LIBRARY_VERSION_NAME            "1.4"                       /* Current library version name. */
 #define CURRENT_FORMAT_VERSION_NAME             "1.3"                       /* Current format version name. */
 

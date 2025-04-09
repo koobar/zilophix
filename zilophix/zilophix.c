@@ -431,7 +431,7 @@ int main(int argc, char* argv[]) {
             decode();
         }
     }
-    else{
+    else if (argc != 1) {
         print("[Fatal Error] No input file.");
     }
 }
